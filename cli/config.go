@@ -1,0 +1,50 @@
+package cli
+
+import (
+	"fmt"
+	"net/url"
+
+	hypertexting "github.com/herdworks/hypertexting-go/lib"
+)
+
+func ConfigCommand() *Command {
+	return &Command{
+		Config: CommandConfig{
+			Name:        "config",
+			Description: "View HyperTemplates configuration.",
+			Usage:       "hyperctl config [options]",
+			Validator:   ConfigCommandValidator,
+			Handler:     ConfigCommandHandler,
+		},
+		Options: CommandOptions{
+			{
+				Name:        "config",
+				ShortName:   "c",
+				EnvName:     "HYPER_CONFIG",
+				Description: "Path to the website configuration file.",
+				Required:    true,
+				Secret:      false,
+			},
+			{
+				Name:        "id",
+				ShortName:   "i",
+				Description: "Identifier to use for the build.",
+				Required:    false,
+				Secret:      false,
+			},
+		},
+	}
+}
+
+func ConfigCommandValidator(cmd *Command) (err error) {
+	return nil
+}
+
+func ConfigCommandHandler(cmd *Command) (err error) {
+	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	if err = website.Load(true, nil); err != nil {
+		return err
+	}
+	fmt.Printf("%v\n", website)
+	return nil
+}
