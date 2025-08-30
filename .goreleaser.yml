@@ -1,0 +1,76 @@
+# GoReleaser configuration for hyperctl
+# This replaces the shell script for building cross-platform binaries
+
+version: 2
+
+project_name: hyperctl
+
+builds:
+  # Build for all target platforms and architectures
+  - id: hyperctl
+    main: ./hyperctl.go
+    binary: hyperctl
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    # Exclude unsupported combinations if any (none in this case)
+    ignore: []
+
+# Create universal binaries for macOS (equivalent to lipo command in shell script)
+universal_binaries:
+  - id: hyperctl-universal
+    name_template: hyperctl
+    replace: true
+
+# Archive configuration - creates tar.gz files similar to the shell script
+archives:
+  - id: hyperctl-archive
+    builds:
+      - hyperctl
+    name_template: "hyperctl_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      # Only include the binary, no additional files
+      - none*
+    wrap_in_directory: false
+
+# Checksum configuration
+checksum:
+  name_template: "checksums.txt"
+
+# Snapshot configuration for development builds
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+# Release configuration
+release:
+  draft: false
+  replace_existing_draft: true
+  target_commitish: "{{ .Commit }}"
+  discussion_category_name: General
+  prerelease: auto
+  mode: replace
+  header: |
+    ## hyperctl {{ .Tag }}
+
+    ### Changes
+  name_template: "{{.ProjectName}}-v{{.Version}}"
+
+# Don't generate changelog automatically
+changelog:
+  disable: true
+
+# Metadata
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
