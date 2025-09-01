@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"fmt"
@@ -7,41 +7,42 @@ import (
 	"slices"
 	"strings"
 
-	hypergraph "github.com/herdworks/hypergraph-go/lib"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypergraph "github.com/herdworks/hypergraph-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func NewCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func NewCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "new",
 			Description: "Create a new website or page.",
 			Usage:       "hyperctl new [command] [options]",
 			Handler:     NewCommandHandler,
 		},
-		Options: CommandOptions{},
-		SubCommands: Commands{
+		Options: cli.CommandOptions{},
+		SubCommands: cli.Commands{
 			NewWebsiteCommand(),
 			NewPageCommand(),
 		},
 	}
 }
 
-func NewCommandHandler(cmd *Command) (err error) {
+func NewCommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
-func NewWebsiteCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func NewWebsiteCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "website",
 			Description: "Create a new website.",
 			Usage:       "hyperctl new website [options] <path>",
 			Validator:   NewWebsiteCommandValidator,
 			Handler:     NewWebsiteCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "baseurl",
 				ShortName:   "b",
@@ -70,7 +71,7 @@ func NewWebsiteCommand() *Command {
 	}
 }
 
-func NewWebsiteCommandValidator(cmd *Command) (err error) {
+func NewWebsiteCommandValidator(cmd *cli.Command) (err error) {
 	var uri *url.URL
 	var baseurl *url.URL
 	var supportedSchemes = []string{"https", "http"}
@@ -91,7 +92,7 @@ func NewWebsiteCommandValidator(cmd *Command) (err error) {
 	}
 	return nil
 }
-func NewWebsiteCommandHandler(cmd *Command) (err error) {
+func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 	websiteDirectory, _ := url.Parse(cmd.Args[0])
 	websiteConfigFileName := "site." + cmd.Options.Get("format")
 	websiteConfigURI := &url.URL{Scheme: websiteDirectory.Scheme, Path: filepath.Join(websiteDirectory.Path, websiteConfigFileName)}
@@ -120,15 +121,15 @@ func NewWebsiteCommandHandler(cmd *Command) (err error) {
 	return nil
 }
 
-func NewPageCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func NewPageCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "page",
 			Description: "Create a new page.",
 			Usage:       "hyperctl new page [options]",
 			Handler:     NewPageCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -177,7 +178,7 @@ func NewPageCommand() *Command {
 	}
 }
 
-func NewPageCommandHandler(cmd *Command) (err error) {
+func NewPageCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
 	if err = website.Load(false, nil); err != nil {
 		return err

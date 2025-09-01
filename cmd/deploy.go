@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -7,20 +7,22 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	hyperproviders "github.com/herdworks/hyperproviders-go/lib"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+
+	cli "github.com/herdworks/cli-go"
+	hyperproviders "github.com/herdworks/hyperproviders-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func DeployCommand() (cmd *Command) {
-	return &Command{
-		Config: CommandConfig{
+func DeployCommand() (cmd *cli.Command) {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "deploy",
 			Description: "Deploy a static site build to the configured provider.",
 			Usage:       "hyperctl deploy [options]",
 			Validator:   DeployCommandValidator,
 			Handler:     DeployCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -53,11 +55,11 @@ func DeployCommand() (cmd *Command) {
 	}
 }
 
-func DeployCommandValidator(cmd *Command) (err error) {
+func DeployCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func DeployCommandHandler(cmd *Command) (err error) {
+func DeployCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
 	var provider *hyperproviders.HyperProvider

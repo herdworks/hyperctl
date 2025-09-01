@@ -1,21 +1,22 @@
-package cli
+package cmd
 
 import (
 	"fmt"
 
-	hypertemplates "github.com/herdworks/hypertemplates-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertemplates "github.com/herdworks/hypertemplates-go"
 )
 
-func RenderCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func RenderCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "render",
 			Description: "Render a HyperTemplate",
 			Usage:       "hyperctl render [options]",
 			Validator:   RenderCommandValidator,
 			Handler:     RenderCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "data",
 				ShortName:   "d",
@@ -48,11 +49,11 @@ func RenderCommand() *Command {
 	}
 }
 
-func RenderCommandValidator(cmd *Command) (err error) {
+func RenderCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func RenderCommandHandler(cmd *Command) (err error) {
+func RenderCommandHandler(cmd *cli.Command) (err error) {
 	html, err := hypertemplates.Render(
 		cmd.Options.Get("data"),
 		cmd.Options.Get("layout"),

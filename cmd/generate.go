@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -6,20 +6,22 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func GenerateCommand() (cmd *Command) {
+func GenerateCommand() (cmd *cli.Command) {
 	id := uuid.New()
-	return &Command{
-		Config: CommandConfig{
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "generate",
 			Description: "Perform an incremental build of a single page and its associated contents.",
 			Usage:       "hyperctl generate [options] [content]",
 			Validator:   GenerateCommandValidator,
 			Handler:     GenerateCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -66,11 +68,11 @@ func GenerateCommand() (cmd *Command) {
 	}
 }
 
-func GenerateCommandValidator(cmd *Command) (err error) {
+func GenerateCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func GenerateCommandHandler(cmd *Command) (err error) {
+func GenerateCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
 	var websiteURI *url.URL
 	var page hypertexting.Page

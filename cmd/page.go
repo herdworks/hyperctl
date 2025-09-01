@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -9,41 +9,42 @@ import (
 	"strings"
 	"time"
 
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
 // hyperctl page
-func PageCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func PageCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "page",
 			Description: "Manage pages and drafts.",
 			Usage:       "hyperctl page [command] [options]",
 			Handler:     PageCommandHandler,
 		},
-		Options: CommandOptions{},
-		SubCommands: Commands{
+		Options: cli.CommandOptions{},
+		SubCommands: cli.Commands{
 			PageListCommand(),
 			PageInspectCommand(),
 		},
 	}
 }
-func PageCommandHandler(cmd *Command) (err error) {
+func PageCommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl page ls
-func PageListCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func PageListCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "ls",
 			Description: "List website pages.",
 			Usage:       "hyperctl page ls [options] [<filter>]",
 			Validator:   PageListCommandValidator,
 			Handler:     PageListCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -55,7 +56,7 @@ func PageListCommand() *Command {
 	}
 }
 
-func PageListCommandValidator(cmd *Command) (err error) {
+func PageListCommandValidator(cmd *cli.Command) (err error) {
 	filter := "all"
 	filters := []string{"all", "pages", "drafts"}
 	if len(cmd.Args) > 1 {
@@ -70,7 +71,7 @@ func PageListCommandValidator(cmd *Command) (err error) {
 	return nil
 }
 
-func PageListCommandHandler(cmd *Command) (err error) {
+func PageListCommandHandler(cmd *cli.Command) (err error) {
 	var filter string = "all"
 	var pages hypertexting.Pages
 	var website *hypertexting.Website
@@ -96,7 +97,7 @@ func PageListCommandHandler(cmd *Command) (err error) {
 	return nil
 }
 
-func PageListCommandOutput(cmd *Command, website *hypertexting.Website, pages hypertexting.Pages) {
+func PageListCommandOutput(cmd *cli.Command, website *hypertexting.Website, pages hypertexting.Pages) {
 	pathcol := cmd.ColumnWidth(pages, "Path", 1)
 	lastmodcol := cmd.ColumnWidth(pages, "LastModified", 1)
 	titlecol := cmd.ColumnWidth(pages, "Title", 1)
@@ -115,16 +116,16 @@ func PageListCommandOutput(cmd *Command, website *hypertexting.Website, pages hy
 }
 
 // hyperctl page inspect
-func PageInspectCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func PageInspectCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect website pages.",
 			Usage:       "hyperctl page inspect [options] <path>",
 			Validator:   PageInspectCommandValidator,
 			Handler:     PageInspectCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -136,7 +137,7 @@ func PageInspectCommand() *Command {
 	}
 }
 
-func PageInspectCommandValidator(cmd *Command) (err error) {
+func PageInspectCommandValidator(cmd *cli.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
@@ -144,7 +145,7 @@ func PageInspectCommandValidator(cmd *Command) (err error) {
 	return nil
 }
 
-func PageInspectCommandHandler(cmd *Command) (err error) {
+func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 	var filter string = "all"
 	var website *hypertexting.Website
 	var pages hypertexting.Pages

@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -7,20 +7,21 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	hyperproviders "github.com/herdworks/hyperproviders-go/lib"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hyperproviders "github.com/herdworks/hyperproviders-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func PublishCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func PublishCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "publish",
 			Description: "Publish a single page build to a HyperProvider.",
 			Usage:       "hyperctl publish [options] <content>",
 			Validator:   PublishCommandValidator,
 			Handler:     PublishCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -59,11 +60,11 @@ func PublishCommand() *Command {
 	}
 }
 
-func PublishCommandValidator(cmd *Command) (err error) {
+func PublishCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func PublishCommandHandler(cmd *Command) (err error) {
+func PublishCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
 	var websiteURI *url.URL
 	var page hypertexting.Page

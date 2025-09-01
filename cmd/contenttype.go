@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"encoding/json"
@@ -6,40 +6,41 @@ import (
 	"net/url"
 	"strings"
 
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
 // hyperctl content-type
-func ContentTypeCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func ContentTypeCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "content-type",
 			Description: "Inspect HyperTemplate theme content types.",
 			Usage:       "hyperctl content-type [command] [options]",
 			Handler:     ContentTypeCommandHandler,
 		},
-		Options: CommandOptions{},
-		SubCommands: Commands{
+		Options: cli.CommandOptions{},
+		SubCommands: cli.Commands{
 			ContentTypeListCommand(),
 			ContentTypeInspectCommand(),
 		},
 	}
 }
-func ContentTypeCommandHandler(cmd *Command) (err error) {
+func ContentTypeCommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl content-type ls
-func ContentTypeListCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func ContentTypeListCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "ls",
 			Description: "List content types.",
 			Usage:       "hyperctl content-type ls [options]",
 			Handler:     ContentTypeListCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -51,7 +52,7 @@ func ContentTypeListCommand() *Command {
 	}
 }
 
-func ContentTypeListCommandHandler(cmd *Command) (err error) {
+func ContentTypeListCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
 	if err = website.Load(false, nil); err != nil {
 		return err
@@ -75,16 +76,16 @@ func ContentTypeListCommandHandler(cmd *Command) (err error) {
 }
 
 // hyperctl content-type inspect
-func ContentTypeInspectCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func ContentTypeInspectCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect content types.",
 			Usage:       "hyperctl content-type inspect [options] <type>",
 			Validator:   ContentTypeInspectValidator,
 			Handler:     ContentTypeInspectCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -96,14 +97,14 @@ func ContentTypeInspectCommand() *Command {
 		},
 	}
 }
-func ContentTypeInspectValidator(cmd *Command) (err error) {
+func ContentTypeInspectValidator(cmd *cli.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
-func ContentTypeInspectCommandHandler(cmd *Command) (err error) {
+func ContentTypeInspectCommandHandler(cmd *cli.Command) (err error) {
 	var jsonBytes []byte
 	var typeRef string = cmd.Args[0]
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}

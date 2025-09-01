@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"encoding/json"
@@ -7,20 +7,21 @@ import (
 	"os"
 	"path/filepath"
 
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
 // TODO: refactor to support reading/writing from/to yaml or json
-func ConfigureCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func ConfigureCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "configure",
 			Description: "Manage HyperTemplates website configuration.",
 			Usage:       "hyperctl configure [options]",
 			Validator:   ConfigureCommandValidator,
 			Handler:     ConfigureCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "base_url",
 				ShortName:   "u",
@@ -56,7 +57,7 @@ func ConfigureCommand() *Command {
 	}
 }
 
-func ConfigureCommandValidator(cmd *Command) (err error) {
+func ConfigureCommandValidator(cmd *cli.Command) (err error) {
 	if len(os.Args[2:]) == 0 {
 		return fmt.Errorf("no configuration parameters provided, nothing to do")
 	}
@@ -68,7 +69,7 @@ func ConfigureCommandValidator(cmd *Command) (err error) {
 	return nil
 }
 
-func ConfigureCommandHandler(cmd *Command) (err error) {
+func ConfigureCommandHandler(cmd *cli.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	configfile := filepath.Join(project, "site.json")
 	uri, _ := url.Parse(configfile)

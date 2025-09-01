@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/herdworks/hyperctl/cli"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	cmd "github.com/herdworks/hyperctl/cmd"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
 var HyperCTL = &cli.CLI{
@@ -12,19 +13,19 @@ var HyperCTL = &cli.CLI{
 	Version:     fmt.Sprintf("%s (%s)", hypertexting.Version(), hypertexting.ReleaseDate()),
 	Description: "hyperctl is a lightweight static site generator based on HyperTemplates.",
 	Commands: []*cli.Command{
-		cli.AssetCommand(),
-		cli.BuildCommand(),
-		cli.ContentTypeCommand(),
-		cli.DataCommand(),
-		cli.DeployCommand(),
-		cli.GenerateCommand(),
-		cli.GraphCommand(),
-		cli.MimetypeCommand(),
-		cli.NewCommand(),
-		cli.PageCommand(),
-		cli.PublishCommand(),
-		cli.RenderCommand(),
-		cli.ServerCommand(),
+		cmd.AssetCommand(),
+		cmd.BuildCommand(),
+		cmd.ContentTypeCommand(),
+		cmd.DataCommand(),
+		cmd.DeployCommand(),
+		cmd.GenerateCommand(),
+		cmd.GraphCommand(),
+		cmd.MimetypeCommand(),
+		cmd.NewCommand(),
+		cmd.PageCommand(),
+		cmd.PublishCommand(),
+		cmd.RenderCommand(),
+		cmd.ServerCommand(),
 	},
 	Options: cli.CommandOptions{
 		{

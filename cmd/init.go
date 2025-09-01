@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"encoding/json"
@@ -7,19 +7,20 @@ import (
 	"os"
 	"path/filepath"
 
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func InitCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func InitCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "init",
 			Description: "Init a HyperTemplates website project.",
 			Usage:       "hyperctl init [options] [content]",
 			Validator:   InitCommandValidator,
 			Handler:     InitCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "base_url",
 				ShortName:   "u",
@@ -48,7 +49,7 @@ func InitCommand() *Command {
 	}
 }
 
-func InitCommandValidator(cmd *Command) (err error) {
+func InitCommandValidator(cmd *cli.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	config := filepath.Join(project, "site.json")
 	if _, err := os.Stat(config); err == nil {
@@ -57,7 +58,7 @@ func InitCommandValidator(cmd *Command) (err error) {
 	return nil
 }
 
-func InitCommandHandler(cmd *Command) (err error) {
+func InitCommandHandler(cmd *cli.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	config := filepath.Join(project, "site.json")
 	uri, _ := url.Parse(config)

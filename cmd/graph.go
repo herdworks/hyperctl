@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"slices"
 	"strings"
 
-	hypergraph "github.com/herdworks/hypergraph-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypergraph "github.com/herdworks/hypergraph-go"
 )
 
 var (
@@ -14,20 +15,20 @@ var (
 	supportedFormats = []string{"json", "JSON", "yaml", "YAML", "yml", "YML"}
 )
 
-func GraphCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func GraphCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "graph",
 			Description: "Web scraping utilities.",
 			Usage:       "hyperctl graph <subcommand> [options] <href>",
 			Handler:     GraphCommandHandler,
 		},
-		SubCommands: Commands{
+		SubCommands: cli.Commands{
 			GraphDocumentCommand(),
 			GraphEntityCommand(),
 			GraphAttachmentCommand(),
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "format",
 				ShortName:   "f",
@@ -46,7 +47,7 @@ func GraphCommand() *Command {
 	}
 }
 
-func GraphCommandValidator(cmd *Command) (err error) {
+func GraphCommandValidator(cmd *cli.Command) (err error) {
 	var uri *url.URL
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("expected exactly 1 arguments, got %v (%s)", len(cmd.Args), strings.Join(cmd.Args, ", "))
@@ -63,25 +64,25 @@ func GraphCommandValidator(cmd *Command) (err error) {
 	return nil
 }
 
-func GraphCommandHandler(cmd *Command) (err error) {
+func GraphCommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil) // display help if no subcommand is provided
 	return
 }
 
-func GraphDocumentCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func GraphDocumentCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "document",
 			Description: "Get web page metadata.",
 			Usage:       "hyperctl graph document [options] <href>",
 			Validator:   GraphCommandValidator,
 			Handler:     GraphDocumentCommandHandler,
 		},
-		Options: CommandOptions{},
+		Options: cli.CommandOptions{},
 	}
 }
 
-func GraphDocumentCommandHandler(cmd *Command) (err error) {
+func GraphDocumentCommandHandler(cmd *cli.Command) (err error) {
 	var metadata map[string]any
 	var metabytes []byte
 	href := cmd.Args[0]
@@ -99,20 +100,20 @@ func GraphDocumentCommandHandler(cmd *Command) (err error) {
 	return nil
 }
 
-func GraphEntityCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func GraphEntityCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "entity",
 			Description: "Get web author metadata.",
 			Usage:       "hyperctl graph entity [options] <href>",
 			Validator:   GraphCommandValidator,
 			Handler:     GraphEntityCommandHandler,
 		},
-		Options: CommandOptions{},
+		Options: cli.CommandOptions{},
 	}
 }
 
-func GraphEntityCommandHandler(cmd *Command) (err error) {
+func GraphEntityCommandHandler(cmd *cli.Command) (err error) {
 	var metadata map[string]any
 	var metabytes []byte
 	href := cmd.Args[0]
@@ -130,20 +131,20 @@ func GraphEntityCommandHandler(cmd *Command) (err error) {
 	return nil
 }
 
-func GraphAttachmentCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func GraphAttachmentCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "attachment",
 			Description: "Get attachment metadata.",
 			Usage:       "hyperctl graph attachment [options] <href>",
 			Validator:   GraphCommandValidator,
 			Handler:     GraphAttachmentCommandHandler,
 		},
-		Options: CommandOptions{},
+		Options: cli.CommandOptions{},
 	}
 }
 
-func GraphAttachmentCommandHandler(cmd *Command) (err error) {
+func GraphAttachmentCommandHandler(cmd *cli.Command) (err error) {
 	var metadata map[string]any
 	var metabytes []byte
 	href := cmd.Args[0]

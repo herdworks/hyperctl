@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -15,21 +15,23 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	hypertemplates "github.com/herdworks/hypertemplates-go/lib"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+
+	cli "github.com/herdworks/cli-go"
+	hypertemplates "github.com/herdworks/hypertemplates-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func ServerCommand() *Command {
+func ServerCommand() *cli.Command {
 	id := uuid.New()
-	return &Command{
-		Config: CommandConfig{
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "server",
 			Description: "Run a local HTTP server.",
 			Usage:       "hyperctl server [options] [content]",
 			Validator:   ServerCommandValidator,
 			Handler:     ServerCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -98,11 +100,11 @@ func ServerCommand() *Command {
 	}
 }
 
-func ServerCommandValidator(cmd *Command) (err error) {
+func ServerCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ServerCommandHandler(cmd *Command) (err error) {
+func ServerCommandHandler(cmd *cli.Command) (err error) {
 	port, err := strconv.Atoi(cmd.Options.Get("port"))
 	if err != nil {
 		port = 8080

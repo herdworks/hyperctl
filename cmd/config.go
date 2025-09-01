@@ -1,22 +1,23 @@
-package cli
+package cmd
 
 import (
 	"fmt"
 	"net/url"
 
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func ConfigCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func ConfigCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "config",
 			Description: "View HyperTemplates configuration.",
 			Usage:       "hyperctl config [options]",
 			Validator:   ConfigCommandValidator,
 			Handler:     ConfigCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -36,11 +37,11 @@ func ConfigCommand() *Command {
 	}
 }
 
-func ConfigCommandValidator(cmd *Command) (err error) {
+func ConfigCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ConfigCommandHandler(cmd *Command) (err error) {
+func ConfigCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
 	if err = website.Load(true, nil); err != nil {
 		return err

@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"context"
@@ -7,20 +7,22 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+
+	cli "github.com/herdworks/cli-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func BuildCommand() *Command {
+func BuildCommand() *cli.Command {
 	id := uuid.New()
-	return &Command{
-		Config: CommandConfig{
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "build",
 			Description: "Build a static site from HyperTemplates.",
 			Usage:       "hyperctl build [options]",
 			Validator:   BuildCommandValidator,
 			Handler:     BuildCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -61,11 +63,11 @@ func BuildCommand() *Command {
 	}
 }
 
-func BuildCommandValidator(cmd *Command) (err error) {
+func BuildCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func BuildCommandHandler(cmd *Command) (err error) {
+func BuildCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
 	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {

@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"encoding/json"
@@ -7,45 +7,46 @@ import (
 	"net/url"
 	"strings"
 
-	hypergraph "github.com/herdworks/hypergraph-go/lib"
-	hypertemplates "github.com/herdworks/hypertemplates-go/lib"
-	hypertexting "github.com/herdworks/hypertexting-go/lib"
+	cli "github.com/herdworks/cli-go"
+	hypergraph "github.com/herdworks/hypergraph-go"
+	hypertemplates "github.com/herdworks/hypertemplates-go"
+	hypertexting "github.com/herdworks/hypertexting-go"
 
-	opml "github.com/herdworks/hypertemplates-go/lib/opml"
+	opml "github.com/herdworks/hypertemplates-go/opml"
 )
 
 // hyperctl data
-func DataCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func DataCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "data",
 			Description: "Manage global data.",
 			Usage:       "hyperctl data [command] [options]",
 			Handler:     DataCommandHandler,
 		},
-		Options: CommandOptions{},
-		SubCommands: Commands{
+		Options: cli.CommandOptions{},
+		SubCommands: cli.Commands{
 			DataListCommand(),
 			DataInspectCommand(),
 			DataTransformCommand(),
 		},
 	}
 }
-func DataCommandHandler(cmd *Command) (err error) {
+func DataCommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl data ls
-func DataListCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func DataListCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "ls",
 			Description: "List global data namespaces.",
 			Usage:       "hyperctl data ls [options]",
 			Handler:     DataListCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -57,7 +58,7 @@ func DataListCommand() *Command {
 	}
 }
 
-func DataListCommandHandler(cmd *Command) (err error) {
+func DataListCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
 	var environment hypertexting.Environment = hypertexting.Environment{}
@@ -95,16 +96,16 @@ func DataListCommandHandler(cmd *Command) (err error) {
 }
 
 // hyperctl data inspect
-func DataInspectCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func DataInspectCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect global data namespace.",
 			Usage:       "hyperctl data inspect <namespace> [options]",
 			Validator:   DataInspectValidator,
 			Handler:     DataInspectCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -116,14 +117,14 @@ func DataInspectCommand() *Command {
 		},
 	}
 }
-func DataInspectValidator(cmd *Command) (err error) {
+func DataInspectValidator(cmd *cli.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
-func DataInspectCommandHandler(cmd *Command) (err error) {
+func DataInspectCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
 	var namespace string = cmd.Args[0]
@@ -146,16 +147,16 @@ func DataInspectCommandHandler(cmd *Command) (err error) {
 }
 
 // hyperctl data transform
-func DataTransformCommand() *Command {
-	return &Command{
-		Config: CommandConfig{
+func DataTransformCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
 			Name:        "transform",
 			Description: "Transform global data namespaces.",
 			Usage:       "hyperctl data transform <namespace> [options]",
 			Validator:   DataTransformValidator,
 			Handler:     DataTransformCommandHandler,
 		},
-		Options: CommandOptions{
+		Options: cli.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -173,14 +174,14 @@ func DataTransformCommand() *Command {
 		},
 	}
 }
-func DataTransformValidator(cmd *Command) (err error) {
+func DataTransformValidator(cmd *cli.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
-func DataTransformCommandHandler(cmd *Command) (err error) {
+func DataTransformCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
 	var namespace string = cmd.Args[0]
