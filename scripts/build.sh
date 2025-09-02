@@ -13,7 +13,6 @@ function reset() {
     if [ -d "builds" ]; then rm -r builds/* 2> /dev/null; fi
     mkdir -p builds/{bin,release}
     go mod tidy
-    go get github.com/herdworks/hyperctl/cli
 }
 
 function version() {
