@@ -2,7 +2,30 @@
 
 Greetings, coding agent. Welcome to the team!
 
+* [Project Instructions](#project-instructions)
+* [General Instructions](#general-instructions)
+* [Programming Languages](#programming-languages)
+
+--
+## Project Instructions
+
+<!-- Project Instructions take priority over all other instructions -->
+
+### Development Instructions
+
+* Build this project `sh scripts/build.sh`
+* Always run `go fmt ./...` before committing
+
+### Testing Instructions
+
+* Test this project with `go test ./... -v`
+
+--
 ## General Instructions
+
+<!-- General Instructions are default preferences and best practices -->
+
+### Best Practices
 
 * Always refer to `README.md` for a description of this project's goals
 * Write simple, clear, and idiomatic code
@@ -13,13 +36,13 @@ Greetings, coding agent. Welcome to the team!
 * Add blank lines to separate logical groups of code
 * When asked to do something that deviates from these instruction (AGENTS.md), ask for clarification!
 
-## Development Environment
+### Development Environment
 
 * Use `curl` for performing HTTP requests or when documenting example HTTP requests
 * Use `git` for revision control
 * Use `.envrc` files to manage environment variables (see: https://direnv.net)
 
-## Dependency Management
+### Dependency Management
 
 * Use standard libraries liberally
 * Use language-native dependency management tools (if available)
@@ -31,7 +54,7 @@ Greetings, coding agent. Welcome to the team!
 * Pin versions for reproducibility
 * Avoid circular dependencies at all costs
 
-## Methods & Functions
+### Methods & Functions
 
 * Functions should do one thing well; extract helpers when complexity grows
 * Functions that need more than ~3-4 arguments are a code smell and should be refactored to accept a type
@@ -43,21 +66,21 @@ Greetings, coding agent. Welcome to the team!
 * Prefer pattern matching / switch statements where the language supports it
 * If a function returns an error, it should be the last return value
 
-## Errors
+### Errors
 
 * Propagate errors with context; surface actionable messages without leaking sensitive data
 * Return errors (preferred) OR log them, but never both
 * Handle errors at the appropriate level
 * Consider using structured errors for better debugging
 
-## Serialization & Deserialization
+### Serialization & Deserialization
 
 * When implementing custom types, always add support for serialization & deserialization
 * Serialization & deserialization implementations should always support JSON
 * Where possible, serialization & deserialization implementations should also support YAML
 * If serialization & deserialization support for TOML and/or XML is cheap, add them as well
 
-## Cryptography
+### Cryptography
 
 * Always use standard library cryptography packages unless otherwise noted
 * Never implement your own cryptography
@@ -66,11 +89,11 @@ Greetings, coding agent. Welcome to the team!
 * Always store passwords using bcrypt or similar
 * Always use TLS for network communication
 
-## Secrets
+### Secrets
 
 * Never hardcode secrets; always use environment variables or secret managers
 
-## Concurrency
+### Concurrency
 
 * Minimize shared mutable state and prefer message passing to maintain clear ownership
 * Use locks sparingly — keep scope minimal and never nest locks without strict ordering
@@ -82,7 +105,7 @@ Greetings, coding agent. Welcome to the team!
 * Keep concurrency mechanisms separate from core business logic
 * Always use cooperative cancellation to prevent orphaned operations and treat cancellation as distinct from errors
 
-## Comments
+### Comments
 
 * Write comments in complete sentences
 * Don’t repeat the code in prose
@@ -92,7 +115,7 @@ Greetings, coding agent. Welcome to the team!
 * Use multi-line/block comments sparingly
 * Comments should include links to specifications and/or reference documents when appropriate
 
-## Tests
+### Tests
 
 * Keep tests close to the code being tested
 * Use the `_test` or `_tests` suffixes for organizing test directories and/or files
@@ -104,7 +127,7 @@ Greetings, coding agent. Welcome to the team!
 * Keep tests fast; long-running tests should be clearly marked (integration, e2e)
 * Tests should always clean up after themselves
 
-## Documentation
+### Documentation
 
 * Every project should have a CHANGELOG based on "Keep a Changelog" (https://keepachangelog.com/)
 * Every project should have at least one README
@@ -119,7 +142,7 @@ Greetings, coding agent. Welcome to the team!
   * Clear setup instructions
   * A troubleshooting section
 
-## Commits
+### Commits
 
 * Reference issues or tickets when relevant
 * Run tests before committing
@@ -128,7 +151,7 @@ Greetings, coding agent. Welcome to the team!
 * Write meaningful commit messages
 * Follow semantic versioning best practices (https://semver.org)
 
-## Common Pitfalls to Avoid
+### Common Pitfalls to Avoid
 
 * Not checking errors
 * Ignoring race conditions
@@ -137,12 +160,15 @@ Greetings, coding agent. Welcome to the team!
 * Swallowing errors instead of handling or propagating them
 * Over-optimizing prematurely (especially around concurrency)
 
-## Operations
+### Operations
 
 * Assume all source code will be hosted on GitHub.com
 * Assume all projects will use GitHub Actions for CI/CD
 
+--
 ## Programming Languages
+
+<!-- Programming Language instructions provide additional guidance beyond General Instructions and Project Instructions -->
 
 ### JavaScript
 
@@ -167,5 +193,3 @@ Greetings, coding agent. Welcome to the team!
 
 * Treat Swift Foundation as part of the standard library (https://github.com/swiftlang/swift-foundation)
 * When writing CLI tools, always use Swift Argument Parser (https://github.com/apple/swift-argument-parser)
-
-<!-- See https://agents.md for more information -->
