@@ -83,7 +83,7 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
 		return err
 	}
-	if providers, err = hyperproviders.New(&website.Providers); err != nil {
+	if providers, err = hyperproviders.New(website.Providers); err != nil {
 		return err
 	}
 	if err = providers.Deploy(context.TODO(), build.URI.Path, website.BaseURL); err != nil {
