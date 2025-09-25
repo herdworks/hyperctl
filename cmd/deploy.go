@@ -62,7 +62,7 @@ func DeployCommandValidator(cmd *cli.Command) (err error) {
 func DeployCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *url.URL
 	var website *hypertexting.Website
-	var provider *hyperproviders.HyperProvider
+	var providers *hyperproviders.HyperProviders
 	var buildID string = uuid.New().String()
 	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
 		return err
@@ -83,13 +83,10 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
 		return err
 	}
-	if err = website.Provider.Validate(); err != nil {
+	if providers, err = hyperproviders.New(website.Providers); err != nil {
 		return err
 	}
-	if provider, err = hyperproviders.New(&website.Provider); err != nil {
-		return err
-	}
-	if err = provider.Deploy(context.TODO(), build.URI.Path, website.BaseURL); err != nil {
+	if err = providers.Deploy(context.TODO(), build.URI.Path, website.BaseURL); err != nil {
 		return err
 	}
 	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)
