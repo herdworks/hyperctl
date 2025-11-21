@@ -105,14 +105,11 @@ func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 			Href: "/favicon.png",
 		},
 	}
-	author := &hypergraph.Entity{
-		Href:    "/",
-		Name:    cmd.Options.Get("title"),
-		Favicon: "/favicon.png",
-	}
-	author.ResolveUsername(cmd.Options.Get("baseurl"))
-	if err = author.Validate("author"); err == nil {
-		website.Author = author
+	website.Author = &hypergraph.Entity{
+		Href:     "/",
+		Username: hypergraph.Username(cmd.Options.Get("baseurl")),
+		Name:     cmd.Options.Get("title"),
+		Favicon:  "/favicon.png",
 	}
 	website.ResolveConfig(nil)
 	if err = website.CreatePackage(); err != nil {

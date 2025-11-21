@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"slices"
@@ -8,11 +11,13 @@ import (
 
 	cli "github.com/herdworks/cli-go"
 	hypergraph "github.com/herdworks/hypergraph-go"
+	"gopkg.in/yaml.v2"
 )
 
 var (
 	supportedSchemes = []string{"http", "https"}
 	supportedFormats = []string{"json", "JSON", "yaml", "YAML", "yml", "YML"}
+	supportedNamespaces = []string{"entity", "hypergraph", "opengraph", "twitter", "oembed", "all", "metadata"}
 )
 
 func GraphCommand() *cli.Command {
@@ -24,7 +29,7 @@ func GraphCommand() *cli.Command {
 			Handler:     GraphCommandHandler,
 		},
 		SubCommands: cli.Commands{
-			GraphDocumentCommand(),
+			GraphAllCommand(),
 			GraphEntityCommand(),
 			GraphAttachmentCommand(),
 		},
@@ -69,66 +74,30 @@ func GraphCommandHandler(cmd *cli.Command) (err error) {
 	return
 }
 
-func GraphDocumentCommand() *cli.Command {
+func GraphAllCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "document",
-			Description: "Get web page metadata.",
-			Usage:       "hyperctl graph document [options] <href>",
+			Name:        "all",
+			Description: "Get all webpage metadata.",
+			Usage:       "hyperctl graph all [options] <href>",
 			Validator:   GraphCommandValidator,
-			Handler:     GraphDocumentCommandHandler,
+			Handler:     GraphMetadataCommandHandler,
 		},
 		Options: cli.CommandOptions{},
 	}
-}
-
-func GraphDocumentCommandHandler(cmd *cli.Command) (err error) {
-	var metadata map[string]any
-	var metabytes []byte
-	href := cmd.Args[0]
-	metadata = hypergraph.GraphDocument(href, cmd.Options.Get("verbose") == "true")
-	switch cmd.Options.Get("format") {
-	case "yaml", "yml":
-		metabytes, err = hypergraph.PrettyYAML(metadata)
-	case "json":
-		metabytes, err = hypergraph.PrettyJSON(metadata)
-	}
-	if err != nil {
-		return fmt.Errorf("error serializing metadata to %s: %w", strings.ToUpper(cmd.Options.Get("format")), err)
-	}
-	fmt.Printf("%v\n", string(metabytes))
-	return nil
 }
 
 func GraphEntityCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "entity",
-			Description: "Get web author metadata.",
+			Description: "Get website entity metadata.",
 			Usage:       "hyperctl graph entity [options] <href>",
 			Validator:   GraphCommandValidator,
-			Handler:     GraphEntityCommandHandler,
+			Handler:     GraphMetadataCommandHandler,
 		},
 		Options: cli.CommandOptions{},
 	}
-}
-
-func GraphEntityCommandHandler(cmd *cli.Command) (err error) {
-	var metadata map[string]any
-	var metabytes []byte
-	href := cmd.Args[0]
-	metadata = hypergraph.GraphEntity(href, cmd.Options.Get("verbose") == "true")
-	switch cmd.Options.Get("format") {
-	case "yaml", "yml":
-		metabytes, err = hypergraph.PrettyYAML(metadata)
-	case "json":
-		metabytes, err = hypergraph.PrettyJSON(metadata)
-	}
-	if err != nil {
-		return fmt.Errorf("error serializing metadata to %s: %w", strings.ToUpper(cmd.Options.Get("format")), err)
-	}
-	fmt.Printf("%v\n", string(metabytes))
-	return nil
 }
 
 func GraphAttachmentCommand() *cli.Command {
@@ -138,22 +107,55 @@ func GraphAttachmentCommand() *cli.Command {
 			Description: "Get attachment metadata.",
 			Usage:       "hyperctl graph attachment [options] <href>",
 			Validator:   GraphCommandValidator,
-			Handler:     GraphAttachmentCommandHandler,
+			Handler:     GraphMetadataCommandHandler,
 		},
 		Options: cli.CommandOptions{},
 	}
 }
 
-func GraphAttachmentCommandHandler(cmd *cli.Command) (err error) {
-	var metadata map[string]any
+func GraphMetadataCommandHandler(cmd *cli.Command) (err error) {
+	var ctx context.Context = context.Background()
+	var verbose bool = cmd.Options.Get("verbose") == "true"
+	var jsonBytes []byte
+	var yamlBytes []byte
 	var metabytes []byte
 	href := cmd.Args[0]
-	metadata = hypergraph.GraphAttachment(href, cmd.Options.Get("verbose") == "true")
+	var document *hypergraph.Document = &hypergraph.Document{Href: href}
+	if err = document.Download(ctx, verbose, nil); err != nil {
+		return errors.Join(fmt.Errorf("downloading document"), err)
+	}
+	if err = document.Scrape(ctx, verbose, nil); err != nil {
+		return errors.Join(fmt.Errorf("scraping document"), err)
+	}
+
+	switch cmd.Config.Name {
+	case "entity":
+		jsonBytes, err = json.MarshalIndent(document.Metadata.Entity, "", "  ")
+	case "hypergraph", "attachment":
+		jsonBytes, err = json.MarshalIndent(document.Metadata.HyperGraph, "", "  ")
+	case "opengraph":
+		jsonBytes, err = json.MarshalIndent(document.Metadata.OpenGraph, "", "  ")
+	case "twitter":
+		jsonBytes, err = json.MarshalIndent(document.Metadata.Twitter, "", "  ")
+	case "oembed":
+		jsonBytes, err = json.MarshalIndent(document.Metadata.OEmbed, "", "  ")
+	case "all", "metadata":
+		jsonBytes, err = json.MarshalIndent(document.Metadata, "", "  ")
+	default:
+		jsonBytes = []byte(fmt.Sprintf("{\"error\": \"namespace \\\"%s\\\" not found (supported namespaces: %s)\"}", cmd.Config.Name, strings.Join(supportedNamespaces, ", ")))
+	}
 	switch cmd.Options.Get("format") {
 	case "yaml", "yml":
-		metabytes, err = hypergraph.PrettyYAML(metadata)
+		metadata := map[string]any{}
+		if err = json.Unmarshal(jsonBytes, &metadata); err != nil {
+			return fmt.Errorf("format=yaml error: %w", err)
+		}
+		if yamlBytes, err = yaml.Marshal(metadata); err != nil {
+			return fmt.Errorf("format=yaml error: %w", err)
+		}
+		metabytes = fmt.Appendf(metabytes, "---\n%s", yamlBytes)
 	case "json":
-		metabytes, err = hypergraph.PrettyJSON(metadata)
+		metabytes = jsonBytes
 	}
 	if err != nil {
 		return fmt.Errorf("error serializing metadata to %s: %w", strings.ToUpper(cmd.Options.Get("format")), err)
@@ -161,3 +163,4 @@ func GraphAttachmentCommandHandler(cmd *cli.Command) (err error) {
 	fmt.Printf("%v\n", string(metabytes))
 	return nil
 }
+
