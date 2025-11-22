@@ -166,6 +166,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 						plural = "s"
 					}
 					fmt.Printf("\n%v change%v detected, refreshing build...\n\n", count, plural)
+					server.Build.Website.Loaded = false // force reload of website config
 					if err = server.Build.Execute(context.TODO(), server.URL, server.WebsiteConfig); err != nil {
 						fmt.Println(err)
 					}
