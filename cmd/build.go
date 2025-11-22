@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"path/filepath"
 
@@ -86,6 +85,5 @@ func BuildCommandHandler(cmd *cli.Command) (err error) {
 		Website: website,
 		Pages:   &website.Pages, // all pages
 	}
-	fmt.Printf("%v\n", configOverrides)
 	return build.Execute(context.TODO(), nil, configOverrides)
 }
