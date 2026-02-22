@@ -1,4 +1,4 @@
-package cmd
+package dev
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	cli "github.com/herdworks/cli-go"
-	hypergraph "github.com/herdworks/hypergraph-go"
+	hypergraph "github.com/herdworks/hypergraph-go/types"
 	"gopkg.in/yaml.v2"
 )
 
@@ -24,8 +24,8 @@ func GraphCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "graph",
-			Description: "Web scraping utilities.",
-			Usage:       "hyperctl graph <subcommand> [options] <href>",
+			Description: "Web scraper utilities.",
+			Usage:       "hyperctl dev graph <subcommand> [options] <href>",
 			Handler:     GraphCommandHandler,
 		},
 		SubCommands: cli.Commands{
@@ -121,10 +121,10 @@ func GraphMetadataCommandHandler(cmd *cli.Command) (err error) {
 	var metabytes []byte
 	href := cmd.Args[0]
 	var document *hypergraph.Document = &hypergraph.Document{Href: href}
-	if err = document.Download(ctx, verbose, nil); err != nil {
+	if err = document.Download(ctx, verbose, nil, 10, nil); err != nil {
 		return errors.Join(fmt.Errorf("downloading document"), err)
 	}
-	if err = document.Scrape(ctx, verbose, nil); err != nil {
+	if err = document.Scrape(ctx, verbose, nil, 10, nil); err != nil {
 		return errors.Join(fmt.Errorf("scraping document"), err)
 	}
 

@@ -8,10 +8,11 @@ go 1.23.5
 // first-party dependencies
 require (
 	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hypergraph-go v0.17.4-0.20251115031643-7d9bed6c6659
+	github.com/herdworks/hyperfeed-go v0.0.32-0.20260216072030-8451278015ca // indirect
+	github.com/herdworks/hypergraph-go v0.17.4-0.20260206225003-5336e4206058
 	github.com/herdworks/hyperproviders-go v0.17.3
-	github.com/herdworks/hypertemplates-go v0.18.0-1.0.20251121173120-05d3835d8d1c
-	github.com/herdworks/hypertexting-go v0.18.0-1.0.20251121173220-76a0667a7484
+	github.com/herdworks/hypertemplates-go v0.17.4-0.20260222031324-b6ab742b08b2
+	github.com/herdworks/hypertexting-go v0.18.0-1.0.20260222033054-4045c61da49e
 )
 
 // direct dependencies
@@ -51,7 +52,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.9 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
-	github.com/herdworks/hyperfeed-go v0.0.31 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.4 // indirect
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc // indirect

@@ -1,4 +1,4 @@
-package cmd
+package dev
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -26,8 +27,8 @@ func ServerCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "server",
-			Description: "Run a local HTTP server.",
-			Usage:       "hyperctl server [options] [content]",
+			Description: "Live-reloading development server.",
+			Usage:       "hyperctl dev server [options] [content]",
 			Validator:   ServerCommandValidator,
 			Handler:     ServerCommandHandler,
 		},
@@ -130,7 +131,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemeSettings:    cmd.Options.Get("theme"),
+		ThemePath:        cmd.Options.Get("theme"),
 	}
 
 	// start the server
@@ -156,7 +157,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		for ever {
 			select {
 			case <-ticker.C:
-				if count, err = ServerCommandWatcher(&server); err != nil {
+				if count, err = ServerCommandWatcher(&server, &website); err != nil {
 					fmt.Println(err)
 					continue
 				}
@@ -184,13 +185,14 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ServerCommandWatcher(server *Server) (changecount int, err error) {
+func ServerCommandWatcher(server *Server, website *hypertexting.Website) (changecount int, err error) {
 	changecount = 0
 	now := time.Now()
 	dir := filepath.Dir(server.ConfigFile)
+	buildpath := path.Join(dir, website.Config.BuildsDirectory)
 	for _, p := range hypertemplates.GetPaths(dir, true) {
 		var stat fs.FileInfo
-		if strings.HasPrefix(p, ".") || strings.HasPrefix(p, "builds/") {
+		if strings.HasPrefix(p, ".") || strings.HasPrefix(p, buildpath) {
 			continue
 		}
 		if stat, err = os.Stat(p); err != nil {

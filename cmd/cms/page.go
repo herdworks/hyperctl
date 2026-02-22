@@ -1,4 +1,4 @@
-package cmd
+package cms
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func PageCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "page",
 			Description: "Manage pages and drafts.",
-			Usage:       "hyperctl page [command] [options]",
+			Usage:       "hyperctl cms page [command] [options]",
 			Handler:     PageCommandHandler,
 		},
 		Options: cli.CommandOptions{},

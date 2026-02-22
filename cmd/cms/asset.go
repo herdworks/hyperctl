@@ -1,4 +1,4 @@
-package cmd
+package cms
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func AssetCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "asset",
 			Description: "Manage website assets.",
-			Usage:       "hyperctl asset [command] [options]",
+			Usage:       "hyperctl cms asset [command] [options]",
 			Handler:     NewCommandHandler,
 		},
 		Options: cli.CommandOptions{},

@@ -1,25 +1,25 @@
-package cmd
+package deploy
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"path/filepath"
 
 	"github.com/google/uuid"
-
 	cli "github.com/herdworks/cli-go"
+	hyperproviders "github.com/herdworks/hyperproviders-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func BuildCommand() *cli.Command {
-	id := uuid.New()
+func PublishCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "build",
-			Description: "Build a static site from HyperTemplates.",
-			Usage:       "hyperctl build [options]",
-			Validator:   BuildCommandValidator,
-			Handler:     BuildCommandHandler,
+			Name:        "incremental",
+			Description: "Deploy an incremental build.",
+			Usage:       "hyperctl deploy incremental [options] <content>",
+			Validator:   PublishCommandValidator,
+			Handler:     PublishCommandHandler,
 		},
 		Options: cli.CommandOptions{
 			{
@@ -31,12 +31,10 @@ func BuildCommand() *cli.Command {
 				Secret:      false,
 			},
 			{
-				Name:        "id",
-				ShortName:   "i",
-				Description: "Identifier to use for the build.",
-				Required:    false,
-				Secret:      false,
-				Default:     id.String(),
+				Name:        "page",
+				ShortName:   "p",
+				Description: "Path to the content index file.",
+				Required:    true,
 			},
 			{
 				Name:        "content-dir",
@@ -62,28 +60,50 @@ func BuildCommand() *cli.Command {
 	}
 }
 
-func BuildCommandValidator(cmd *cli.Command) (err error) {
+func PublishCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func BuildCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+func PublishCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
+	var websiteURI *url.URL
+	var page hypertexting.Page
+	var pageURI *url.URL
+	var provider *hyperproviders.HyperProvider
+	var buildID string = uuid.New().String()
 	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
+	if pageURI, err = url.Parse(cmd.Options.Get("page")); err != nil {
+		return err
+	}
+	page = hypertexting.Page{URI: pageURI, Path: hypertexting.PagePath(website, pageURI)}
+	build := &hypertexting.HyperBuild{
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
+		ID:          buildID,
+		Website:     website,
+		Incremental: true,
+		Pages:       &hypertexting.Pages{&page},
+	}
 	configOverrides := &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemeSettings:    cmd.Options.Get("theme"),
+		ThemePath:        cmd.Options.Get("theme"),
 	}
-	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
-		ID:      cmd.Options.Get("id"),
-		Website: website,
-		Pages:   &website.Pages, // all pages
+	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
+		return err
 	}
-	return build.Execute(context.TODO(), nil, configOverrides)
+	if err = website.Provider.Validate(); err != nil {
+		return err
+	}
+	if provider, err = hyperproviders.New(&website.Provider); err != nil {
+		return err
+	}
+	if err = provider.Deploy(context.TODO(), build.URI.Path, website.BaseURL); err != nil {
+		return err
+	}
+	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)
+	return nil
 }

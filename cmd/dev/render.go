@@ -1,4 +1,4 @@
-package cmd
+package dev
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ func RenderCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "render",
-			Description: "Render a HyperTemplate",
-			Usage:       "hyperctl render [options]",
+			Description: "HyperTemplate rendering utilities.",
+			Usage:       "hyperctl dev render [options]",
 			Validator:   RenderCommandValidator,
 			Handler:     RenderCommandHandler,
 		},

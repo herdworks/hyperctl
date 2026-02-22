@@ -1,4 +1,4 @@
-package cmd
+package cms
 
 import (
 	"fmt"
@@ -14,8 +14,8 @@ func DataCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "data",
-			Description: "Manage global data.",
-			Usage:       "hyperctl data [command] [options]",
+			Description: "Manage global template data.",
+			Usage:       "hyperctl cms data [command] [options]",
 			Handler:     DataCommandHandler,
 		},
 		Options: cli.CommandOptions{},

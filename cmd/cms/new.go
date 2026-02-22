@@ -1,4 +1,4 @@
-package cmd
+package cms
 
 import (
 	"fmt"
@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	cli "github.com/herdworks/cli-go"
-	hypergraph "github.com/herdworks/hypergraph-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
@@ -17,7 +16,7 @@ func NewCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "new",
 			Description: "Create a new website or page.",
-			Usage:       "hyperctl new [command] [options]",
+			Usage:       "hyperctl cms new [command] [options]",
 			Handler:     NewCommandHandler,
 		},
 		Options: cli.CommandOptions{},
@@ -105,11 +104,10 @@ func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 			Href: "/favicon.png",
 		},
 	}
-	website.Author = &hypergraph.Entity{
-		Href:     "/",
-		Username: hypergraph.Username(cmd.Options.Get("baseurl")),
+	website.Byline = hypertexting.Byline{
 		Name:     cmd.Options.Get("title"),
 		Favicon:  "/favicon.png",
+		Href:     "/",
 	}
 	website.ResolveConfig(nil)
 	if err = website.CreatePackage(); err != nil {
