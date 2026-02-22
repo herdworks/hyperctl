@@ -15,10 +15,36 @@ import (
 	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
+func ThemeInstallCommand() *cli.Command {
+	return &cli.Command{
+		Config: cli.CommandConfig{
+			Name:        "install",
+			Description: "Install a theme from a package archive.",
+			Usage:       "hyperctl theme install [options]",
+			Handler:     ThemeInstallCommandHandler,
+		},
+		Options: cli.CommandOptions{
+			{
+				Name:        "config",
+				ShortName:   "c",
+				EnvName:     "HYPER_CONFIG",
+				Description: "Path to the website configuration file.",
+				Required:    true,
+			},
+			{
+				Name:        "file",
+				ShortName:   "f",
+				Description: "Path to theme package file (zip archive).",
+				Required:    true,
+			},
+		},
+	}
+}
+
 func ThemeInstallCommandHandler(cmd *cli.Command) (err error) {
-	var reader *zip.ReadCloser
-	var theme hypertemplates.Theme
 	var website *hypertexting.Website
+	var theme hypertemplates.Theme
+	var reader *zip.ReadCloser
 
 	// Load the website configuration.
 	if uri, err := url.Parse(cmd.Options.Get("config")); err == nil && uri != nil {

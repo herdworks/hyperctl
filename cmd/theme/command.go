@@ -14,6 +14,7 @@ func Command() *cli.Command {
 		SubCommands: cli.Commands{
 			ThemeListCommand(),
 			ThemeInstallCommand(),
+			ThemePackageCommand(),
 		},
 	}
 }
