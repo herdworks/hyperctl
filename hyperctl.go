@@ -19,9 +19,9 @@ var HyperCTL = &cli.CLI{
 	Description: "hyperctl is a simple static site generator.",
 	Commands: []*cli.Command{
 		cms.Command(),
+		theme.Command(),
 		build.Command(),
 		deploy.Command(),
-		theme.Command(),
 		dev.Command(),
 	},
 	Options: cli.CommandOptions{
