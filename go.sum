@@ -62,6 +62,10 @@ github.com/herdworks/hypertemplates-go v0.17.4-0.20260222074108-8f3191b571ab h1:
 github.com/herdworks/hypertemplates-go v0.17.4-0.20260222074108-8f3191b571ab/go.mod h1:XTeoXRaLi+Ja1HqLTyGPScxKm4y4h8ENqAsuOFLhl44=
 github.com/herdworks/hypertemplates-go v0.17.4-0.20260222170618-394ab76c2e53 h1:2qUDLFjV/Dh16uEPPNRvoAkX/4SZxfK/arWj7GrMiE4=
 github.com/herdworks/hypertemplates-go v0.17.4-0.20260222170618-394ab76c2e53/go.mod h1:XTeoXRaLi+Ja1HqLTyGPScxKm4y4h8ENqAsuOFLhl44=
+github.com/herdworks/hypertemplates-go v0.17.4-0.20260222182210-1d66fe61a912 h1:5+J3XlJSUWnJ5fhkglh+rf2LsMW/WFWKIs1FACjp7p8=
+github.com/herdworks/hypertemplates-go v0.17.4-0.20260222182210-1d66fe61a912/go.mod h1:XTeoXRaLi+Ja1HqLTyGPScxKm4y4h8ENqAsuOFLhl44=
+github.com/herdworks/hypertemplates-go v0.17.4-0.20260223170519-d04f351e8399 h1:11TMAc++SURXm4aQoCfYp4ZwSY+GmeBB9mGqHjsCfDA=
+github.com/herdworks/hypertemplates-go v0.17.4-0.20260223170519-d04f351e8399/go.mod h1:XTeoXRaLi+Ja1HqLTyGPScxKm4y4h8ENqAsuOFLhl44=
 github.com/herdworks/hypertexting-go v0.18.0-1.0.20260222055211-ea5b83953af7 h1:KlAgJzzgsviBLNCZ/PuQiVbCRorg1cF8E/FpHc2M7CY=
 github.com/herdworks/hypertexting-go v0.18.0-1.0.20260222055211-ea5b83953af7/go.mod h1:Zd/OgKSYIivM7qyIfgqU64zPmjfwiO31VooTot16Zzo=
 github.com/herdworks/hypertexting-go v0.18.0-1.0.20260222170724-7d956c6f3778 h1:b/GJJvE4G/jucC2qiH4eNy9i/wV7jPZJNXfyBThOjao=
