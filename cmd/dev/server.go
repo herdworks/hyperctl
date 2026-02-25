@@ -121,6 +121,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	server.Duration = time.Duration(server.Interval) * time.Second
 	server.WatchedFiles = map[string]fs.FileInfo{}
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website.Load(false, nil) // silently perform an initial load to get website.config.builds_dir
 	server.Build = &hypertexting.HyperBuild{
 		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
 		ID:      cmd.Options.Get("id"),
