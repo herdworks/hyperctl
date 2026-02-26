@@ -8,11 +8,11 @@ go 1.23.5
 // first-party dependencies
 require (
 	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hyperfeed-go v0.0.32-0.20260216072030-8451278015ca // indirect
-	github.com/herdworks/hypergraph-go v0.17.4-0.20260206225003-5336e4206058
+	github.com/herdworks/hyperfeed-go v0.18.0 // indirect
+	github.com/herdworks/hypergraph-go v0.18.0
 	github.com/herdworks/hyperproviders-go v0.17.3
-	github.com/herdworks/hypertemplates-go v0.17.4-0.20260225010229-0e53493e0a71
-	github.com/herdworks/hypertexting-go v0.18.0-1.0.20260225012149-cbcd9ca2c83a
+	github.com/herdworks/hypertemplates-go v0.18.0
+	github.com/herdworks/hypertexting-go v0.18.0
 )
 
 // direct dependencies
