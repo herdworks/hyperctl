@@ -4,22 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## Unreleased
+## 0.18.0 (2026-02-26)
 
-* Changed `hyperctl new` → `hyperctl cms new`
-* Changed `hyperctl asset` → `hyperctl cms asset`
-* Changed `hyperctl content-type` → `hyperctl cms content-type`
-* Changed `hyperctl data` → `hyperctl cms data`
-* Changed `hyperctl page` → `hyperctl cms page`
-* Changed `hyperctl build` → `hyperctl build complete`
-* Changed `hyperctl generate` → `hyperctl build incremental`
-* Changed `hyperctl deploy` → `hyperctl deploy complete`
-* Changed `hyperctl publish` → `hyperctl deploy incremental` 
-* Changed `hyperctl graph` → `hyperctl dev graph`
-* Changed `hyperctl mimetype` → `hyperctl dev mimetype`
-* Changed `hyperctl render` → `hyperctl dev render`
-* Changed `hyperctl server` → `hyperctl dev server`
-* Fixed several bugs in the live-reloading development server
+* Added `hyperctl theme` command group with `ls`, `install`, and `package` subcommands for theme management.
+* Added theme package installation validation and extraction for zip archives.
+* Changed the CLI to use namespaced command groups (`cms`, `theme`, `build`, `deploy`, and `dev`).
+* Changed the top-level command order to group the most common workflows (`cms`, `theme`, `build`, `deploy`, and `dev`) together.
+* Changed `hyperctl new` → `hyperctl cms new`.
+* Changed `hyperctl asset` → `hyperctl cms asset`.
+* Changed `hyperctl content-type` → `hyperctl cms content-type`.
+* Changed `hyperctl data` → `hyperctl cms data`.
+* Changed `hyperctl page` → `hyperctl cms page`.
+* Changed `hyperctl build` → `hyperctl build complete`.
+* Changed `hyperctl generate` → `hyperctl build incremental`.
+* Changed `hyperctl deploy` → `hyperctl deploy complete`.
+* Changed `hyperctl publish` → `hyperctl deploy incremental`.
+* Changed `hyperctl graph` → `hyperctl dev graph`.
+* Changed `hyperctl graph document` → `hyperctl dev graph all`.
+* Changed `hyperctl mimetype` → `hyperctl dev mimetype`.
+* Changed `hyperctl render` → `hyperctl dev render`.
+* Changed `hyperctl server` → `hyperctl dev server`.
+* Changed `hyperctl dev graph` subcommands to use a shared metadata scraping handler based on `hypergraph.Document`.
+* Changed `hyperctl cms new website` to derive author usernames with `hypergraph.Username()` and skip entity validation.
+* Changed template data support via dependency updates to expose root `ht.*`, `env.*`, and `theme.*` namespaces.
+* Changed block template data to use the `block.*` namespace via updated `hypertemplates-go` support.
+* Changed GitHub Actions release workflows to build on pull requests and only publish tag releases when the tag commit is on `main`.
+* Removed `hyperctl data transform`.
+* Fixed the live-reloading development server to reload `site.yaml` changes after file updates.
+* Fixed `hyperctl dev server` to respect `site.config.builds_dir` when selecting the build output directory.
+* Fixed erroneous debug logging in `hyperctl build`.
 
 ## 0.17.3
 
