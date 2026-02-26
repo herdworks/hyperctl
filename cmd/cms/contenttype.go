@@ -1,4 +1,4 @@
-package cmd
+package cms
 
 import (
 	"encoding/json"
@@ -15,8 +15,8 @@ func ContentTypeCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "content-type",
-			Description: "Inspect HyperTemplate theme content types.",
-			Usage:       "hyperctl content-type [command] [options]",
+			Description: "Manage content-types.",
+			Usage:       "hyperctl cms content-type [command] [options]",
 			Handler:     ContentTypeCommandHandler,
 		},
 		Options: cli.CommandOptions{},

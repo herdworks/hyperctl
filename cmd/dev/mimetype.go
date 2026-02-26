@@ -1,4 +1,4 @@
-package cmd
+package dev
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ func MimetypeCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "mimetype",
-			Description: "Get file mimetype information.",
-			Usage:       "hyperctl mimetype [options] <path>",
+			Description: "Mimetype utilities.",
+			Usage:       "hyperctl dev mimetype [options] <path>",
 			Validator:   MimetypeCommandValidator,
 			Handler:     MimetypeCommandHandler,
 		},

@@ -3,12 +3,14 @@ name: Build and Release
 on:
   push:
     branches:
-      - main
+      - '**'
     tags:
       - '*'
 
 jobs:
   build:
+    name: Build
+    if: ${{ github.event.deleted != true }}
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -40,14 +42,66 @@ jobs:
 
       - name: Run build.sh
         run: |
-          set -e
+          set -euo pipefail
           chmod +x scripts/build.sh
           ./scripts/build.sh
 
-      - name: Create release
+      - name: Upload release artifacts
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-bundles
+          path: builds/release/*.tar.gz
+          if-no-files-found: error
+
+  release-eligibility:
+    name: Check Release Eligibility
+    if: ${{ github.event.deleted != true && startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag commit is on main
+        id: check
         run: |
-          set -e
+          set -euo pipefail
+          git fetch origin main --depth=1
+
+          if git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Tag ${GITHUB_REF_NAME} is not on main. Skipping release."
+          echo "should_release=false" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Release
+    needs:
+      - build
+      - release-eligibility
+    if: ${{ needs.release-eligibility.outputs.should_release == 'true' }}
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-bundles
+          path: builds/release
+
+      - name: Create release
+        run: |
+          set -euo pipefail
           gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" -F CHANGELOG.md
           gh release upload "${{ github.ref_name }}" builds/release/*.tar.gz
         env:

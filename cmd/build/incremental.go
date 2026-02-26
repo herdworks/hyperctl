@@ -1,8 +1,7 @@
-package cmd
+package build
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"path/filepath"
 
@@ -12,15 +11,15 @@ import (
 	hypertexting "github.com/herdworks/hypertexting-go"
 )
 
-func BuildCommand() *cli.Command {
+func GenerateCommand() (cmd *cli.Command) {
 	id := uuid.New()
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "build",
-			Description: "Build a static site from HyperTemplates.",
-			Usage:       "hyperctl build [options]",
-			Validator:   BuildCommandValidator,
-			Handler:     BuildCommandHandler,
+			Name:        "incremental",
+			Description: "Perform an incremental build.",
+			Usage:       "hyperctl build incremental [options] [content]",
+			Validator:   GenerateCommandValidator,
+			Handler:     GenerateCommandHandler,
 		},
 		Options: cli.CommandOptions{
 			{
@@ -30,6 +29,12 @@ func BuildCommand() *cli.Command {
 				Description: "Path to the website configuration file.",
 				Required:    true,
 				Secret:      false,
+			},
+			{
+				Name:        "page",
+				ShortName:   "p",
+				Description: "Path to the page index file.",
+				Required:    true,
 			},
 			{
 				Name:        "id",
@@ -63,29 +68,35 @@ func BuildCommand() *cli.Command {
 	}
 }
 
-func BuildCommandValidator(cmd *cli.Command) (err error) {
+func GenerateCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func BuildCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+func GenerateCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
+	var websiteURI *url.URL
+	var page hypertexting.Page
+	var pageURI *url.URL
 	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
+	if pageURI, err = url.Parse(cmd.Options.Get("page")); err != nil {
+		return err
+	}
+	page = hypertexting.Page{URI: pageURI, Path: hypertexting.PagePath(website, pageURI)}
+	build := &hypertexting.HyperBuild{
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
+		ID:          cmd.Options.Get("id"),
+		Website:     website,
+		Incremental: true,
+		Pages:       &hypertexting.Pages{&page},
+	}
 	configOverrides := &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemeSettings:    cmd.Options.Get("theme"),
+		ThemePath:        cmd.Options.Get("theme"),
 	}
-	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
-		ID:      cmd.Options.Get("id"),
-		Website: website,
-		Pages:   &website.Pages, // all pages
-	}
-	fmt.Printf("%v\n", configOverrides)
 	return build.Execute(context.TODO(), nil, configOverrides)
 }

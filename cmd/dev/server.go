@@ -1,4 +1,4 @@
-package cmd
+package dev
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -26,8 +27,8 @@ func ServerCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "server",
-			Description: "Run a local HTTP server.",
-			Usage:       "hyperctl server [options] [content]",
+			Description: "Live-reloading development server.",
+			Usage:       "hyperctl dev server [options] [content]",
 			Validator:   ServerCommandValidator,
 			Handler:     ServerCommandHandler,
 		},
@@ -104,21 +105,23 @@ func ServerCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
+// TODO: this thing was only meant to be a temporary prototype; need refactoring
 func ServerCommandHandler(cmd *cli.Command) (err error) {
-	port, err := strconv.Atoi(cmd.Options.Get("port"))
-	if err != nil {
-		port = 8080
+	var server Server = Server{Hostname: cmd.Options.Get("host")}
+	if server.Port, err = strconv.Atoi(cmd.Options.Get("port")); err != nil {
+		return fmt.Errorf("invalid port: %s", cmd.Options.Get("port"))
 	}
-	server := Server{Hostname: cmd.Options.Get("host"), Port: port}
-	server.URL, err = url.Parse(fmt.Sprintf("http://%s:%d/", server.Hostname, server.Port))
-	server.ConfigFile = cmd.Options.Get("config")
-	server.Interval, err = strconv.Atoi(cmd.Options.Get("interval"))
-	if err != nil {
+	if server.URL, err = url.Parse(fmt.Sprintf("http://%s:%d/", server.Hostname, server.Port)); err != nil {
+		return fmt.Errorf("invalid server URL: %v", err)
+	}
+	if server.Interval, err = strconv.Atoi(cmd.Options.Get("interval")); err != nil {
 		server.Interval = 2
 	}
+	server.ConfigFile = cmd.Options.Get("config")
 	server.Duration = time.Duration(server.Interval) * time.Second
 	server.WatchedFiles = map[string]fs.FileInfo{}
 	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website.Load(false, nil) // silently perform an initial load to get website.config.builds_dir
 	server.Build = &hypertexting.HyperBuild{
 		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
 		ID:      cmd.Options.Get("id"),
@@ -129,8 +132,10 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemeSettings:    cmd.Options.Get("theme"),
+		ThemePath:        cmd.Options.Get("theme"),
 	}
+
+	// start the server
 	go func() {
 		fmt.Printf("Listening on %s...\n", server.Address())
 		ss := http.FileServer(http.Dir(server.Build.URI.Path))
@@ -142,17 +147,18 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		}
 	}()
 
-	ticker := time.NewTicker(server.Duration)
+	// start the file watcher
+	var ticker *time.Ticker = time.NewTicker(server.Duration)
 	defer ticker.Stop()
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
-		ever := true
+		var count int
+		var ever bool = true
 		for ever {
 			select {
 			case <-ticker.C:
-				count, err := ServerCommandWatcher(&server)
-				if err != nil {
+				if count, err = ServerCommandWatcher(&server, &website); err != nil {
 					fmt.Println(err)
 					continue
 				}
@@ -162,8 +168,8 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 						plural = "s"
 					}
 					fmt.Printf("\n%v change%v detected, refreshing build...\n\n", count, plural)
-					err = server.Build.Execute(context.TODO(), server.URL, server.WebsiteConfig)
-					if err != nil {
+					server.Build.Website.Loaded = false // force reload of website config
+					if err = server.Build.Execute(context.TODO(), server.URL, server.WebsiteConfig); err != nil {
 						fmt.Println(err)
 					}
 					fmt.Println()
@@ -180,21 +186,20 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ServerCommandWatcher(server *Server) (changecount int, err error) {
+func ServerCommandWatcher(server *Server, website *hypertexting.Website) (changecount int, err error) {
 	changecount = 0
 	now := time.Now()
 	dir := filepath.Dir(server.ConfigFile)
+	buildpath := path.Join(dir, website.Config.BuildsDirectory)
 	for _, p := range hypertemplates.GetPaths(dir, true) {
-		if strings.HasPrefix(p, ".") {
+		var stat fs.FileInfo
+		if strings.HasPrefix(p, ".") || strings.HasPrefix(p, buildpath) {
 			continue
 		}
-		if strings.HasPrefix(p, "builds/") {
-			continue
-		}
-		stat, err := os.Stat(p)
-		if err != nil {
+		if stat, err = os.Stat(p); err != nil {
 			return 0, err
 		}
+		// new file
 		if _, watched := server.WatchedFiles[p]; !watched {
 			if changecount == 0 {
 				fmt.Println()
@@ -204,6 +209,7 @@ func ServerCommandWatcher(server *Server) (changecount int, err error) {
 			changecount++
 			continue
 		}
+		// modified file
 		age := uint64(now.Sub(stat.ModTime()).Milliseconds())
 		if age < uint64(server.Interval*1000) {
 			if changecount == 0 {

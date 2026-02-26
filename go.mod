@@ -5,23 +5,28 @@ module github.com/herdworks/hyperctl
 
 go 1.23.5
 
+// first-party dependencies
+require (
+	github.com/herdworks/cli-go v0.1.0
+	github.com/herdworks/hyperfeed-go v0.0.32-0.20260216072030-8451278015ca // indirect
+	github.com/herdworks/hypergraph-go v0.17.4-0.20260206225003-5336e4206058
+	github.com/herdworks/hyperproviders-go v0.17.3
+	github.com/herdworks/hypertemplates-go v0.17.4-0.20260225010229-0e53493e0a71
+	github.com/herdworks/hypertexting-go v0.18.0-1.0.20260225012149-cbcd9ca2c83a
+)
+
 // direct dependencies
 require (
 	github.com/google/uuid v1.6.0
-	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hypergraph-go v0.17.3
-	github.com/herdworks/hyperproviders-go v0.17.3
-	github.com/herdworks/hypertemplates-go v0.17.3
-	github.com/herdworks/hypertexting-go v0.17.3
 )
 
 // local development dependencies (replacements)
 //
 // uncomment to use local dependencies
-// replace github.com/herdworks/hypertexting-go => ../hypertexting-go
-// replace github.com/herdworks/hypertemplates-go => ../hypertemplates-go
 // replace github.com/herdworks/hypergraph-go => ../hypergraph-go
 // replace github.com/herdworks/hyperproviders-go => ../hyperproviders-go
+// replace github.com/herdworks/hypertemplates-go => ../hypertemplates-go
+// replace github.com/herdworks/hypertexting-go => ../hypertexting-go
 
 // transitive dependencies
 require (
@@ -51,8 +56,8 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.4 // indirect
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc // indirect
 	github.com/yuin/goldmark-meta v1.1.0 // indirect
-	golang.org/x/net v0.32.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	gopkg.in/yaml.v2 v2.3.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

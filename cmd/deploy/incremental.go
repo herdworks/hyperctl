@@ -1,4 +1,4 @@
-package cmd
+package deploy
 
 import (
 	"context"
@@ -15,9 +15,9 @@ import (
 func PublishCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "publish",
-			Description: "Publish a single page build to a HyperProvider.",
-			Usage:       "hyperctl publish [options] <content>",
+			Name:        "incremental",
+			Description: "Deploy an incremental build.",
+			Usage:       "hyperctl deploy incremental [options] <content>",
 			Validator:   PublishCommandValidator,
 			Handler:     PublishCommandHandler,
 		},
@@ -90,7 +90,7 @@ func PublishCommandHandler(cmd *cli.Command) (err error) {
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemeSettings:    cmd.Options.Get("theme"),
+		ThemePath:        cmd.Options.Get("theme"),
 	}
 	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
 		return err
