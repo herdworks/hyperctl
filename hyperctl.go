@@ -9,13 +9,12 @@ import (
 	deploy "github.com/herdworks/hyperctl/cmd/deploy"
 	dev "github.com/herdworks/hyperctl/cmd/dev"
 	theme "github.com/herdworks/hyperctl/cmd/theme"
-
-	hypertexting "github.com/herdworks/hypertexting-go"
+	version "github.com/herdworks/hyperctl/cmd/version"
 )
 
 var HyperCTL = &cli.CLI{
 	Name:        "hyperctl",
-	Version:     fmt.Sprintf("%s (%s)", hypertexting.Version(), hypertexting.ReleaseDate()),
+	Version:     fmt.Sprintf("%s (%s)", version.CLIVersion, version.CLIReleaseDate),
 	Description: "hyperctl is a simple static site generator.",
 	Commands: []*cli.Command{
 		cms.Command(),

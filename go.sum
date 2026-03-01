@@ -58,8 +58,8 @@ github.com/herdworks/hypergraph-go v0.18.0 h1:Mb5FYHja34NfMtvb83dkt5BtbzsZXoWUj4
 github.com/herdworks/hypergraph-go v0.18.0/go.mod h1:yIgqNsfnxxoON3XqAAg+u3SG7SKBOu+7iNerZby5KhI=
 github.com/herdworks/hyperproviders-go v0.17.3 h1:q/2+zdBB0ssAufuru7Fo4i+7rITD0RPL/otsctihn+k=
 github.com/herdworks/hyperproviders-go v0.17.3/go.mod h1:Tz6Xii/pE613GeMK9g2FBZvgOxLMxvsp1PwYmDCmNe8=
-github.com/herdworks/hypertemplates-go v0.18.0 h1:HT4zMSh8lchLbNpM/ijG5Jz3y+w9So6mK+uoKmDhfz8=
-github.com/herdworks/hypertemplates-go v0.18.0/go.mod h1:PBwwJwxzXG07uF1TFpWEji75rasY15wz6JtggxqnK+k=
+github.com/herdworks/hypertemplates-go v0.18.1 h1:n7n17PXSVRLU6yZmrlQNLoEhzAqdOF99YV4LFLS1Qc0=
+github.com/herdworks/hypertemplates-go v0.18.1/go.mod h1:PBwwJwxzXG07uF1TFpWEji75rasY15wz6JtggxqnK+k=
 github.com/herdworks/hypertexting-go v0.18.0 h1:d/5ffE8OlqwbhP89T85H6qLFTcZkVyuCKva7zc2rHHI=
 github.com/herdworks/hypertexting-go v0.18.0/go.mod h1:F+irsBgMRCDlbQd/C1pfJF6d3q+nTulZT0TrCKiyLf0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

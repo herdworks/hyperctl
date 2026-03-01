@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## 0.18.1 (2026-03-01)
+
+* Added `github.com/herdworks/cmd/version` package for local versioning
+* Fixed a bug in `hyperctl theme package` that failed to include the `theme.json` config file in the theme archive.
+
 ## 0.18.0 (2026-02-26)
 
 * Added `hyperctl theme` command group with `ls`, `install`, and `package` subcommands for theme management.
