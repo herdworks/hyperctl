@@ -2,11 +2,11 @@ package cms
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 // hyperctl data
@@ -52,10 +52,10 @@ func DataListCommand() *cli.Command {
 }
 
 func DataListCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+	var websiteURI *href.Href
 	var website *hypertexting.Website
 	var environment hypertexting.Environment = hypertexting.Environment{}
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
@@ -118,11 +118,11 @@ func DataInspectValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 func DataInspectCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+	var websiteURI *href.Href
 	var website *hypertexting.Website
 	var namespace string = cmd.Args[0]
 	var namespaceBytes []byte
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}

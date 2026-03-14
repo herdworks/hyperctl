@@ -3,12 +3,12 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 // TODO: refactor to support reading/writing from/to yaml or json
@@ -72,7 +72,7 @@ func ConfigureCommandValidator(cmd *cli.Command) (err error) {
 func ConfigureCommandHandler(cmd *cli.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	configfile := filepath.Join(project, "site.json")
-	uri, _ := url.Parse(configfile)
+	uri, _ := href.Parse(configfile)
 	website := &hypertexting.Website{URI: uri}
 	var jsonBytes []byte
 	if jsonBytes, err = os.ReadFile(configfile); err != nil {

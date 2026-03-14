@@ -9,6 +9,7 @@ import (
 	cli "github.com/herdworks/cli-go"
 	hypertemplates "github.com/herdworks/hypertemplates-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func ThemePackageCommand() *cli.Command {
@@ -51,7 +52,7 @@ func ThemePackageCommandHandler(cmd *cli.Command) (err error) {
 	var archive string = cmd.Options.Get("file")
 
 	// Load the website configuration
-	if uri, err := url.Parse(cmd.Options.Get("config")); err == nil && uri != nil {
+	if uri, err := href.Parse(cmd.Options.Get("config")); err == nil && uri != nil {
 		website = &hypertexting.Website{URI: uri}
 	} else {
 		return fmt.Errorf("invalid website config URI: %s", cmd.Options.Get("config"))

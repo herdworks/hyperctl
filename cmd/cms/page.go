@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"slices"
 	"strings"
 	"time"
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 // hyperctl page
@@ -75,8 +75,8 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 	var filter string = "all"
 	var pages hypertexting.Pages
 	var website *hypertexting.Website
-	var websiteURI *url.URL
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	var websiteURI *href.Href
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
@@ -151,8 +151,8 @@ func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 	var pages hypertexting.Pages
 	var page *hypertexting.Page
 	var pageBytes []byte
-	var websiteURI *url.URL
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	var websiteURI *href.Href
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}

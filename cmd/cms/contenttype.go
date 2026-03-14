@@ -8,6 +8,7 @@ import (
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 // hyperctl content-type
@@ -53,7 +54,7 @@ func ContentTypeListCommand() *cli.Command {
 }
 
 func ContentTypeListCommandHandler(cmd *cli.Command) (err error) {
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}
@@ -107,7 +108,7 @@ func ContentTypeInspectValidator(cmd *cli.Command) (err error) {
 func ContentTypeInspectCommandHandler(cmd *cli.Command) (err error) {
 	var jsonBytes []byte
 	var typeRef string = cmd.Args[0]
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}

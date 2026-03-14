@@ -9,6 +9,7 @@ import (
 	cli "github.com/herdworks/cli-go"
 	hypertemplates "github.com/herdworks/hypertemplates-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func AssetCommand() *cli.Command {
@@ -61,7 +62,7 @@ func AssetAddCommandValidator(cmd *cli.Command) (err error) {
 func AssetAddCommandHandler(cmd *cli.Command) (err error) {
 	sourcePath := cmd.Args[0]
 	assetPath := cmd.Args[1]
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}
@@ -99,7 +100,7 @@ func AssetListCommandValidator(cmd *cli.Command) (err error) {
 
 func AssetListCommandHandler(cmd *cli.Command) (err error) {
 	var assets hypertemplates.HyperFiles
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	} // load website + theme assets
@@ -165,7 +166,7 @@ func AssetLookupCommandValidator(cmd *cli.Command) (err error) {
 
 func AssetLookupCommandHandler(cmd *cli.Command) (err error) {
 	assetPath := cmd.Args[0]
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}

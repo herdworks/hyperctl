@@ -10,6 +10,7 @@ import (
 	cli "github.com/herdworks/cli-go"
 	hyperproviders "github.com/herdworks/hyperproviders-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func PublishCommand() *cli.Command {
@@ -66,19 +67,19 @@ func PublishCommandValidator(cmd *cli.Command) (err error) {
 
 func PublishCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
-	var websiteURI *url.URL
+	var websiteURI *href.Href
 	var page hypertexting.Page
-	var pageURI *url.URL
+	var pageURI *href.Href
 	var provider *hyperproviders.HyperProvider
 	var buildID string = uuid.New().String()
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
-	if pageURI, err = url.Parse(cmd.Options.Get("page")); err != nil {
+	if pageURI, err = href.Parse(cmd.Options.Get("page")); err != nil {
 		return err
 	}
-	page = hypertexting.Page{URI: pageURI, Path: hypertexting.PagePath(website, pageURI)}
+	page = hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
 	build := &hypertexting.HyperBuild{
 		URI:         &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
 		ID:          buildID,

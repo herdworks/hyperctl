@@ -3,12 +3,12 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func InitCommand() *cli.Command {
@@ -61,7 +61,7 @@ func InitCommandValidator(cmd *cli.Command) (err error) {
 func InitCommandHandler(cmd *cli.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	config := filepath.Join(project, "site.json")
-	uri, _ := url.Parse(config)
+	uri, _ := href.Parse(config)
 	website := hypertexting.Website{
 		URI:         uri,
 		BaseURL:     cmd.Options.Get("base_url"),

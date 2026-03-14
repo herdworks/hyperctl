@@ -10,6 +10,7 @@ import (
 	cli "github.com/herdworks/cli-go"
 	hyperproviders "github.com/herdworks/hyperproviders-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func DeployCommand() (cmd *cli.Command) {
@@ -59,11 +60,11 @@ func DeployCommandValidator(cmd *cli.Command) (err error) {
 }
 
 func DeployCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+	var websiteURI *href.Href
 	var website *hypertexting.Website
 	var provider *hyperproviders.HyperProvider
 	var buildID string = uuid.New().String()
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}

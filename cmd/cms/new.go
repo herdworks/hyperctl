@@ -9,6 +9,7 @@ import (
 
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func NewCommand() *cli.Command {
@@ -94,7 +95,7 @@ func NewWebsiteCommandValidator(cmd *cli.Command) (err error) {
 func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 	websiteDirectory, _ := url.Parse(cmd.Args[0])
 	websiteConfigFileName := "site." + cmd.Options.Get("format")
-	websiteConfigURI := &url.URL{Scheme: websiteDirectory.Scheme, Path: filepath.Join(websiteDirectory.Path, websiteConfigFileName)}
+	websiteConfigURI := &href.Href{URL: url.URL{Scheme: websiteDirectory.Scheme, Path: filepath.Join(websiteDirectory.Path, websiteConfigFileName)}}
 	website := hypertexting.Website{
 		URI:         websiteConfigURI,
 		BaseURL:     cmd.Options.Get("baseurl"),
@@ -174,7 +175,7 @@ func NewPageCommand() *cli.Command {
 }
 
 func NewPageCommandHandler(cmd *cli.Command) (err error) {
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}

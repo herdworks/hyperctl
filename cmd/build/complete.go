@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	cli "github.com/herdworks/cli-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func BuildCommand() *cli.Command {
@@ -66,9 +67,9 @@ func BuildCommandValidator(cmd *cli.Command) (err error) {
 }
 
 func BuildCommandHandler(cmd *cli.Command) (err error) {
-	var websiteURI *url.URL
+	var websiteURI *href.Href
 	var website *hypertexting.Website
-	if websiteURI, err = url.Parse(cmd.Options.Get("config")); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}

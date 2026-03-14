@@ -20,6 +20,7 @@ import (
 	cli "github.com/herdworks/cli-go"
 	hypertemplates "github.com/herdworks/hypertemplates-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
+	href "github.com/herdworks/hypertexting-go/href"
 )
 
 func ServerCommand() *cli.Command {
@@ -120,7 +121,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	server.ConfigFile = cmd.Options.Get("config")
 	server.Duration = time.Duration(server.Interval) * time.Second
 	server.WatchedFiles = map[string]fs.FileInfo{}
-	website := hypertexting.Website{URI: &url.URL{Path: cmd.Options.Get("config")}}
+	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	website.Load(false, nil) // silently perform an initial load to get website.config.builds_dir
 	server.Build = &hypertexting.HyperBuild{
 		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
