@@ -106,9 +106,9 @@ func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 		},
 	}
 	website.Byline = hypertexting.Byline{
-		Name:     cmd.Options.Get("title"),
-		Favicon:  "/favicon.png",
-		Href:     "/",
+		Name:    cmd.Options.Get("title"),
+		Favicon: "/favicon.png",
+		Href:    "/",
 	}
 	website.ResolveConfig(nil)
 	if err = website.CreatePackage(); err != nil {

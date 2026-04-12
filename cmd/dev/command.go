@@ -27,5 +27,3 @@ func CommandHandler(cmd *cli.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
-
-

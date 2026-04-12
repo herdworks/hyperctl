@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## 0.18.2 (2026-04-12)
+
+* Added `byline.username` field for backwards compatibility with very early versions of `hyperctl`
+* Fixed a race condition in `hyperctl dev server` that would cause the server to crash intermittently
+* Fixed a bug that generated broken URLs in Atom feed `<link rel='self'>` elements;
+  we're not properly _joining_ "atom.xml" instead of _concatenating_ "atom.xml" to page paths
+
 ## 0.18.1 (2026-03-01)
 
 * Added `github.com/herdworks/cmd/version` package for local versioning

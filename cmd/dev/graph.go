@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	supportedSchemes = []string{"http", "https"}
-	supportedFormats = []string{"json", "JSON", "yaml", "YAML", "yml", "YML"}
+	supportedSchemes    = []string{"http", "https"}
+	supportedFormats    = []string{"json", "JSON", "yaml", "YAML", "yml", "YML"}
 	supportedNamespaces = []string{"entity", "hypergraph", "opengraph", "twitter", "oembed", "all", "metadata"}
 )
 
@@ -163,4 +163,3 @@ func GraphMetadataCommandHandler(cmd *cli.Command) (err error) {
 	fmt.Printf("%v\n", string(metabytes))
 	return nil
 }
-

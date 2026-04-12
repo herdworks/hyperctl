@@ -64,4 +64,3 @@ func ThemeListCommandOutput(cmd *cli.Command, website *hypertexting.Website, the
 		)
 	}
 }
-
