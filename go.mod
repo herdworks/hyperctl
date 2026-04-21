@@ -11,12 +11,15 @@ require (
 	github.com/herdworks/hyperfeed-go v0.19.1 // indirect
 	github.com/herdworks/hypergraph-go v0.19.0
 	github.com/herdworks/hyperproviders-go v0.17.3
-	github.com/herdworks/hypertemplates-go v0.18.2
-	github.com/herdworks/hypertexting-go v0.18.3
+	github.com/herdworks/hypertemplates-go v0.20.0
+	github.com/herdworks/hypertexting-go v0.20.0
 )
 
 // direct dependencies
-require github.com/google/uuid v1.6.0
+require (
+	github.com/google/uuid v1.6.0
+	gopkg.in/yaml.v2 v2.4.0
+)
 
 // local development dependencies (replacements)
 //
@@ -49,13 +52,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.9 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
-	github.com/dlclark/regexp2 v1.7.0 // indirect
+	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.4 // indirect
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc // indirect
 	github.com/yuin/goldmark-meta v1.1.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
-	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

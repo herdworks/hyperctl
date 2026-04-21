@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## 0.19.0 (2026-04-21)
+
+Added `site.pages`, `site.drafts`, and `site.assets` template data. 
+Made several improvements to `ht-block` elements, including access to `page.*` template data.
+
+* Added `page.*` template data to `ht-block`
+* Added `site.pages`, `site.drafts`, and `site.assets` to template data.
+* Updated `github.com/herdworks/hypertemplates-go` to version v0.20.0, including: 
+  * added support for template data array accessors (e.g. `page.attachments.1.kind`)
+  * added support for`ht-block` user data
+  * improved markdown detection of inline vs block-level `ht-block` elements
+  * improved markdown detection of `<!-- more -->` comments (now supports whitespace)
+* Updated `github.com/herdworks/hypertexting-go` to version v0.20.0, including: 
+  * support for `page.*` template data in `ht-block` elements
+
+
 ## 0.18.2 (2026-04-12)
 
 * Added `byline.username` field for backwards compatibility with very early versions of `hyperctl`

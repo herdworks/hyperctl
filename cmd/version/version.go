@@ -1,6 +1,6 @@
 package version
 
 var (
-	CLIVersion     = "0.18.2"
-	CLIReleaseDate = "2026-04-12T10:30:00-07:00"
+	CLIVersion     = "0.19.0"
+	CLIReleaseDate = "2026-04-21T12:00:00-07:00"
 )

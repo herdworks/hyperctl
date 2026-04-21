@@ -15,6 +15,7 @@
   * `../hypertemplates-go` — HTML templating and static site generation
   * `../hyperproviders-go` — Multi-provider deployment
   * `../hyperfeed-go` — Feed reader (transitive dependency)
-* To test uncommitted changes across repos, uncomment the `replace` directives in `go.mod` to point at sibling directories; re-comment them before committing
+* To test uncommitted changes across repos, uncomment the `replace` directives in `go.mod` to point at local directories;
+  re-comment them before committing
 
 <!-- See https://agents.md for more information -->
