@@ -4,6 +4,66 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## 0.20.0 (2026-04-23)
+
+Added a new `ht-fmt` templating directive and all-new variable subtitution system with `${ ... }` style template variables.
+
+_NOTE: variable substitution was designed to look and function similar to variable substitution in [Javascript template literals], but the HyperTemplates implementation is **not** based on Javascript._
+
+* Added new template variable declaration, with `${ ... }` delimiter. 
+  Template variables can be used in element attributes, _and_ text nodes. 
+
+  ```html
+  <title ht-fmt>${site.title} | ${page.title}</title>
+  <meta name='description' content='${page.description}' ht-fmt>
+  ```
+
+* Added new `ht-fmt` template directive that enables variable substitution on template element attributes and text nodes.
+
+  _NOTE: text node variable substitution is scoped to **direct descendents** of a template element. 
+  In the following example, the `${page.greeting.planet}` variable will be replaced, but the `${page.greeting.galaxy}` variable will not. The former is a a direct descendent text node of the parent `<a>` element, but the latter is a direct descendant text node of the nested `<span>` element (a grandchild of the parent `<a>` element)._
+
+  ```html
+  <a href='${page.path}' ht-fmt>
+    Hello, ${page.greeting.planet} world! Welcome to the <span>${page.greeting.galaxy}</span> galaxy.
+  </a>
+  ```
+
+* Added a CSS template variable declaration, with `--ht-fmt( ... )` delimiter. 
+  
+  > NOTE: variable subtitution in `<style>` elements and `style=''` attributes must use the CSS syntax. 
+  > 
+  > Example:
+  > 
+  > ```html
+  > <style ht-fmt>
+  >     :root article {
+  >         color: --ht-fmt("page.colors.text, page.colors.body", rgba(0,0,0,0.5));
+  >     }
+  > </style>
+  > ```
+  >
+  > HyperTemplates CSS variables support two arguments: 
+  > 
+  > * a comma-separated list of template data keys (see `"page.colors.text, page.colors.body"` above)
+  > * a fallback value (see `rgba(0,0,0,0.5)` above), which can be any valid CSS value
+  >
+  > NOTE: The variable substitution syntax for CSS conforms to the [CSS custom function] specification, 
+  > which means they are valid CSS. 
+  > Syntax highlighters rejoice!
+
+* Templating variables support functions. The only function that is currently supported is: `default`, for providing fallback values.
+
+  > **Example**
+  >
+  > ```html
+  > <meta name='description' content='${page.description | default "Lorem ipsum, placeholder page description."}' ht-fmt>
+  > ```
+
+<!-- Links -->
+[Javascript template literals]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+[CSS custom function]: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Custom_functions_and_mixins/Using_custom_functions#function_basics
+
 ## 0.19.0 (2026-04-21)
 
 Added `site.pages`, `site.drafts`, and `site.assets` template data. 
