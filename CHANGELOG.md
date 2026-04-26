@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## Unreleased
+
+* Fixed build and deploy commands to honor `site.config.builds_dir` before selecting build output directories.
+* Fixed incremental build and deploy commands to load website directory settings before deriving page paths.
+* Fixed dev server startup to apply directory and theme overrides before the initial website load.
+
 ## 0.20.0 (2026-04-23)
 
 Added a new `ht-fmt` templating directive and all-new variable subtitution system with `${ ... }` style template variables.

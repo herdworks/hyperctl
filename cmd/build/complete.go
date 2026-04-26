@@ -69,15 +69,18 @@ func BuildCommandValidator(cmd *cli.Command) (err error) {
 func BuildCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *href.Href
 	var website *hypertexting.Website
-	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
-		return err
-	}
-	website = &hypertexting.Website{URI: websiteURI}
 	configOverrides := &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
 		ThemePath:        cmd.Options.Get("theme"),
+	}
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
+		return err
+	}
+	website = &hypertexting.Website{URI: websiteURI}
+	if err = website.Load(false, configOverrides); err != nil {
+		return err
 	}
 	build := &hypertexting.HyperBuild{
 		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
@@ -85,5 +88,5 @@ func BuildCommandHandler(cmd *cli.Command) (err error) {
 		Website: website,
 		Pages:   &website.Pages, // all pages
 	}
-	return build.Execute(context.TODO(), nil, configOverrides)
+	return build.Execute(context.TODO(), nil, nil)
 }

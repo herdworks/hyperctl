@@ -121,19 +121,25 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	server.ConfigFile = cmd.Options.Get("config")
 	server.Duration = time.Duration(server.Interval) * time.Second
 	server.WatchedFiles = map[string]fs.FileInfo{}
-	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	website.Load(false, nil) // silently perform an initial load to get website.config.builds_dir
-	server.Build = &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
-		ID:      cmd.Options.Get("id"),
-		Website: &website,
-		Pages:   &website.Pages,
-	}
 	server.WebsiteConfig = &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
 		ThemePath:        cmd.Options.Get("theme"),
+	}
+	websiteURI, err := href.Parse(cmd.Options.Get("config"))
+	if err != nil {
+		return err
+	}
+	website := &hypertexting.Website{URI: websiteURI}
+	if err = website.Load(false, server.WebsiteConfig); err != nil {
+		return err
+	}
+	server.Build = &hypertexting.HyperBuild{
+		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
+		ID:      cmd.Options.Get("id"),
+		Website: website,
+		Pages:   &website.Pages,
 	}
 
 	// start the server
@@ -159,7 +165,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		for ever {
 			select {
 			case <-ticker.C:
-				if count, err = ServerCommandWatcher(&server, &website); err != nil {
+				if count, err = ServerCommandWatcher(&server, website); err != nil {
 					fmt.Println(err)
 					continue
 				}
@@ -170,7 +176,11 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 					}
 					fmt.Printf("\n%v change%v detected, refreshing build...\n\n", count, plural)
 					server.Build.Website.Loaded = false // force reload of website config
-					if err = server.Build.Execute(context.TODO(), server.URL, server.WebsiteConfig); err != nil {
+					if err = server.Build.Website.Load(false, server.WebsiteConfig); err != nil {
+						fmt.Println(err)
+						continue
+					}
+					if err = server.Build.Execute(context.TODO(), server.URL, nil); err != nil {
 						fmt.Println(err)
 					}
 					fmt.Println()

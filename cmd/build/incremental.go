@@ -78,10 +78,19 @@ func GenerateCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *href.Href
 	var page hypertexting.Page
 	var pageURI *href.Href
+	configOverrides := &hypertexting.WebsiteConfig{
+		ContentDirectory: cmd.Options.Get("content-dir"),
+		DataDirectory:    cmd.Options.Get("data-dir"),
+		StaticDirectory:  cmd.Options.Get("static-dir"),
+		ThemePath:        cmd.Options.Get("theme"),
+	}
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
+	if err = website.Load(false, configOverrides); err != nil {
+		return err
+	}
 	if pageURI, err = href.Parse(cmd.Options.Get("page")); err != nil {
 		return err
 	}
@@ -93,11 +102,5 @@ func GenerateCommandHandler(cmd *cli.Command) (err error) {
 		Incremental: true,
 		Pages:       &hypertexting.Pages{&page},
 	}
-	configOverrides := &hypertexting.WebsiteConfig{
-		ContentDirectory: cmd.Options.Get("content-dir"),
-		DataDirectory:    cmd.Options.Get("data-dir"),
-		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemePath:        cmd.Options.Get("theme"),
-	}
-	return build.Execute(context.TODO(), nil, configOverrides)
+	return build.Execute(context.TODO(), nil, nil)
 }

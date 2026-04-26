@@ -72,10 +72,19 @@ func PublishCommandHandler(cmd *cli.Command) (err error) {
 	var pageURI *href.Href
 	var provider *hyperproviders.HyperProvider
 	var buildID string = uuid.New().String()
+	configOverrides := &hypertexting.WebsiteConfig{
+		ContentDirectory: cmd.Options.Get("content-dir"),
+		DataDirectory:    cmd.Options.Get("data-dir"),
+		StaticDirectory:  cmd.Options.Get("static-dir"),
+		ThemePath:        cmd.Options.Get("theme"),
+	}
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
+	if err = website.Load(false, configOverrides); err != nil {
+		return err
+	}
 	if pageURI, err = href.Parse(cmd.Options.Get("page")); err != nil {
 		return err
 	}
@@ -87,13 +96,7 @@ func PublishCommandHandler(cmd *cli.Command) (err error) {
 		Incremental: true,
 		Pages:       &hypertexting.Pages{&page},
 	}
-	configOverrides := &hypertexting.WebsiteConfig{
-		ContentDirectory: cmd.Options.Get("content-dir"),
-		DataDirectory:    cmd.Options.Get("data-dir"),
-		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemePath:        cmd.Options.Get("theme"),
-	}
-	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
+	if err = build.Execute(context.TODO(), nil, nil); err != nil {
 		return err
 	}
 	if err = website.Provider.Validate(); err != nil {

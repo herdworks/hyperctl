@@ -64,23 +64,26 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
 	var provider *hyperproviders.HyperProvider
 	var buildID string = uuid.New().String()
-	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
-		return err
-	}
-	website = &hypertexting.Website{URI: websiteURI}
-	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
-		ID:      buildID,
-		Website: website,
-		Pages:   &website.Pages, // all pages
-	}
 	configOverrides := &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
 		ThemePath:        cmd.Options.Get("theme"),
 	}
-	if err = build.Execute(context.TODO(), nil, configOverrides); err != nil {
+	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
+		return err
+	}
+	website = &hypertexting.Website{URI: websiteURI}
+	if err = website.Load(false, configOverrides); err != nil {
+		return err
+	}
+	build := &hypertexting.HyperBuild{
+		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
+		ID:      buildID,
+		Website: website,
+		Pages:   &website.Pages, // all pages
+	}
+	if err = build.Execute(context.TODO(), nil, nil); err != nil {
 		return err
 	}
 	if err = website.Provider.Validate(); err != nil {
