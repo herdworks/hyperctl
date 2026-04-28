@@ -6,16 +6,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Changed deploy commands to require a deployment environment from `site.environments`.
-* Fixed build and deploy commands to honor `site.config.builds_dir` before selecting build output directories.
-* Fixed incremental build and deploy commands to load website directory settings before deriving page paths.
-* Fixed dev server startup to apply directory and theme overrides before the initial website load.
-* Updated `github.com/herdworks/hyperproviders-go` to v0.18.0.
-* Changed minimum Go toolchain to `1.25.0`.
+## 0.20.0 (2026-04-27)
 
-## 0.20.0 (2026-04-23)
-
-Added a new `ht-fmt` templating directive and all-new variable subtitution system with `${ ... }` style template variables.
+Added a new `ht-apply` templating directive and all-new variable subtitution system with `${ ... }` style template variables. 
 
 _NOTE: variable substitution was designed to look and function similar to variable substitution in [Javascript template literals], but the HyperTemplates implementation is **not** based on Javascript._
 
@@ -23,31 +16,31 @@ _NOTE: variable substitution was designed to look and function similar to variab
   Template variables can be used in element attributes, _and_ text nodes. 
 
   ```html
-  <title ht-fmt>${site.title} | ${page.title}</title>
-  <meta name='description' content='${page.description}' ht-fmt>
+  <title ht-apply>${site.title} | ${page.title}</title>
+  <meta name='description' content='${page.description}' ht-apply>
   ```
 
-* Added new `ht-fmt` template directive that enables variable substitution on template element attributes and text nodes.
+* Added new `ht-apply` template directive that enables variable substitution on template element attributes and text nodes.
 
   _NOTE: text node variable substitution is scoped to **direct descendents** of a template element. 
   In the following example, the `${page.greeting.planet}` variable will be replaced, but the `${page.greeting.galaxy}` variable will not. The former is a a direct descendent text node of the parent `<a>` element, but the latter is a direct descendant text node of the nested `<span>` element (a grandchild of the parent `<a>` element)._
 
   ```html
-  <a href='${page.path}' ht-fmt>
+  <a href='${page.path}' ht-apply>
     Hello, ${page.greeting.planet} world! Welcome to the <span>${page.greeting.galaxy}</span> galaxy.
   </a>
   ```
 
-* Added a CSS template variable declaration, with `--ht-fmt( ... )` delimiter. 
+* Added a CSS template variable declaration, with `--ht-value( ... )` delimiter. 
   
   > NOTE: variable subtitution in `<style>` elements and `style=''` attributes must use the CSS syntax. 
   > 
   > Example:
   > 
   > ```html
-  > <style ht-fmt>
+  > <style ht-apply>
   >     :root article {
-  >         color: --ht-fmt("page.colors.text, page.colors.body", rgba(0,0,0,0.5));
+  >         color: --ht-value("page.colors.text, page.colors.body", rgba(0,0,0,0.5));
   >     }
   > </style>
   > ```
@@ -66,8 +59,14 @@ _NOTE: variable substitution was designed to look and function similar to variab
   > **Example**
   >
   > ```html
-  > <meta name='description' content='${page.description | default "Lorem ipsum, placeholder page description."}' ht-fmt>
+  > <meta name='description' content='${page.description | default "Lorem ipsum, placeholder page description."}' ht-apply>
   > ```
+
+* Added support for `site.environments`.
+* Added a new `git` provider kind for deploying to git endpoints
+* Fixed a bug that caused build and deploy commands to ignore `site.config.builds_dir`
+* Updated `github.com/herdworks/hyperproviders-go` to v0.18.1.
+* Changed minimum Go toolchain to `1.25.0`.
 
 <!-- Links -->
 [Javascript template literals]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
