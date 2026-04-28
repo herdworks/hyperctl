@@ -96,7 +96,7 @@ func PublishCommandHandler(cmd *cli.Command) (err error) {
 	}
 	page = hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
 	build := &hypertexting.HyperBuild{
-		URI:         &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
 		ID:          buildID,
 		Website:     website,
 		Incremental: true,

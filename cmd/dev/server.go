@@ -8,7 +8,6 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -136,10 +135,11 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	}
 	server.Build = &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
-		ID:      cmd.Options.Get("id"),
-		Website: website,
-		Pages:   &website.Pages,
+		URI:           &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
+		ID:            cmd.Options.Get("id"),
+		Website:       website,
+		IncludeDrafts: true,
+		Pages:         &website.Pages,
 	}
 
 	// start the server
@@ -175,7 +175,6 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 						plural = "s"
 					}
 					fmt.Printf("\n%v change%v detected, refreshing build...\n\n", count, plural)
-					server.Build.Website.Loaded = false // force reload of website config
 					if err = server.Build.Website.Load(false, server.WebsiteConfig); err != nil {
 						fmt.Println(err)
 						continue
@@ -201,11 +200,19 @@ func ServerCommandWatcher(server *Server, website *hypertexting.Website) (change
 	changecount = 0
 	now := time.Now()
 	dir := filepath.Dir(server.ConfigFile)
-	buildpath := path.Join(dir, website.Config.BuildsDirectory)
-	for _, p := range hypertemplates.GetPaths(dir, true) {
+	buildpath := filepath.ToSlash(website.BuildsDirName())
+	paths, err := hypertemplates.ListFiles(dir, true)
+	if err != nil {
+		return 0, err
+	}
+	for _, relPath := range paths {
 		var stat fs.FileInfo
-		if strings.HasPrefix(p, ".") || strings.HasPrefix(p, buildpath) {
+		if strings.HasPrefix(relPath, ".") || relPath == buildpath || strings.HasPrefix(relPath, buildpath+"/") {
 			continue
+		}
+		p, err := hypertemplates.LocalFilePath(dir, relPath)
+		if err != nil {
+			return 0, err
 		}
 		if stat, err = os.Stat(p); err != nil {
 			return 0, err

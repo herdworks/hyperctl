@@ -96,7 +96,7 @@ func GenerateCommandHandler(cmd *cli.Command) (err error) {
 	}
 	page = hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
 	build := &hypertexting.HyperBuild{
-		URI:         &url.URL{Path: filepath.Join(website.BuildsDir(), cmd.Options.Get("id"))},
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
 		ID:          cmd.Options.Get("id"),
 		Website:     website,
 		Incremental: true,

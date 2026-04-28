@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+Major redesign of website resource management based on HyperTemplates and HyperTexting migration to []string of relative paths instead of the obtuse HyperFile interface. 
+
+* Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
+* Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
+* Changed `hyperctl cms asset ls` to use resolved asset entries from `hypertexting-go`, including theme, website, and page assets with their source, size, and final public path.
+* Updated build, deploy, dev server, CMS, and theme commands for the new `hypertexting-go` directory path helpers.
+
 ## 0.20.0 (2026-04-27)
 
 Added a new `ht-apply` templating directive and all-new variable subtitution system with `${ ... }` style template variables. 

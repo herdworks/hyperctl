@@ -84,7 +84,7 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	}
 	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDir(), buildID)},
+		URI:     &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
 		ID:      buildID,
 		Website: website,
 		Pages:   &website.Pages, // all pages

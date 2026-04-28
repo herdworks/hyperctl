@@ -69,7 +69,7 @@ func ThemeInstallCommandHandler(cmd *cli.Command) (err error) {
 	}
 
 	// Construct the install path and check for existing installation.
-	installPath := filepath.Join(website.ThemesDir(), theme.Name, theme.Version)
+	installPath := filepath.Join(website.ThemesDirPath(), theme.Name, theme.Version)
 	if _, err = os.Stat(installPath); err == nil {
 		return fmt.Errorf("theme %q version %q is already installed at %s", theme.Name, theme.Version, installPath)
 	}

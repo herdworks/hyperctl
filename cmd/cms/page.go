@@ -13,7 +13,7 @@ import (
 	href "github.com/herdworks/hypertexting-go/href"
 )
 
-// hyperctl page
+// hyperctl cms page
 func PageCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
@@ -34,13 +34,13 @@ func PageCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-// hyperctl page ls
+// hyperctl cms page ls
 func PageListCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "ls",
 			Description: "List website pages.",
-			Usage:       "hyperctl page ls [options] [<filter>]",
+			Usage:       "hyperctl cms page ls [options] [<filter>]",
 			Validator:   PageListCommandValidator,
 			Handler:     PageListCommandHandler,
 		},
@@ -86,18 +86,30 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 	if len(cmd.Args) > 0 {
 		filter = cmd.Args[0]
 	}
-	if pages, err = (website.ListPages(filter)); err != nil {
+	if pages, err = website.ListPages(); err != nil {
 		return err
 	}
 	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false); err != nil {
 		return err
 	}
+	pages = FilterPages(pages, filter)
 	pages.SortBy("slug", true)
-	PageListCommandOutput(cmd, website, pages)
+	PageListCommandOutput(cmd, pages)
 	return nil
 }
 
-func PageListCommandOutput(cmd *cli.Command, website *hypertexting.Website, pages hypertexting.Pages) {
+func FilterPages(pages hypertexting.Pages, filter string) hypertexting.Pages {
+	switch filter {
+	case "pages":
+		return pages.FilterDraft(false)
+	case "drafts":
+		return pages.FilterDraft(true)
+	default:
+		return pages
+	}
+}
+
+func PageListCommandOutput(cmd *cli.Command, pages hypertexting.Pages) {
 	pathcol := cmd.ColumnWidth(pages, "Path", 1)
 	lastmodcol := cmd.ColumnWidth(pages, "LastModified", 1)
 	titlecol := cmd.ColumnWidth(pages, "Title", 1)
@@ -109,19 +121,19 @@ func PageListCommandOutput(cmd *cli.Command, website *hypertexting.Website, page
 			"%-*s %-*v %-*v %-*s\n",
 			lastmodcol, pages[i].LastModified().Format(time.RFC3339),
 			titlecol, pages[i].Title,
-			draftcol, hypertexting.PageIsDraft(website, pages[i]),
+			draftcol, pages[i].Draft,
 			pathcol, pages[i].Path,
 		)
 	}
 }
 
-// hyperctl page inspect
+// hyperctl cms page inspect
 func PageInspectCommand() *cli.Command {
 	return &cli.Command{
 		Config: cli.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect website pages.",
-			Usage:       "hyperctl page inspect [options] <path>",
+			Usage:       "hyperctl cms page inspect [options] <path>",
 			Validator:   PageInspectCommandValidator,
 			Handler:     PageInspectCommandHandler,
 		},
@@ -146,7 +158,6 @@ func PageInspectCommandValidator(cmd *cli.Command) (err error) {
 }
 
 func PageInspectCommandHandler(cmd *cli.Command) (err error) {
-	var filter string = "all"
 	var website *hypertexting.Website
 	var pages hypertexting.Pages
 	var page *hypertexting.Page
@@ -159,10 +170,7 @@ func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}
-	if len(cmd.Args) > 0 {
-		filter = cmd.Args[0]
-	}
-	if pages, err = (website.ListPages(filter)); err != nil {
+	if pages, err = website.ListPages(); err != nil {
 		return err
 	}
 	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false); err != nil {
@@ -172,7 +180,7 @@ func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	} // populate page feeds
 	pages.ResolveTemplateData(website)
-	page = pages.GetPath(cmd.Args[0])
+	page = pages.PageByPath(cmd.Args[0])
 	if page == nil {
 		return fmt.Errorf("page \"%s\" not found", cmd.Args[0])
 	}

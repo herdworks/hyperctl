@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 
 	cli "github.com/herdworks/cli-go"
-	hypertemplates "github.com/herdworks/hypertemplates-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -34,7 +34,7 @@ func AssetAddCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "add",
 			Description: "Add a static asset to a website.",
-			Usage:       "hyperctl asset add [options] <asset> <path>",
+			Usage:       "hyperctl cms asset add [options] <asset> <path>",
 			Validator:   AssetAddCommandValidator,
 			Handler:     AssetAddCommandHandler,
 		},
@@ -77,7 +77,7 @@ func AssetListCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "ls",
 			Description: "List all static assets.",
-			Usage:       "hyperctl asset ls [options]",
+			Usage:       "hyperctl cms asset ls [options]",
 			Validator:   AssetListCommandValidator,
 			Handler:     AssetListCommandHandler,
 		},
@@ -99,38 +99,82 @@ func AssetListCommandValidator(cmd *cli.Command) (err error) {
 }
 
 func AssetListCommandHandler(cmd *cli.Command) (err error) {
-	var assets hypertemplates.HyperFiles
+	var assets AssetListRows
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil); err != nil {
 		return err
-	} // load website + theme assets
-	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDir()); err != nil {
+	}
+	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
 		return err
 	}
 	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false); err != nil {
 		return err
-	} // load page assets
-	assets = append(assets, website.Assets...)
-	for _, page := range website.Pages {
-		assets = append(assets, page.Assets...)
+	}
+	assetEntries, err := hypertexting.AssetEntries(&website.Theme, &website, website.Pages)
+	if err != nil {
+		return err
+	}
+	if assets, err = assetListRows(&website, assetEntries); err != nil {
+		return err
 	}
 	AssetListCommandOutput(cmd, assets)
 	return nil
 }
-func AssetListCommandOutput(cmd *cli.Command, assets hypertemplates.HyperFiles) {
+
+func assetListRows(website *hypertexting.Website, assets hypertexting.Assets) (AssetListRows, error) {
+	rows := AssetListRows{}
+	for _, asset := range assets {
+		stat, err := os.Stat(asset.SourcePath)
+		if err != nil {
+			return nil, err
+		}
+		row := AssetListRow{
+			Source: website.RelativePath(asset.SourcePath),
+			Size:   stat.Size(),
+			Path:   asset.PublicPath,
+		}
+		rows = append(rows, row)
+	}
+	return rows, nil
+}
+
+type AssetListRow struct {
+	Source string
+	Size   int64
+	Path   string
+}
+
+type AssetListRows []AssetListRow
+
+func (assets AssetListRows) ColumnValues(field string) (values []string) {
+	values = []string{}
+	for i := range assets {
+		switch field {
+		case "Source", "source":
+			values = append(values, assets[i].Source)
+		case "Size", "size":
+			values = append(values, fmt.Sprintf("%d", assets[i].Size))
+		case "Path", "path":
+			values = append(values, assets[i].Path)
+		}
+	}
+	return values
+}
+
+func AssetListCommandOutput(cmd *cli.Command, assets AssetListRows) {
 	indexcol := 3
 	sourcecol := cmd.ColumnWidth(assets, "Source", 1)
 	sizecol := cmd.ColumnWidth(assets, "Size", 1)
-	pathcol := cmd.ColumnWidth(assets, "Path", 2) // add padding for / prefix
+	pathcol := cmd.ColumnWidth(assets, "Path", 1)
 	fmt.Printf("%-*s %-*s %-*v %-*s\n", indexcol, "No", sourcecol, "Source", sizecol, "Size", pathcol, "Path")
 	fmt.Printf("%-*s %-*s %-*v %-*s\n", indexcol, "--", sourcecol, "------", sizecol, "----", pathcol, "----")
 	for i := range assets {
 		fmt.Printf(
 			"%-*v %-*s %-*v %-*s\n",
 			indexcol, i+1,
-			sourcecol, assets[i].RelPath(),
-			sizecol, assets[i].Size(),
-			pathcol, fmt.Sprintf("/%s", assets[i].SubPath()),
+			sourcecol, assets[i].Source,
+			sizecol, assets[i].Size,
+			pathcol, assets[i].Path,
 		)
 	}
 }
@@ -140,7 +184,7 @@ func AssetLookupCommand() *cli.Command {
 		Config: cli.CommandConfig{
 			Name:        "lookup",
 			Description: "Lookup a static asset by its path.",
-			Usage:       "hyperctl asset lookup [options] <path>",
+			Usage:       "hyperctl cms asset lookup [options] <path>",
 			Validator:   AssetLookupCommandValidator,
 			Handler:     AssetLookupCommandHandler,
 		},
