@@ -8,7 +8,6 @@ import (
 
 	"github.com/google/uuid"
 	cli "github.com/herdworks/cli-go"
-	hyperproviders "github.com/herdworks/hyperproviders-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -28,6 +27,14 @@ func DeployCommand() (cmd *cli.Command) {
 				ShortName:   "c",
 				EnvName:     "HYPER_CONFIG",
 				Description: "Path to the website configuration file.",
+				Required:    true,
+				Secret:      false,
+			},
+			{
+				Name:        "environment",
+				ShortName:   "e",
+				EnvName:     "HYPER_ENVIRONMENT",
+				Description: "Deployment environment to use from site.environments.",
 				Required:    true,
 				Secret:      false,
 			},
@@ -62,7 +69,6 @@ func DeployCommandValidator(cmd *cli.Command) (err error) {
 func DeployCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *href.Href
 	var website *hypertexting.Website
-	var provider *hyperproviders.HyperProvider
 	var buildID string = uuid.New().String()
 	configOverrides := &hypertexting.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
@@ -86,13 +92,11 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err = build.Execute(context.TODO(), nil, nil); err != nil {
 		return err
 	}
-	if err = website.Provider.Validate(); err != nil {
+	environment, err := deploymentEnvironment(website, cmd.Options.Get("environment"))
+	if err != nil {
 		return err
 	}
-	if provider, err = hyperproviders.New(&website.Provider); err != nil {
-		return err
-	}
-	if err = provider.Deploy(context.TODO(), build.URI.Path, website.BaseURL); err != nil {
+	if err = environment.Deploy(context.TODO(), build.URI.Path, deploymentSession()); err != nil {
 		return err
 	}
 	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)

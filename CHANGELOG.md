@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Changed deploy commands to require a deployment environment from `site.environments`.
 * Fixed build and deploy commands to honor `site.config.builds_dir` before selecting build output directories.
 * Fixed incremental build and deploy commands to load website directory settings before deriving page paths.
 * Fixed dev server startup to apply directory and theme overrides before the initial website load.
+* Updated `github.com/herdworks/hyperproviders-go` to v0.18.0.
+* Changed minimum Go toolchain to `1.25.0`.
 
 ## 0.20.0 (2026-04-23)
 
