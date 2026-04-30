@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-## 0.20.0 (2026-04-27)
+## 0.20.0 (2026-04-30)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
 This release adds the `ht-apply` template value/plugin pipeline, named deployment environments with multi-provider deploys, git-based hosting providers, and the redesigned website resource model from `hypertexting-go`.
