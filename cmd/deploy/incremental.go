@@ -35,7 +35,12 @@ func PublishCommand() *cli.Command {
 				ShortName:   "e",
 				EnvName:     "HYPER_ENVIRONMENT",
 				Description: "Deployment environment to use from site.environments.",
-				Required:    true,
+				Secret:      false,
+			},
+			{
+				Name:        "providers",
+				EnvName:     "HYPER_PROVIDERS",
+				Description: "Comma-separated provider names to deploy from site.providers.",
 				Secret:      false,
 			},
 			{
@@ -105,11 +110,11 @@ func PublishCommandHandler(cmd *cli.Command) (err error) {
 	if err = build.Execute(context.TODO(), nil, nil); err != nil {
 		return err
 	}
-	environment, err := deploymentEnvironment(website, cmd.Options.Get("environment"))
+	environment, environmentName, err := deploymentEnvironment(website, cmd.Options.Get("environment"), cmd.Options.Get("providers"))
 	if err != nil {
 		return err
 	}
-	if err = environment.Deploy(context.TODO(), build.URI.Path, deploymentSession()); err != nil {
+	if err = deployEnvironment(context.TODO(), website, environment, environmentName, build.URI.Path); err != nil {
 		return err
 	}
 	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)

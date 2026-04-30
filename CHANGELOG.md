@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Added `--providers` / `HYPER_PROVIDERS` to deploy commands for comma-separated provider selection from `site.providers`.
+* Changed deploy commands so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
+* Updated `github.com/herdworks/hyperproviders-go` to version 0.19.0
+* Updated `github.com/herdworks/hypertexting-go` to version 0.23.0
+
 ## 0.20.0 (2026-04-30)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
@@ -13,7 +18,7 @@ This release adds the `ht-apply` template value/plugin pipeline, named deploymen
 
 * Added support for HyperTemplates `ht-apply` template values in generated sites, including `${ ... }` substitutions in element attributes and text nodes, `--ht-value(...)` CSS values, `get` lookups, string-literal fallbacks, and JavaScript plugin functions in value pipelines.
 * Added theme and website JavaScript plugin discovery through the new `plugins_dir` settings in `theme.json` and `site.yaml`.
-* Added named deployment environment support. `hyperctl deploy complete` and `hyperctl deploy incremental` now require `--environment` / `HYPER_ENVIRONMENT` and deploy through the selected `site.environments` entry.
+* Added named deployment environment support. `hyperctl deploy complete` and `hyperctl deploy incremental` can deploy through the selected `site.environments` entry.
 * Added multi-provider deployment support through `hyperproviders-go` environments and env-backed secrets.
 * Added git-based hosting provider support through the new `git` provider kind.
 * Changed build, deploy, dev server, CMS, and theme commands to use the new root-scoped HyperTexting path helpers.

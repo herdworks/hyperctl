@@ -10,9 +10,9 @@ require (
 	github.com/herdworks/cli-go v0.1.0
 	github.com/herdworks/hyperfeed-go v0.19.1 // indirect
 	github.com/herdworks/hypergraph-go v0.19.0
-	github.com/herdworks/hyperproviders-go v0.18.2
+	github.com/herdworks/hyperproviders-go v0.19.0
 	github.com/herdworks/hypertemplates-go v0.23.0
-	github.com/herdworks/hypertexting-go v0.22.1
+	github.com/herdworks/hypertexting-go v0.23.0
 )
 
 // direct dependencies
