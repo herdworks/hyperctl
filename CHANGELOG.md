@@ -6,78 +6,26 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-Major redesign of website resource management based on HyperTemplates and HyperTexting migration to []string of relative paths instead of the obtuse HyperFile interface. 
+## 0.20.0 (2026-04-27)
 
+Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
+This release adds the `ht-apply` template value/plugin pipeline, named deployment environments with multi-provider deploys, git-based hosting providers, and the redesigned website resource model from `hypertexting-go`.
+
+* Added support for HyperTemplates `ht-apply` template values in generated sites, including `${ ... }` substitutions in element attributes and text nodes, `--ht-value(...)` CSS values, `get` lookups, string-literal fallbacks, and JavaScript plugin functions in value pipelines.
+* Added theme and website JavaScript plugin discovery through the new `plugins_dir` settings in `theme.json` and `site.yaml`.
+* Added named deployment environment support. `hyperctl deploy complete` and `hyperctl deploy incremental` now require `--environment` / `HYPER_ENVIRONMENT` and deploy through the selected `site.environments` entry.
+* Added multi-provider deployment support through `hyperproviders-go` environments and env-backed secrets.
+* Added git-based hosting provider support through the new `git` provider kind.
+* Changed build, deploy, dev server, CMS, and theme commands to use the new root-scoped HyperTexting path helpers.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
 * Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
 * Changed `hyperctl cms asset ls` to use resolved asset entries from `hypertexting-go`, including theme, website, and page assets with their source, size, and final public path.
-* Updated build, deploy, dev server, CMS, and theme commands for the new `hypertexting-go` directory path helpers.
-
-## 0.20.0 (2026-04-27)
-
-Added a new `ht-apply` templating directive and all-new variable subtitution system with `${ ... }` style template variables. 
-
-_NOTE: variable substitution was designed to look and function similar to variable substitution in [Javascript template literals], but the HyperTemplates implementation is **not** based on Javascript._
-
-* Added new template variable declaration, with `${ ... }` delimiter. 
-  Template variables can be used in element attributes, _and_ text nodes. 
-
-  ```html
-  <title ht-apply>${site.title} | ${page.title}</title>
-  <meta name='description' content='${page.description}' ht-apply>
-  ```
-
-* Added new `ht-apply` template directive that enables variable substitution on template element attributes and text nodes.
-
-  _NOTE: text node variable substitution is scoped to **direct descendents** of a template element. 
-  In the following example, the `${page.greeting.planet}` variable will be replaced, but the `${page.greeting.galaxy}` variable will not. The former is a a direct descendent text node of the parent `<a>` element, but the latter is a direct descendant text node of the nested `<span>` element (a grandchild of the parent `<a>` element)._
-
-  ```html
-  <a href='${page.path}' ht-apply>
-    Hello, ${page.greeting.planet} world! Welcome to the <span>${page.greeting.galaxy}</span> galaxy.
-  </a>
-  ```
-
-* Added a CSS template variable declaration, with `--ht-value( ... )` delimiter. 
-  
-  > NOTE: variable subtitution in `<style>` elements and `style=''` attributes must use the CSS syntax. 
-  > 
-  > Example:
-  > 
-  > ```html
-  > <style ht-apply>
-  >     :root article {
-  >         color: --ht-value("page.colors.text, page.colors.body", rgba(0,0,0,0.5));
-  >     }
-  > </style>
-  > ```
-  >
-  > HyperTemplates CSS variables support two arguments: 
-  > 
-  > * a comma-separated list of template data keys (see `"page.colors.text, page.colors.body"` above)
-  > * a fallback value (see `rgba(0,0,0,0.5)` above), which can be any valid CSS value
-  >
-  > NOTE: The variable substitution syntax for CSS conforms to the [CSS custom function] specification, 
-  > which means they are valid CSS. 
-  > Syntax highlighters rejoice!
-
-* Templating variables support functions. The only function that is currently supported is: `default`, for providing fallback values.
-
-  > **Example**
-  >
-  > ```html
-  > <meta name='description' content='${page.description | default "Lorem ipsum, placeholder page description."}' ht-apply>
-  > ```
-
-* Added support for `site.environments`.
-* Added a new `git` provider kind for deploying to git endpoints
-* Fixed a bug that caused build and deploy commands to ignore `site.config.builds_dir`
-* Updated `github.com/herdworks/hyperproviders-go` to v0.18.1.
-* Changed minimum Go toolchain to `1.25.0`.
-
-<!-- Links -->
-[Javascript template literals]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
-[CSS custom function]: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Custom_functions_and_mixins/Using_custom_functions#function_basics
+* Removed `drafts_dir` configuration and loading of pages from a drafts directory.
+* Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
+* Updated `github.com/herdworks/hypertemplates-go` to v0.23.0.
+* Updated `github.com/herdworks/hypertexting-go` to v0.22.1.
+* Updated `github.com/herdworks/hyperproviders-go` to v0.18.2.
+* Updated minimum Go toolchain to `1.25.0`.
 
 ## 0.19.0 (2026-04-21)
 
