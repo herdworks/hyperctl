@@ -17,6 +17,7 @@ This release adds the `ht-apply` template value/plugin pipeline, support for mul
 * Added `--providers` / `HYPER_PROVIDERS` to deploy commands for comma-separated provider selection from `site.providers`.
 * Added multi-provider deployment support through `hyperproviders-go` environments and env-backed secrets.
 * Added git-based hosting provider support through the new `git` provider kind.
+* Added `page.ugly_url` so pages can opt out of `<path>/index.html` index pages, and instead generate `<path>.html` pages.
 * Changed deploy target selection so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
 * Changed build, deploy, dev server, CMS, and theme commands to use the new root-scoped HyperTexting path helpers.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
@@ -25,7 +26,7 @@ This release adds the `ht-apply` template value/plugin pipeline, support for mul
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
 * Updated `github.com/herdworks/hypertemplates-go` to v0.23.0.
-* Updated `github.com/herdworks/hypertexting-go` to v0.23.0.
+* Updated `github.com/herdworks/hypertexting-go` to v0.24.0.
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
