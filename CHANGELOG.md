@@ -6,21 +6,18 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Added `--providers` / `HYPER_PROVIDERS` to deploy commands for comma-separated provider selection from `site.providers`.
-* Changed deploy commands so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
-* Updated `github.com/herdworks/hyperproviders-go` to version 0.19.0
-* Updated `github.com/herdworks/hypertexting-go` to version 0.23.0
-
 ## 0.20.0 (2026-04-30)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
-This release adds the `ht-apply` template value/plugin pipeline, named deployment environments with multi-provider deploys, git-based hosting providers, and the redesigned website resource model from `hypertexting-go`.
+This release adds the `ht-apply` template value/plugin pipeline, support for multiple hosting providers, named deployment environments, git-based hosting providers, and the redesigned website resource model from `hypertexting-go`.
 
 * Added support for HyperTemplates `ht-apply` template values in generated sites, including `${ ... }` substitutions in element attributes and text nodes, `--ht-value(...)` CSS values, `get` lookups, string-literal fallbacks, and JavaScript plugin functions in value pipelines.
 * Added theme and website JavaScript plugin discovery through the new `plugins_dir` settings in `theme.json` and `site.yaml`.
 * Added named deployment environment support. `hyperctl deploy complete` and `hyperctl deploy incremental` can deploy through the selected `site.environments` entry.
+* Added `--providers` / `HYPER_PROVIDERS` to deploy commands for comma-separated provider selection from `site.providers`.
 * Added multi-provider deployment support through `hyperproviders-go` environments and env-backed secrets.
 * Added git-based hosting provider support through the new `git` provider kind.
+* Changed deploy target selection so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
 * Changed build, deploy, dev server, CMS, and theme commands to use the new root-scoped HyperTexting path helpers.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
 * Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
@@ -28,8 +25,8 @@ This release adds the `ht-apply` template value/plugin pipeline, named deploymen
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
 * Updated `github.com/herdworks/hypertemplates-go` to v0.23.0.
-* Updated `github.com/herdworks/hypertexting-go` to v0.22.1.
-* Updated `github.com/herdworks/hyperproviders-go` to v0.18.2.
+* Updated `github.com/herdworks/hypertexting-go` to v0.23.0.
+* Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
 ## 0.19.0 (2026-04-21)
