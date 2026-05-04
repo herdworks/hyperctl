@@ -100,8 +100,12 @@ github.com/herdworks/hyperproviders-go v0.19.0 h1:0qDDJoQcSp5MonNPSfwg6EKZRP9/4d
 github.com/herdworks/hyperproviders-go v0.19.0/go.mod h1:VzS5fdkCJw1EnJVGwuOu7nfZ25WJPKOpmcQR9H543lo=
 github.com/herdworks/hypertemplates-go v0.23.0 h1:zJQmu2VjP6EjKTMpZqagE+qNxYKGA7g3113JuAs3Ts8=
 github.com/herdworks/hypertemplates-go v0.23.0/go.mod h1:D0AWMNOZ7fAV0exEx7X6CXGTdZDcqHGA3ZaBEvmLWmk=
+github.com/herdworks/hypertemplates-go v0.24.0 h1:cQj95lRAQgrD7yqG95T6/iQKCh6EnrcEjEyDnjrM9Js=
+github.com/herdworks/hypertemplates-go v0.24.0/go.mod h1:D0AWMNOZ7fAV0exEx7X6CXGTdZDcqHGA3ZaBEvmLWmk=
 github.com/herdworks/hypertexting-go v0.24.0 h1:/oqku0UiHZO/zXjutDOoOHHHrFThGhjYO5ESxewbrn0=
 github.com/herdworks/hypertexting-go v0.24.0/go.mod h1:LPZ0C3THuydZuMNo7iig/L8zognTD4eScVWibVbNIjA=
+github.com/herdworks/hypertexting-go v0.25.0 h1:lIDva6nazDi7UqrpF/StlT3LaDlUvY5lzPzLj57l/5k=
+github.com/herdworks/hypertexting-go v0.25.0/go.mod h1:LUp4/QQc16fOLnrD1CC0hpCmLkhd/8r3YMpGI0QBdsw=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4gf13a4=

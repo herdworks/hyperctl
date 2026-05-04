@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -71,19 +72,19 @@ func DataListCommandHandler(cmd *cli.Command) (err error) {
 	if environment.TemplateData != nil {
 		website.GlobalData.Set("env", environment.TemplateData)
 	} // add environment data to global data
-	if website.GlobalData.IsEmpty() {
+	if len(website.GlobalData) == 0 {
 		fmt.Println("No namespace data configured.")
 		return nil
 	}
-	colwidth := cmd.ColumnWidth(website.GlobalData, "Namespace", 1)
+	colwidth := cmd.ColumnWidth(hypertexting.NamespacedData(website.GlobalData), "Namespace", 1)
 	fmt.Printf("%-*s %s\n", colwidth, "Namespace", "Size")
 	fmt.Printf("%-*s %s\n", colwidth, "---------", "----")
-	for _, namespace := range website.GlobalData.Keys() {
-		if bytes, err := website.GlobalData.Inspect([]string{namespace}, "json"); err == nil {
-			fmt.Printf("%-*s %v\n", colwidth, namespace, len(bytes))
-		} else {
-			return fmt.Errorf("error inspecting namespace \"%s\": %v", namespace, err)
+	for _, namespace := range website.GlobalData.Keys("") {
+		bytes, err := json.Marshal(website.GlobalData.Get(namespace))
+		if err != nil {
+			return fmt.Errorf("error inspecting namespace %q: %v", namespace, err)
 		}
+		fmt.Printf("%-*s %v\n", colwidth, namespace, len(bytes))
 	}
 	return nil
 }
@@ -132,7 +133,7 @@ func DataInspectCommandHandler(cmd *cli.Command) (err error) {
 	if website.GlobalData, err = hypertexting.NamespacedTemplateData(website, website.Config.Markdown, false); err != nil {
 		return err
 	}
-	if namespaceBytes, err = website.GlobalData.Inspect([]string{namespace}, "json"); err != nil {
+	if namespaceBytes, err = json.Marshal(website.GlobalData.Get(namespace)); err != nil {
 		return err
 	}
 	fmt.Println(string(namespaceBytes))

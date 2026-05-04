@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Migrated `hyperctl cms data` (`cmd/cms/data.go`) to the `hypertemplates-go` v0.24.0+ / `hypertexting-go` v0.25.0 data API: `TemplateData.IsEmpty()` → `len(...) == 0`; `.Keys()` → `.Keys("")`; `.Inspect([]string{namespace}, "json")` → `json.Marshal(.Get(namespace))`; the column-width helper now wraps the global data with `hypertexting.NamespacedData(...)`.
+* Compatible with `hypertemplates-go` v0.24.0. No template content in this CLI was affected by the `value.Render` → `value.RenderString` rename or the rewriter hardening (new builtins like `printf`/`len`/`index` rejected at parse time in pipe-tail position).
+
 ## 0.20.0 (2026-04-30)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
