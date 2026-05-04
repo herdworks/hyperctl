@@ -4,11 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## Unreleased
-
-* Migrated `hyperctl cms data` (`cmd/cms/data.go`) to the `hypertemplates-go` v0.24.0+ / `hypertexting-go` v0.25.0 data API: `TemplateData.IsEmpty()` → `len(...) == 0`; `.Keys()` → `.Keys("")`; `.Inspect([]string{namespace}, "json")` → `json.Marshal(.Get(namespace))`; the column-width helper now wraps the global data with `hypertexting.NamespacedData(...)`.
-* Compatible with `hypertemplates-go` v0.24.0. No template content in this CLI was affected by the `value.Render` → `value.RenderString` rename or the rewriter hardening (new builtins like `printf`/`len`/`index` rejected at parse time in pipe-tail position).
-
 ## 0.20.0 (2026-04-30)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
@@ -26,10 +21,11 @@ This release adds the `ht-apply` template value/plugin pipeline, support for mul
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
 * Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
 * Changed `hyperctl cms asset ls` to use resolved asset entries from `hypertexting-go`, including theme, website, and page assets with their source, size, and final public path.
+* Changed `hyperctl cms data` (`cmd/cms/data.go`) to the new `hypertemplates-go` v0.24.0 / `hypertexting-go` v0.25.0 data API — `TemplateData.IsEmpty()` → `len(...) == 0`; `.Keys()` → `.Keys("")`; `.Inspect([]string{namespace}, "json")` → `json.Marshal(.Get(namespace))`; the column-width helper now wraps the global data with `hypertexting.NamespacedData(...)`.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
-* Updated `github.com/herdworks/hypertemplates-go` to v0.23.0.
-* Updated `github.com/herdworks/hypertexting-go` to v0.24.0.
+* Updated `github.com/herdworks/hypertemplates-go` to v0.24.0.
+* Updated `github.com/herdworks/hypertexting-go` to v0.25.1.
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
