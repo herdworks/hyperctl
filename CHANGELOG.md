@@ -4,10 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## 0.20.0 (2026-04-30)
+## 0.20.0 (2026-05-05)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
-This release adds the `ht-apply` template value/plugin pipeline, support for multiple hosting providers, named deployment environments, git-based hosting providers, and the redesigned website resource model from `hypertexting-go`.
+This release adds the `ht-apply` template value/plugin pipeline, support for multiple hosting providers, named deployment environments, git-based hosting providers, and support for computed template data (!).
+
+> BREAKING CHANGES: hyperctl v0.20.0 drops support for the drafts_dir – drafts are now defined by setting `draft:true` in page data files. > This release also changes template data namespace names which are now derived from their file path.
 
 * Added support for HyperTemplates `ht-apply` template values in generated sites, including `${ ... }` substitutions in element attributes and text nodes, `--ht-value(...)` CSS values, `get` lookups, string-literal fallbacks, and JavaScript plugin functions in value pipelines.
 * Added theme and website JavaScript plugin discovery through the new `plugins_dir` settings in `theme.json` and `site.yaml`.
@@ -16,16 +18,21 @@ This release adds the `ht-apply` template value/plugin pipeline, support for mul
 * Added multi-provider deployment support through `hyperproviders-go` environments and env-backed secrets.
 * Added git-based hosting provider support through the new `git` provider kind.
 * Added `page.ugly_url` so pages can opt out of `<path>/index.html` index pages, and instead generate `<path>.html` pages.
+* Added computed-data scripts. Drop `*.js` files into the data directory alongside YAML/JSON/OPML; each must define `function namespace()` and return the value to install under the file's keypath. Computed scripts see `ht`, `build`, `env`, `site`, `data`, and `theme` as ambient bindings — `site.pages` is populated because the pass runs after page loading.
+* Added `--verbose` / `-v` to `hyperctl cms data ls` and `hyperctl cms data inspect`. Computed-script `console.log` output is silenced by default so stdout stays pipeable to `jq`; `--verbose` routes it to stderr.
 * Changed deploy target selection so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
 * Changed build, deploy, dev server, CMS, and theme commands to use the new root-scoped HyperTexting path helpers.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
 * Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
 * Changed `hyperctl cms asset ls` to use resolved asset entries from `hypertexting-go`, including theme, website, and page assets with their source, size, and final public path.
-* Changed `hyperctl cms data` (`cmd/cms/data.go`) to the new `hypertemplates-go` v0.24.0 / `hypertexting-go` v0.25.0 data API — `TemplateData.IsEmpty()` → `len(...) == 0`; `.Keys()` → `.Keys("")`; `.Inspect([]string{namespace}, "json")` → `json.Marshal(.Get(namespace))`; the column-width helper now wraps the global data with `hypertexting.NamespacedData(...)`.
+* Changed `hyperctl cms data ls` to enumerate the full build-context namespace set (`ht`, `build`, `env`, `site`, `data`, `theme`) instead of only website global data. Backed by the new `(*HyperBuild).LoadContext` / `Context()` API in `hypertexting-go` v0.26.0.
+* Changed `hyperctl cms data inspect <namespace>` to `hyperctl cms data inspect <keypath>`. Accepts arbitrary dotted keypaths (e.g. `site.pages`, `data.social.twitter`) instead of only top-level namespaces.
+* Changed data namespaces to derive from filenames (and subdirectory layout), not from a `namespace:` key or single-top-key inference inside the file. Migration: rename data files so `<filename>.<ext>` matches the desired top-level namespace; group related files into subdirectories for nested keypaths (`data/social/twitter.yaml` → `data.social.twitter.*`). Cross-format collisions (`foo.yaml` + `foo.json`) and directory-vs-file collisions (`foo.yaml` + `foo/`) now error.
+* Changed plugin file format: each plugin file must define a top-level `function plugin(...)` (or bind the `plugin` identifier to a callable, e.g. `const plugin = (input) => ...`). The plugin's public name is its filename (sans `.js`); names must match `^[A-Za-z_][A-Za-z0-9_]*$` and cannot be `get`, `plugin`, `namespace`, or `data`. The previous `const plugin = name` selector inside the file is no longer recognized.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
-* Updated `github.com/herdworks/hypertemplates-go` to v0.24.0.
-* Updated `github.com/herdworks/hypertexting-go` to v0.25.1.
+* Updated `github.com/herdworks/hypertemplates-go` to v0.26.0.
+* Updated `github.com/herdworks/hypertexting-go` to v0.26.0.
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
