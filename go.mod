@@ -11,8 +11,8 @@ require (
 	github.com/herdworks/hyperfeed-go v0.19.1 // indirect
 	github.com/herdworks/hypergraph-go v0.19.0
 	github.com/herdworks/hyperproviders-go v0.19.0
-	github.com/herdworks/hypertemplates-go v0.26.0
-	github.com/herdworks/hypertexting-go v0.26.0
+	github.com/herdworks/hypertemplates-go v0.27.0
+	github.com/herdworks/hypertexting-go v0.27.0
 )
 
 // direct dependencies
