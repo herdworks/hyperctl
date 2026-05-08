@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-## 0.20.0 (2026-05-06)
+## 0.20.0 (2026-05-08)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
 This release adds support for a new `ht-apply` directive, template variables, templating plugins (!), computed template data, git-based hosting providers, multi-provider hosting environments, and more.
