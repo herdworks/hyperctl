@@ -11,8 +11,8 @@ require (
 	github.com/herdworks/hyperfeed-go v0.19.1 // indirect
 	github.com/herdworks/hypergraph-go v0.19.0
 	github.com/herdworks/hyperproviders-go v0.19.0
-	github.com/herdworks/hypertemplates-go v0.27.0
-	github.com/herdworks/hypertexting-go v0.27.0
+	github.com/herdworks/hypertemplates-go v0.28.0
+	github.com/herdworks/hypertexting-go v0.28.0
 )
 
 // direct dependencies
@@ -83,3 +83,5 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+require github.com/evanw/esbuild v0.28.0 // indirect

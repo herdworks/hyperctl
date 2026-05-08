@@ -18,14 +18,14 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Added template variables, formatted `${ ... }` strings that can be used to insert template data into element attributes and text nodes.
 * Added support for `<style>` element and `style` attribute variable substitution using the `--ht-value(...)` variable syntax.
 * Added variable substitution _functions_ including a built-in `get` function for looking up template data with string-literal fallbacks. 
-* Added template variable plugins, user-defined variable substitution functions written in Javascript. 
+* Added template variable plugins, user-defined variable substitution functions written in Javascript and authored as ES modules with an `export default` function. 
 * Added `site.config.plugins_dir` and `theme.config.plugins_dir` settings to configure template variable plugin discovery.
 * Added new "builtins" – automatic template features powered by layout fragments that can be disabled or overriden by adding layout fragments to themes. 
 * Added named deployment environments, configured via `site.environments`. Use `hyperctl deploy complete --environment` and `hyperctl deploy incremental --environment` to deploy to a named environment. 
 * Added support for multiple named providers, configured via `site.providers`. Use `hyperctl deploy complete --providers` and `hyperctl deploy incremental --providers` to deploy to a comma-separated selection of providers.
 * Added git-based hosting provider support through the new `git` provider kind.
 * Added `page.ugly_url` so pages can opt out of `<path>/index.html` index pages, and instead generate `<path>.html` pages.
-* Added computed-data scripts. Drop `*.js` files into the data directory alongside YAML/JSON/OPML; each must define `function namespace()` and return the value to install under the file's keypath. Computed scripts see `ht`, `build`, `env`, `site`, `data`, and `theme` as ambient bindings — `site.pages` is populated because the pass runs after page loading.
+* Added computed-data scripts. Drop `*.js` files into the data directory alongside YAML/JSON/OPML; each must `export default` a function that returns the value to install under the file's keypath. Computed scripts see `ht`, `build`, `env`, `site`, `data`, and `theme` as ambient bindings — `site.pages` is populated because the pass runs after page loading.
 * Added `--verbose` / `-v` to `hyperctl cms data ls` and `hyperctl cms data inspect`. Computed-script `console.log` output is silenced by default so stdout stays pipeable to `jq`; `--verbose` routes it to stderr.
 * Changed deploy target selection so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
@@ -35,8 +35,8 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Changed data namespaces to derive from filenames (and subdirectory layout), not from a `namespace:` key or single-top-key inference inside the file. Migration: rename data files so `<filename>.<ext>` matches the desired top-level namespace; group related files into subdirectories for nested keypaths (`data/social/twitter.yaml` → `data.social.twitter.*`). Cross-format collisions (`foo.yaml` + `foo.json`) and directory-vs-file collisions (`foo.yaml` + `foo/`) now error.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
-* Updated `github.com/herdworks/hypertemplates-go` to v0.27.0.
-* Updated `github.com/herdworks/hypertexting-go` to v0.27.0.
+* Updated `github.com/herdworks/hypertemplates-go` to v0.28.0, which standardizes scripting plugins on the ESM `export default` contract.
+* Updated `github.com/herdworks/hypertexting-go` to v0.28.0.
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
