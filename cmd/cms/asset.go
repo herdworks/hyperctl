@@ -214,9 +214,37 @@ func AssetLookupCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, nil); err != nil {
 		return err
 	}
-	assetFilePath := website.GetAssetURI(assetPath)
-	if assetFilePath != nil {
-		fmt.Printf("asset \"%s\" source \"%s\" found\n", assetPath, assetFilePath.Path)
+	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
+		return err
 	}
+	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false); err != nil {
+		return err
+	}
+	candidates, err := hypertexting.AssetCandidates(&website.Theme, &website, website.Pages)
+	if err != nil {
+		return err
+	}
+	matches := assetLookupMatches(candidates, assetPath)
+	fmt.Printf("asset \"%s\" lookup\n", assetPath)
+	if len(matches) == 0 {
+		fmt.Printf("asset \"%s\" not found\n", assetPath)
+		return nil
+	}
+	for _, match := range matches {
+		fmt.Printf("asset \"%s\" candidate \"%s\"\n", assetPath, website.RelativePath(match.SourcePath))
+	}
+	winner := matches[len(matches)-1]
+	fmt.Printf("asset \"%s\" source \"%s\"\n", assetPath, website.RelativePath(winner.SourcePath))
 	return nil
+}
+
+func assetLookupMatches(candidates hypertexting.Assets, query string) hypertexting.Assets {
+	normalized := strings.TrimPrefix(query, "/")
+	matches := hypertexting.Assets{}
+	for _, asset := range candidates {
+		if asset.RelPath == normalized {
+			matches = append(matches, asset)
+		}
+	}
+	return matches
 }

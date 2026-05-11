@@ -58,3 +58,49 @@ func TestAssetListRowsUseWinningAssetSource(t *testing.T) {
 		t.Fatalf("asset size = %d, want %d", assets[0].Size, len("page"))
 	}
 }
+
+func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
+	root := t.TempDir()
+	website := &hypertexting.Website{
+		URI: &href.Href{URL: url.URL{Path: filepath.Join(root, "site.yaml")}},
+		Theme: hypertemplates.Theme{
+			URI: &url.URL{Path: filepath.Join(root, "theme", "theme.json")},
+		},
+	}
+	website.Theme.Assets = []string{"shared.css", "theme-only.css"}
+	website.Assets = []string{"shared.css"}
+	page := &hypertexting.Page{Assets: []string{"shared.css"}}
+
+	candidates, err := hypertexting.AssetCandidates(&website.Theme, website, hypertexting.Pages{page})
+	if err != nil {
+		t.Fatalf("AssetCandidates returned error: %v", err)
+	}
+
+	matches := assetLookupMatches(candidates, "shared.css")
+	if len(matches) != 3 {
+		t.Fatalf("matches len = %d, want 3", len(matches))
+	}
+	wantSources := []hypertexting.AssetSource{
+		hypertexting.AssetSourceTheme,
+		hypertexting.AssetSourceWebsite,
+		hypertexting.AssetSourcePage,
+	}
+	for i, want := range wantSources {
+		if matches[i].Source != want {
+			t.Fatalf("matches[%d].Source = %q, want %q", i, matches[i].Source, want)
+		}
+	}
+
+	if got := assetLookupMatches(candidates, "/shared.css"); len(got) != 3 {
+		t.Fatalf("leading-slash query matches len = %d, want 3", len(got))
+	}
+
+	themeOnly := assetLookupMatches(candidates, "theme-only.css")
+	if len(themeOnly) != 1 || themeOnly[0].Source != hypertexting.AssetSourceTheme {
+		t.Fatalf("theme-only matches = %#v, want one theme entry", themeOnly)
+	}
+
+	if got := assetLookupMatches(candidates, "missing.css"); len(got) != 0 {
+		t.Fatalf("missing.css matches len = %d, want 0", len(got))
+	}
+}

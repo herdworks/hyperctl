@@ -17,5 +17,6 @@
   * `../hyperfeed-go` — Feed reader (transitive dependency)
 * To test uncommitted changes across repos, uncomment the `replace` directives in `go.mod` to point at local directories;
   re-comment them before committing
+* Only bump the tool version from the `main` branch. On other branches, record breaking changes (and other notable changes) under the `Unreleased` section of `CHANGELOG.md`; the version bump happens at release time on `main`
 
 <!-- See https://agents.md for more information -->

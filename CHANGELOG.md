@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-## 0.20.0 (2026-05-08)
+## 0.20.0 (2026-05-11)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
 This release adds support for a new `ht-apply` directive, template variables, templating plugins (!), computed template data, git-based hosting providers, multi-provider hosting environments, and more.
@@ -27,7 +27,9 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Added `page.ugly_url` so pages can opt out of `<path>/index.html` index pages, and instead generate `<path>.html` pages.
 * Added computed-data scripts. Drop `*.js` files into the data directory alongside YAML/JSON/OPML; each must `export default` a function that returns the value to install under the file's keypath. Computed scripts see `ht`, `build`, `env`, `site`, `data`, and `theme` as ambient bindings — `site.pages` is populated because the pass runs after page loading.
 * Added `--verbose` / `-v` to `hyperctl cms data ls` and `hyperctl cms data inspect`. Computed-script `console.log` output is silenced by default so stdout stays pipeable to `jq`; `--verbose` routes it to stderr.
+* Added support for CSV/TSV template data files. Delimited data must contain a header row, and header rows must have unique non-empty column names. 
 * Changed deploy target selection so `--environment` and `--providers` are mutually exclusive, with no selector defaulting to the `default` environment.
+* Changed `hyperctl cms asset lookup` to enumerate every theme, website, and page candidate for the queried path in precedence order and identify the winning source. Previously only printed the winning source path.
 * Changed `hyperctl cms page` draft filtering to use the page-level `draft` property instead of a separate drafts directory.
 * Changed `hyperctl dev server` to render draft pages while keeping build and deploy commands draft-excluding by default.
 * Changed `hyperctl cms data ls` to enumerate the full build-context namespace set (`ht`, `build`, `env`, `site`, `data`, `theme`) instead of only website global data. Backed by the shared build context methods in `hypertexting-go` v0.26.0 and newer.
@@ -35,8 +37,8 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Changed data namespaces to derive from filenames (and subdirectory layout), not from a `namespace:` key or single-top-key inference inside the file. Migration: rename data files so `<filename>.<ext>` matches the desired top-level namespace; group related files into subdirectories for nested keypaths (`data/social/twitter.yaml` → `data.social.twitter.*`). Cross-format collisions (`foo.yaml` + `foo.json`) and directory-vs-file collisions (`foo.yaml` + `foo/`) now error.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
-* Updated `github.com/herdworks/hypertemplates-go` to v0.28.0, which standardizes scripting plugins on the ESM `export default` contract.
-* Updated `github.com/herdworks/hypertexting-go` to v0.28.0.
+* Updated `github.com/herdworks/hypertemplates-go` to v0.29.0. 
+* Updated `github.com/herdworks/hypertexting-go` to v0.29.1. 
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
