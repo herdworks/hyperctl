@@ -37,8 +37,9 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Changed data namespaces to derive from filenames (and subdirectory layout), not from a `namespace:` key or single-top-key inference inside the file. Migration: rename data files so `<filename>.<ext>` matches the desired top-level namespace; group related files into subdirectories for nested keypaths (`data/social/twitter.yaml` → `data.social.twitter.*`). Cross-format collisions (`foo.yaml` + `foo.json`) and directory-vs-file collisions (`foo.yaml` + `foo/`) now error.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
+* Fixed an infinite loop that could occur on websites with multiple page.feed fields configured
 * Updated `github.com/herdworks/hypertemplates-go` to v0.29.0. 
-* Updated `github.com/herdworks/hypertexting-go` to v0.29.1. 
+* Updated `github.com/herdworks/hypertexting-go` to v0.29.2. 
 * Updated `github.com/herdworks/hyperproviders-go` to v0.19.0.
 * Updated minimum Go toolchain to `1.25.0`.
 
