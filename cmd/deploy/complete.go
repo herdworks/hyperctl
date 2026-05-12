@@ -27,6 +27,7 @@ func DeployCommand() (cmd *cli.Command) {
 				ShortName:   "c",
 				EnvName:     "HYPER_CONFIG",
 				Description: "Path to the website configuration file.",
+				Default:     "site.yaml",
 				Required:    true,
 				Secret:      false,
 			},

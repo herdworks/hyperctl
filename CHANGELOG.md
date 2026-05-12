@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Changed `-c` / `--config` flag to default to `site.yaml` across all commands that accept it.
+
 ## 0.20.0 (2026-05-11)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
