@@ -6,9 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Changed `-c` / `--config` flag to default to `site.yaml` across all commands that accept it.
 
-## 0.20.0 (2026-05-11)
+## 0.20.0 (2026-05-12)
 
 Updated `hyperctl` for the current HyperTexting, HyperTemplates, and HyperProviders release set.
 This release adds support for a new `ht-apply` directive, template variables, templating plugins (!), computed template data, git-based hosting providers, multi-provider hosting environments, and more.
@@ -37,6 +36,7 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Changed `hyperctl cms data ls` to enumerate the full build-context namespace set (`ht`, `build`, `env`, `site`, `data`, `theme`) instead of only website global data. Backed by the shared build context methods in `hypertexting-go` v0.26.0 and newer.
 * Changed `hyperctl cms data inspect <namespace>` to `hyperctl cms data inspect <keypath>`. Accepts template data keypaths (e.g. `site.pages`, `data.social.twitter`) instead of only top-level namespaces.
 * Changed data namespaces to derive from filenames (and subdirectory layout), not from a `namespace:` key or single-top-key inference inside the file. Migration: rename data files so `<filename>.<ext>` matches the desired top-level namespace; group related files into subdirectories for nested keypaths (`data/social/twitter.yaml` → `data.social.twitter.*`). Cross-format collisions (`foo.yaml` + `foo.json`) and directory-vs-file collisions (`foo.yaml` + `foo/`) now error.
+* Changed `-c` / `--config` flag to default to `site.yaml` across all commands that accept it.
 * Removed `drafts_dir` configuration and loading of pages from a drafts directory.
 * Fixed build, deploy, and dev server commands to honor `site.config.builds_dir` when constructing build output paths.
 * Fixed an infinite loop that could occur on websites with multiple page.feed fields configured
