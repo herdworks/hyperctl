@@ -12,7 +12,7 @@ require (
 	github.com/herdworks/hypergraph-go v0.19.0
 	github.com/herdworks/hyperproviders-go v0.19.0
 	github.com/herdworks/hypertemplates-go v0.29.0
-	github.com/herdworks/hypertexting-go v0.29.2
+	github.com/herdworks/hypertexting-go v0.32.0
 )
 
 // direct dependencies

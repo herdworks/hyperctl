@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+Updated `github.com/herdworks/hypertexting-go` to 0.32.0 for generated atom feed canonical url fixes.
 
 ## 0.20.0 (2026-05-12)
 
