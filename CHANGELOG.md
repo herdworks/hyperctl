@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Changed deployment secret resolution to check environment variables first and local files second, enabling file-backed secrets such as Git `ssh_private_key` without provider-specific path handling. Relative file secret paths are resolved from the website config directory, and file paths support `~/`, `$HOME/`, and `${HOME}/` expansion.
+
 ## 0.20.1 (2026-05-27)
 
 Updated `github.com/herdworks/hypertexting-go` to 0.32.0 for generated atom feed canonical url fixes.

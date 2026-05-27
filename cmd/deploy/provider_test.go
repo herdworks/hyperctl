@@ -91,15 +91,18 @@ func TestParseProviderNames(t *testing.T) {
 	}
 }
 
-func TestDeploymentSessionUsesEnvSecrets(t *testing.T) {
-	session := deploymentSession()
+func TestDeploymentSessionUsesEnvThenFilesSecrets(t *testing.T) {
+	session := deploymentSession(nil)
 	if session == nil {
 		t.Fatal("deploymentSession returned nil")
 	}
-	if len(session.SecretProviders) != 1 {
-		t.Fatalf("SecretProviders len = %d, want 1", len(session.SecretProviders))
+	if len(session.SecretProviders) != 2 {
+		t.Fatalf("SecretProviders len = %d, want 2", len(session.SecretProviders))
 	}
 	if got := session.SecretProviders[0].Name(); got != "env" {
 		t.Fatalf("SecretProviders[0].Name() = %q, want env", got)
+	}
+	if got := session.SecretProviders[1].Name(); got != "files" {
+		t.Fatalf("SecretProviders[1].Name() = %q, want files", got)
 	}
 }

@@ -3,11 +3,13 @@ package deploy
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	hyperproviders "github.com/herdworks/hyperproviders-go"
 	"github.com/herdworks/hyperproviders-go/hosting"
 	envsecrets "github.com/herdworks/hyperproviders-go/providers/env"
+	filesecrets "github.com/herdworks/hyperproviders-go/providers/files"
 	_ "github.com/herdworks/hyperproviders-go/providers/git"
 	_ "github.com/herdworks/hyperproviders-go/providers/s3"
 	hypertexting "github.com/herdworks/hypertexting-go"
@@ -44,7 +46,7 @@ func deployEnvironment(ctx context.Context, website *hypertexting.Website, envir
 		ctx, finish = hosting.BeginDeployment(ctx, environmentName)
 		defer func() { finish(err) }()
 	}
-	return environment.Deploy(ctx, website.Providers, root, deploymentSession())
+	return environment.Deploy(ctx, website.Providers, root, deploymentSession(website))
 }
 
 func parseProviderNames(value string) []string {
@@ -60,8 +62,13 @@ func parseProviderNames(value string) []string {
 	return names
 }
 
-func deploymentSession() *hyperproviders.Session {
+func deploymentSession(website *hypertexting.Website) *hyperproviders.Session {
+	fileSecrets := filesecrets.New()
+	if website != nil && website.URI != nil && website.URI.Path != "" {
+		fileSecrets = filesecrets.NewWithBaseDirectory(filepath.Dir(website.URI.Path))
+	}
+
 	return &hyperproviders.Session{
-		SecretProviders: []hyperproviders.SecretProvider{envsecrets.New()},
+		SecretProviders: []hyperproviders.SecretProvider{envsecrets.New(), fileSecrets},
 	}
 }
