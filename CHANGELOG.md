@@ -6,7 +6,28 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Changed deployment secret resolution to check environment variables first and local files second, enabling file-backed secrets such as Git `ssh_private_key` without provider-specific path handling. Relative file secret paths are resolved from the website config directory, and file paths support `~/`, `$HOME/`, and `${HOME}/` expansion.
+## 0.21.0 (2026-05-27)
+
+Added support for 
+
+* Added support for file-based secrets. 
+  The files secret provider looks up secrets using the secret key as a file path, with support for absolute paths, and `./`, `../`, `~/`, `$HOME/`, or `${HOME}/` resolution.
+* Removed support for the `git` provider `ssh_key_path` secret.
+  To use an SSH private key with the git provider, configure the `ssh_private_key` secret with a file path key; e.g.:
+
+  ```yaml
+  providers:
+    github:
+      kind: git
+      endpoint: https://github.com/example/website.git
+      config:
+        branch: gh-pages
+      secrets:
+        - name: ssh_private_key
+          key: $HOME/.ssh/example
+  ```
+
+  _NOTE: relative path secret keys (e.g. `key: deploy_key.pem`) are resolved from the website root directory.
 
 ## 0.20.1 (2026-05-27)
 
