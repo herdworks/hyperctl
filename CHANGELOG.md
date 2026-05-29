@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+## 0.22.0 (2026-05-28)
+
+* Added `--data-file` and `--log-file` options to `hyperctl build`, `hyperctl deploy`, and `hyperctl dev server`.
 * Changed `hyperctl build` to perform full-site builds directly, with incremental builds now selected via `hyperctl build --incremental --page <path>` instead of the `build incremental` subcommand.
 * Changed `hyperctl deploy` to perform full-site deployments directly, with incremental deployments now selected via `hyperctl deploy --incremental --page <path>` instead of the `deploy incremental` subcommand.
-* Added `--data-file` and `--log-file` options to `hyperctl build`, `hyperctl deploy`, and `hyperctl dev server`.
 * Changed deployments to pass explicit hyperproviders deployment modes: full deploys use `replacement`, while incremental deploys use `overlay`.
 * Updated command call sites for the new `hypertexting-go` `Build` / `BuildConfig` APIs and explicit writer logging APIs.
 * Updated `github.com/herdworks/hyperproviders-go` to v0.23.0, `github.com/herdworks/hypertemplates-go` to v0.30.0, and `github.com/herdworks/hypertexting-go` to v0.33.0.
