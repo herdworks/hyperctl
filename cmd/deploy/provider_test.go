@@ -91,6 +91,15 @@ func TestParseProviderNames(t *testing.T) {
 	}
 }
 
+func TestDeploymentMode(t *testing.T) {
+	if got := deploymentMode(false); got != hyperproviders.DeploymentModeReplacement {
+		t.Fatalf("deploymentMode(false) = %q, want replacement", got)
+	}
+	if got := deploymentMode(true); got != hyperproviders.DeploymentModeOverlay {
+		t.Fatalf("deploymentMode(true) = %q, want overlay", got)
+	}
+}
+
 func TestDeploymentSessionUsesEnvThenFilesSecrets(t *testing.T) {
 	session := deploymentSession(nil)
 	if session == nil {

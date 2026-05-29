@@ -58,12 +58,12 @@ func ThemePackageCommandHandler(cmd *cli.Command) (err error) {
 	} else {
 		return fmt.Errorf("invalid website config URI: %s", cmd.Options.Get("config"))
 	}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 
 	// Load the theme configuration
-	if err = theme.Parse(); err == nil {
+	if err = theme.Parse(nil); err == nil {
 		theme.ResolveConfig()
 	} else {
 		return err
@@ -80,7 +80,7 @@ func ThemePackageCommandHandler(cmd *cli.Command) (err error) {
 	}
 
 	// Create the theme package archive
-	if err = theme.Archive(archive); err != nil {
+	if err = theme.Archive(archive, nil); err != nil {
 		return err
 	}
 	fmt.Printf("Theme packaged successfully: %s\n", archive)

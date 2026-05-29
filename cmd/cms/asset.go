@@ -64,10 +64,10 @@ func AssetAddCommandHandler(cmd *cli.Command) (err error) {
 	sourcePath := cmd.Args[0]
 	assetPath := cmd.Args[1]
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	if err = website.CopyAsset(sourcePath, assetPath); err != nil {
+	if err = website.CopyAsset(sourcePath, assetPath, nil); err != nil {
 		return err
 	}
 	return nil
@@ -103,13 +103,13 @@ func AssetListCommandValidator(cmd *cli.Command) (err error) {
 func AssetListCommandHandler(cmd *cli.Command) (err error) {
 	var assets AssetListRows
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false, nil); err != nil {
 		return err
 	}
 	assetEntries, err := hypertexting.AssetEntries(&website.Theme, &website, website.Pages)
@@ -214,13 +214,13 @@ func AssetLookupCommandValidator(cmd *cli.Command) (err error) {
 func AssetLookupCommandHandler(cmd *cli.Command) (err error) {
 	assetPath := cmd.Args[0]
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false, nil); err != nil {
 		return err
 	}
 	candidates, err := hypertexting.AssetCandidates(&website.Theme, &website, website.Pages)

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Changed `hyperctl build` to perform full-site builds directly, with incremental builds now selected via `hyperctl build --incremental --page <path>` instead of the `build incremental` subcommand.
+* Changed `hyperctl deploy` to perform full-site deployments directly, with incremental deployments now selected via `hyperctl deploy --incremental --page <path>` instead of the `deploy incremental` subcommand.
+* Added `--data-file` and `--log-file` options to `hyperctl build`, `hyperctl deploy`, and `hyperctl dev server`.
+* Changed deployments to pass explicit hyperproviders deployment modes: full deploys use `replacement`, while incremental deploys use `overlay`.
+* Updated command call sites for the new `hypertexting-go` `Build` / `BuildConfig` APIs and explicit writer logging APIs.
+* Updated `github.com/herdworks/hyperproviders-go` to v0.23.0, `github.com/herdworks/hypertemplates-go` to v0.30.0, and `github.com/herdworks/hypertexting-go` to v0.33.0.
+
 ## 0.21.0 (2026-05-27)
 
 Added support for 
@@ -48,8 +55,8 @@ This release adds support for a new `ht-apply` directive, template variables, te
 * Added template variable plugins, user-defined variable substitution functions written in Javascript and authored as ES modules with an `export default` function. 
 * Added `site.config.plugins_dir` and `theme.config.plugins_dir` settings to configure template variable plugin discovery.
 * Added new "builtins" – automatic template features powered by layout fragments that can be disabled or overriden by adding layout fragments to themes. 
-* Added named deployment environments, configured via `site.environments`. Use `hyperctl deploy complete --environment` and `hyperctl deploy incremental --environment` to deploy to a named environment. 
-* Added support for multiple named providers, configured via `site.providers`. Use `hyperctl deploy complete --providers` and `hyperctl deploy incremental --providers` to deploy to a comma-separated selection of providers.
+* Added named deployment environments, configured via `site.environments`. Use `hyperctl deploy --environment` for full-site deployments, or `hyperctl deploy --incremental --page <path> --environment` for incremental deployments.
+* Added support for multiple named providers, configured via `site.providers`. Use `hyperctl deploy --providers` for full-site deployments, or `hyperctl deploy --incremental --page <path> --providers` for incremental deployments.
 * Added git-based hosting provider support through the new `git` provider kind.
 * Added `page.ugly_url` so pages can opt out of `<path>/index.html` index pages, and instead generate `<path>.html` pages.
 * Added computed-data scripts. Drop `*.js` files into the data directory alongside YAML/JSON/OPML; each must `export default` a function that returns the value to install under the file's keypath. Computed scripts see `ht`, `build`, `env`, `site`, `data`, and `theme` as ambient bindings — `site.pages` is populated because the pass runs after page loading.
@@ -110,9 +117,9 @@ Made several improvements to `ht-block` elements, including access to `page.*` t
 * Changed `hyperctl content-type` → `hyperctl cms content-type`.
 * Changed `hyperctl data` → `hyperctl cms data`.
 * Changed `hyperctl page` → `hyperctl cms page`.
-* Changed `hyperctl build` → `hyperctl build complete`.
+* Changed `hyperctl build` into the full-site build mode for the namespaced `build` command group used by that release.
 * Changed `hyperctl generate` → `hyperctl build incremental`.
-* Changed `hyperctl deploy` → `hyperctl deploy complete`.
+* Changed `hyperctl deploy` into the full-site deployment mode for the namespaced `deploy` command group used by that release.
 * Changed `hyperctl publish` → `hyperctl deploy incremental`.
 * Changed `hyperctl graph` → `hyperctl dev graph`.
 * Changed `hyperctl graph document` → `hyperctl dev graph all`.

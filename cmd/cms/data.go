@@ -144,7 +144,7 @@ func DataInspectCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-// loadBuildContext constructs a HyperBuild for the website at the
+// loadBuildContext constructs a Build for the website at the
 // --config path and runs LoadContext so build.Context() is fully
 // populated for inspection. The build is never written; URI is set to
 // an empty URL placeholder since the write phase is skipped.
@@ -154,23 +154,25 @@ func DataInspectCommandHandler(cmd *cli.Command) (err error) {
 // output to tools like `jq` without noise on stdout. When the --verbose
 // flag is set the output is routed to stderr instead, keeping stdout
 // clean while still surfacing diagnostics.
-func loadBuildContext(cmd *cli.Command) (*hypertexting.HyperBuild, error) {
+func loadBuildContext(cmd *cli.Command) (*hypertexting.Build, error) {
 	websiteURI, err := href.Parse(cmd.Options.Get("config"))
 	if err != nil {
 		return nil, err
 	}
-	build := &hypertexting.HyperBuild{
+	build := &hypertexting.Build{
 		URI:     &url.URL{},
 		ID:      "inspect",
 		Website: &hypertexting.Website{URI: websiteURI},
 		Pages:   &hypertexting.Pages{},
 	}
+	logWriter := io.Writer(io.Discard)
 	if cmd.Options.Get("verbose") == "true" {
 		scripting.SetConsoleOutput(os.Stderr)
+		logWriter = os.Stderr
 	} else {
 		scripting.SetConsoleOutput(io.Discard)
 	}
-	if err := build.LoadContext(context.Background(), nil, nil, false); err != nil {
+	if err := build.LoadContext(context.Background(), logWriter); err != nil {
 		return nil, err
 	}
 	return build, nil

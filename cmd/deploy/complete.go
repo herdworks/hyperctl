@@ -15,9 +15,9 @@ import (
 func DeployCommand() (cmd *cli.Command) {
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "complete",
-			Description: "Deploy a complete build.",
-			Usage:       "hyperctl deploy complete [options]",
+			Name:        "deploy",
+			Description: "Deployment management tools",
+			Usage:       "hyperctl deploy [options]",
 			Validator:   DeployCommandValidator,
 			Handler:     DeployCommandHandler,
 		},
@@ -45,6 +45,16 @@ func DeployCommand() (cmd *cli.Command) {
 				Secret:      false,
 			},
 			{
+				Name:        "incremental",
+				Description: "Switch from full-site deployment mode to incremental deployment mode. Requires --page.",
+				Boolean:     true,
+			},
+			{
+				Name:        "page",
+				ShortName:   "p",
+				Description: "Path to the page index file for incremental deployments.",
+			},
+			{
 				Name:        "content-dir",
 				EnvName:     "HYPER_CONTENT_DIR",
 				Description: "Relative path to the content directory to use for the build (overwrites site.config.content_dir).",
@@ -64,11 +74,27 @@ func DeployCommand() (cmd *cli.Command) {
 				EnvName:     "HYPER_THEME",
 				Description: "Relative path to theme config to use for the build (overwrites site.config.theme).",
 			},
+			{
+				Name:        "data-file",
+				Description: "Build-root-relative or absolute path for build data JSON, for example build.json.",
+			},
+			{
+				Name:        "log-file",
+				Description: "Build-root-relative or absolute path for build logs, for example build.log.",
+			},
 		},
 	}
 }
 
 func DeployCommandValidator(cmd *cli.Command) (err error) {
+	incremental := cmd.Options.Get("incremental") == "true"
+	page := cmd.Options.Get("page")
+	if incremental && page == "" {
+		return fmt.Errorf("--page is required when --incremental is set")
+	}
+	if !incremental && page != "" {
+		return fmt.Errorf("--page can only be used when --incremental is set")
+	}
 	return nil
 }
 
@@ -76,33 +102,50 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *href.Href
 	var website *hypertexting.Website
 	var buildID string = uuid.New().String()
-	configOverrides := &hypertexting.WebsiteConfig{
-		ContentDirectory: cmd.Options.Get("content-dir"),
-		DataDirectory:    cmd.Options.Get("data-dir"),
-		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemePath:        cmd.Options.Get("theme"),
+	incremental := cmd.Options.Get("incremental") == "true"
+	config := hypertexting.BuildConfig{
+		WebsiteConfig: hypertexting.WebsiteConfig{
+			ContentDirectory: cmd.Options.Get("content-dir"),
+			DataDirectory:    cmd.Options.Get("data-dir"),
+			StaticDirectory:  cmd.Options.Get("static-dir"),
+			ThemePath:        cmd.Options.Get("theme"),
+		},
+		DataFile: cmd.Options.Get("data-file"),
+		LogFile:  cmd.Options.Get("log-file"),
+		Verbose:  true,
 	}
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
-	if err = website.Load(false, configOverrides); err != nil {
+	if err = website.Load(false, &config.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
-		ID:      buildID,
-		Website: website,
-		Pages:   &website.Pages, // all pages
+	var pages *hypertexting.Pages = &website.Pages
+	if incremental {
+		pageURI, err := href.Parse(cmd.Options.Get("page"))
+		if err != nil {
+			return err
+		}
+		page := &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
+		pages = &hypertexting.Pages{page}
 	}
-	if err = build.Execute(context.TODO(), nil, nil); err != nil {
+	build := &hypertexting.Build{
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
+		ID:          buildID,
+		Website:     website,
+		Config:      config,
+		Incremental: incremental,
+		Pages:       pages,
+	}
+	if err = build.Execute(context.TODO()); err != nil {
 		return err
 	}
 	environment, environmentName, err := deploymentEnvironment(website, cmd.Options.Get("environment"), cmd.Options.Get("providers"))
 	if err != nil {
 		return err
 	}
-	if err = deployEnvironment(context.TODO(), website, environment, environmentName, build.URI.Path); err != nil {
+	if err = deployEnvironment(context.TODO(), website, environment, environmentName, build.URI.Path, deploymentMode(incremental)); err != nil {
 		return err
 	}
 	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)

@@ -53,7 +53,7 @@ func ThemeInstallCommandHandler(cmd *cli.Command) (err error) {
 	} else {
 		return fmt.Errorf("invalid website config URI: %s", cmd.Options.Get("config"))
 	}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 

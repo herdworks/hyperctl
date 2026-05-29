@@ -98,6 +98,14 @@ func ServerCommand() *cli.Command {
 				EnvName:     "HYPER_THEME",
 				Description: "Relative path to theme config to use for the build (overwrites site.config.theme).",
 			},
+			{
+				Name:        "data-file",
+				Description: "Build-root-relative or absolute path for build data JSON, for example build.json.",
+			},
+			{
+				Name:        "log-file",
+				Description: "Build-root-relative or absolute path for build logs, for example build.log.",
+			},
 		},
 	}
 }
@@ -127,18 +135,26 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		StaticDirectory:  cmd.Options.Get("static-dir"),
 		ThemePath:        cmd.Options.Get("theme"),
 	}
+	buildConfig := hypertexting.BuildConfig{
+		WebsiteConfig: *server.WebsiteConfig,
+		BaseURL:       server.URL.String(),
+		DataFile:      cmd.Options.Get("data-file"),
+		LogFile:       cmd.Options.Get("log-file"),
+		Verbose:       true,
+	}
 	websiteURI, err := href.Parse(cmd.Options.Get("config"))
 	if err != nil {
 		return err
 	}
 	website := &hypertexting.Website{URI: websiteURI}
-	if err = website.Load(false, server.WebsiteConfig); err != nil {
+	if err = website.Load(false, server.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	server.Build = &hypertexting.HyperBuild{
+	server.Build = &hypertexting.Build{
 		URI:           &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
 		ID:            cmd.Options.Get("id"),
 		Website:       website,
+		Config:        buildConfig,
 		IncludeDrafts: true,
 		Pages:         &website.Pages,
 	}
@@ -176,11 +192,11 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 						plural = "s"
 					}
 					fmt.Printf("\n%v change%v detected, refreshing build...\n\n", count, plural)
-					if err = server.Build.Website.Load(false, server.WebsiteConfig); err != nil {
+					if err = server.Build.Website.Load(false, server.WebsiteConfig, nil); err != nil {
 						fmt.Println(err)
 						continue
 					}
-					if err = server.Build.Execute(context.TODO(), server.URL, nil); err != nil {
+					if err = server.Build.Execute(context.TODO()); err != nil {
 						fmt.Println(err)
 					}
 					fmt.Println()
@@ -245,7 +261,7 @@ func ServerCommandWatcher(server *Server, website *hypertexting.Website) (change
 type Server struct {
 	ConfigFile    string
 	WebsiteConfig *hypertexting.WebsiteConfig
-	Build         *hypertexting.HyperBuild
+	Build         *hypertexting.Build
 	Interval      int
 	Duration      time.Duration
 	WatchedFiles  map[string]fs.FileInfo

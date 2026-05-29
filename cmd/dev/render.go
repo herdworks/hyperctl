@@ -60,6 +60,7 @@ func RenderCommandHandler(cmd *cli.Command) (err error) {
 		cmd.Options.Get("theme"),
 		cmd.Options.Get("untidy") == "true",
 		&hypertemplates.DefaultHyperMarkConfig,
+		nil,
 	)
 	if err != nil {
 		return err

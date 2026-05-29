@@ -111,7 +111,7 @@ func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 		Href:    "/",
 	}
 	website.ResolveConfig(nil)
-	if err = website.CreatePackage(); err != nil {
+	if err = website.CreatePackage(nil); err != nil {
 		return err
 	}
 	return nil
@@ -177,7 +177,7 @@ func NewPageCommand() *cli.Command {
 
 func NewPageCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 	page := hypertexting.Page{
@@ -188,6 +188,6 @@ func NewPageCommandHandler(cmd *cli.Command) (err error) {
 		Content:     cmd.Options.Get("content"),
 		Draft:       cmd.Options.Get("draft") == "true",
 	}
-	contenttype := website.GetContentTypeByName(cmd.Options.Get("content-type"), true)
-	return hypertexting.CreatePage(&website, &page, contenttype)
+	contenttype := website.GetContentTypeByName(cmd.Options.Get("content-type"), true, nil)
+	return hypertexting.CreatePage(&website, &page, contenttype, nil)
 }

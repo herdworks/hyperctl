@@ -81,7 +81,7 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 	if len(cmd.Args) > 0 {
@@ -90,7 +90,7 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 	if pages, err = website.ListPages(); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false, nil); err != nil {
 		return err
 	}
 	pages = FilterPages(pages, filter)
@@ -169,16 +169,16 @@ func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 	if pages, err = website.ListPages(); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false, nil); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPageFeeds(context.TODO(), website, pages); err != nil {
+	if err = hypertexting.LoadPageFeeds(context.TODO(), website, pages, nil); err != nil {
 		return err
 	} // populate page feeds
 	pages.ResolveTemplateData(website)

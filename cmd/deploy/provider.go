@@ -3,6 +3,7 @@ package deploy
 import (
 	"context"
 	"fmt"
+	"io"
 	"path/filepath"
 	"strings"
 
@@ -40,13 +41,22 @@ func deploymentEnvironment(website *hypertexting.Website, environmentName, provi
 	return env, environmentName, nil
 }
 
-func deployEnvironment(ctx context.Context, website *hypertexting.Website, environment *hyperproviders.HostingEnvironment, environmentName, root string) (err error) {
+func deployEnvironment(ctx context.Context, website *hypertexting.Website, environment *hyperproviders.HostingEnvironment, environmentName, root string, mode hyperproviders.DeploymentMode) (err error) {
+	ctx = hosting.WithDeploymentRoot(ctx, root)
+	var w io.Writer
 	if environmentName != "" {
 		var finish func(error)
-		ctx, finish = hosting.BeginDeployment(ctx, environmentName)
+		ctx, w, finish = hosting.BeginDeployment(ctx, environmentName, nil)
 		defer func() { finish(err) }()
 	}
-	return environment.Deploy(ctx, website.Providers, root, deploymentSession(website))
+	return environment.Deploy(ctx, website.Providers, root, deploymentSession(website), mode, w)
+}
+
+func deploymentMode(incremental bool) hyperproviders.DeploymentMode {
+	if incremental {
+		return hyperproviders.DeploymentModeOverlay
+	}
+	return hyperproviders.DeploymentModeReplacement
 }
 
 func parseProviderNames(value string) []string {

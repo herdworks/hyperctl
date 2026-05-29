@@ -45,7 +45,7 @@ func ConfigCommandValidator(cmd *cli.Command) (err error) {
 
 func ConfigCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(true, nil); err != nil {
+	if err = website.Load(true, nil, nil); err != nil {
 		return err
 	}
 	fmt.Printf("%v\n", website)

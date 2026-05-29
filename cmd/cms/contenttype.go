@@ -56,7 +56,7 @@ func ContentTypeListCommand() *cli.Command {
 
 func ContentTypeListCommandHandler(cmd *cli.Command) (err error) {
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
 
@@ -111,10 +111,10 @@ func ContentTypeInspectCommandHandler(cmd *cli.Command) (err error) {
 	var jsonBytes []byte
 	var typeRef string = cmd.Args[0]
 	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
-	if err = website.Load(false, nil); err != nil {
+	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	contentType := website.GetContentTypeByName(typeRef, false)
+	contentType := website.GetContentTypeByName(typeRef, false, nil)
 	if contentType == nil {
 		return fmt.Errorf("content-type \"%s\" not found", typeRef)
 	}

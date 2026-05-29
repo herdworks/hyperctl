@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"path/filepath"
 
@@ -15,9 +16,9 @@ func BuildCommand() *cli.Command {
 	id := uuid.New()
 	return &cli.Command{
 		Config: cli.CommandConfig{
-			Name:        "complete",
-			Description: "Perform a complete build.",
-			Usage:       "hyperctl build complete [options]",
+			Name:        "build",
+			Description: "Build management tools",
+			Usage:       "hyperctl build [options]",
 			Validator:   BuildCommandValidator,
 			Handler:     BuildCommandHandler,
 		},
@@ -40,6 +41,16 @@ func BuildCommand() *cli.Command {
 				Default:     id.String(),
 			},
 			{
+				Name:        "incremental",
+				Description: "Switch from full-site build mode to incremental build mode. Requires --page.",
+				Boolean:     true,
+			},
+			{
+				Name:        "page",
+				ShortName:   "p",
+				Description: "Path to the page index file for incremental builds.",
+			},
+			{
 				Name:        "content-dir",
 				EnvName:     "HYPER_CONTENT_DIR",
 				Description: "Relative path to the content directory to use for the build (overwrites site.config.content_dir).",
@@ -59,35 +70,68 @@ func BuildCommand() *cli.Command {
 				EnvName:     "HYPER_THEME",
 				Description: "Relative path to theme config to use for the build (overwrites site.config.theme).",
 			},
+			{
+				Name:        "data-file",
+				Description: "Build-root-relative or absolute path for build data JSON, for example build.json.",
+			},
+			{
+				Name:        "log-file",
+				Description: "Build-root-relative or absolute path for build logs, for example build.log.",
+			},
 		},
 	}
 }
 
 func BuildCommandValidator(cmd *cli.Command) (err error) {
+	incremental := cmd.Options.Get("incremental") == "true"
+	page := cmd.Options.Get("page")
+	if incremental && page == "" {
+		return fmt.Errorf("--page is required when --incremental is set")
+	}
+	if !incremental && page != "" {
+		return fmt.Errorf("--page can only be used when --incremental is set")
+	}
 	return nil
 }
 
 func BuildCommandHandler(cmd *cli.Command) (err error) {
 	var websiteURI *href.Href
 	var website *hypertexting.Website
-	configOverrides := &hypertexting.WebsiteConfig{
-		ContentDirectory: cmd.Options.Get("content-dir"),
-		DataDirectory:    cmd.Options.Get("data-dir"),
-		StaticDirectory:  cmd.Options.Get("static-dir"),
-		ThemePath:        cmd.Options.Get("theme"),
+	incremental := cmd.Options.Get("incremental") == "true"
+	config := hypertexting.BuildConfig{
+		WebsiteConfig: hypertexting.WebsiteConfig{
+			ContentDirectory: cmd.Options.Get("content-dir"),
+			DataDirectory:    cmd.Options.Get("data-dir"),
+			StaticDirectory:  cmd.Options.Get("static-dir"),
+			ThemePath:        cmd.Options.Get("theme"),
+		},
+		DataFile: cmd.Options.Get("data-file"),
+		LogFile:  cmd.Options.Get("log-file"),
+		Verbose:  true,
 	}
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
 	website = &hypertexting.Website{URI: websiteURI}
-	if err = website.Load(false, configOverrides); err != nil {
+	if err = website.Load(false, &config.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	build := &hypertexting.HyperBuild{
-		URI:     &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
-		ID:      cmd.Options.Get("id"),
-		Website: website,
-		Pages:   &website.Pages, // all pages
+	var pages *hypertexting.Pages = &website.Pages
+	if incremental {
+		pageURI, err := href.Parse(cmd.Options.Get("page"))
+		if err != nil {
+			return err
+		}
+		page := &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
+		pages = &hypertexting.Pages{page}
 	}
-	return build.Execute(context.TODO(), nil, nil)
+	build := &hypertexting.Build{
+		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
+		ID:          cmd.Options.Get("id"),
+		Website:     website,
+		Config:      config,
+		Incremental: incremental,
+		Pages:       pages,
+	}
+	return build.Execute(context.TODO())
 }
