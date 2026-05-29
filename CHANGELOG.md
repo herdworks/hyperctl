@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Updated `github.com/herdworks/hypertexting-go` to v0.33.1 for build-root path helper and reporting changes.
+## 0.22.0 (2026-05-29)
+
 * Changed `hyperctl build` and `hyperctl deploy` `--data-file` and `--log-file` descriptions to require build-root-relative artifact paths.
 * Refactored `hyperctl build` and `hyperctl deploy` command definitions into their command entrypoint files, removing the separate completion implementation files.
+* Updated `github.com/herdworks/hypertexting-go` to v0.33.1 for build-root path helper and reporting changes.
 
-## 0.22.0 (2026-05-28)
+## 0.22.0-1 (2026-05-28)
 
 * Added `--data-file` and `--log-file` options to `hyperctl build`, `hyperctl deploy`, and `hyperctl dev server`.
 * Changed `hyperctl build` to perform full-site builds directly, with incremental builds now selected via `hyperctl build --incremental --page <path>` instead of the `build incremental` subcommand.
