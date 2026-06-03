@@ -6,24 +6,21 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-## 0.22.0 (2026-05-29)
-
-* Changed `hyperctl build` and `hyperctl deploy` `--data-file` and `--log-file` descriptions to require build-root-relative artifact paths.
-* Refactored `hyperctl build` and `hyperctl deploy` command definitions into their command entrypoint files, removing the separate completion implementation files.
-* Updated `github.com/herdworks/hypertexting-go` to v0.33.1 for build-root path helper and reporting changes.
-
-## 0.22.0-1 (2026-05-28)
+## 0.22.0 (2026-06-03)
 
 * Added `--data-file` and `--log-file` options to `hyperctl build`, `hyperctl deploy`, and `hyperctl dev server`.
-* Changed `hyperctl build` to perform full-site builds directly, with incremental builds now selected via `hyperctl build --incremental --page <path>` instead of the `build incremental` subcommand.
-* Changed `hyperctl deploy` to perform full-site deployments directly, with incremental deployments now selected via `hyperctl deploy --incremental --page <path>` instead of the `deploy incremental` subcommand.
+* Combined `hyperctl build complete` and `hyperctl build incremental` into a single `hyperctl build` command, with new `hyperctl build --incremental --page <path>` arguments.
+* Combined `hyperctl deploy complete` and `hyperctl deploy incremental` into a single `hyperctl deploy` command, with new `hyperctl deploy --incremental --page <path>` arguments.
 * Changed deployments to pass explicit hyperproviders deployment modes: full deploys use `replacement`, while incremental deploys use `overlay`.
 * Updated command call sites for the new `hypertexting-go` `Build` / `BuildConfig` APIs and explicit writer logging APIs.
-* Updated `github.com/herdworks/hyperproviders-go` to v0.23.0, `github.com/herdworks/hypertemplates-go` to v0.30.0, and `github.com/herdworks/hypertexting-go` to v0.33.0.
+* Updated `github.com/herdworks/hyperproviders-go` to `v0.23.0`, `github.com/herdworks/hypertemplates-go` to `v0.30.0`, `github.com/herdworks/hypertexting-go` to `v0.34.0`, `github.com/herdworks/hyperfeed-go` to `v0.20.0`, and `github.com/herdworks/hypergraph-go` to `v0.19.1`.
+* `hypertexting-go` updates include the `Build` / `BuildConfig` API, explicit writer logging APIs, build-root path helper and reporting changes, typed attachment href handling with string JSON/YAML encoding, removal of built-in attachment link scraping, document attachment support, and generated Atom entry `related`/`enclosure` links with MIME type and length metadata.
+* `hyperfeed-go` `v0.20.0` improves Atom, RSS, and JSON Feed parser handling for related/external links versus enclosure attachments, deduplicates item attachments by normalized href, and fixes enclosure link classification.
+* `hypergraph-go` `v0.19.1` updates feed discovery to skip `.well-known` URIs.
 
 ## 0.21.0 (2026-05-27)
 
-Added support for 
+Added support for a "files" secret provider and removed the git provider `ssh_key_path` secret.
 
 * Added support for file-based secrets. 
   The files secret provider looks up secrets using the secret key as a file path, with support for absolute paths, and `./`, `../`, `~/`, `$HOME/`, or `${HOME}/` resolution.
