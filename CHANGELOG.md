@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+## 0.22.1 (2026-07-20)
+
 * Updated `github.com/herdworks/hypertexting-go` to `v0.36.3`, pulling in `.csv` discovery for site and theme static data directories, content type overlay/preview APIs, page data MIME-type helpers, and current feed-reader integration updates.
 * Updated `github.com/herdworks/hypertemplates-go` to `v0.32.0`, pulling in `TemplateData` mutation helpers and stricter mutation-path validation for add, replace, and append operations.
 * Updated `github.com/herdworks/hyperfeed-go` to `v0.26.5` and `github.com/herdworks/hypergraph-go` to `v0.22.3`, pulling in OPML/recommendations/following-link discovery improvements, following URL metadata persistence, and feed import/discovery fixes.
