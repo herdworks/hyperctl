@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	httheme "github.com/herdworks/hypertemplates-go/theme"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -25,7 +25,7 @@ func TestAssetListRowsUseWinningAssetSource(t *testing.T) {
 	root := t.TempDir()
 	website := &hypertexting.Website{
 		URI: &href.Href{URL: url.URL{Path: filepath.Join(root, "site.yaml")}},
-		Theme: hypertemplates.Theme{
+		Theme: httheme.Theme{
 			URI: &url.URL{Path: filepath.Join(root, "theme", "theme.json")},
 		},
 	}
@@ -63,7 +63,7 @@ func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
 	root := t.TempDir()
 	website := &hypertexting.Website{
 		URI: &href.Href{URL: url.URL{Path: filepath.Join(root, "site.yaml")}},
-		Theme: hypertemplates.Theme{
+		Theme: httheme.Theme{
 			URI: &url.URL{Path: filepath.Join(root, "theme", "theme.json")},
 		},
 	}

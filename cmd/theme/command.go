@@ -15,6 +15,7 @@ func Command() *cli.Command {
 			ThemeListCommand(),
 			ThemeInstallCommand(),
 			ThemePackageCommand(),
+			ThemeMigrateCommand(),
 		},
 	}
 }

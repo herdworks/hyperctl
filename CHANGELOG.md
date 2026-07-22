@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Added `hyperctl theme migrate` with explicit theme selection, optional complete-theme output directories, interactive review, `ht-param` migration, and optional `ht-debug` cleanup.
+* Updated command implementations for HyperTemplates' focused `theme` and `files` APIs while retaining the existing `hyperctl dev render` behavior.
+
 ## 0.22.1 (2026-07-20)
 
 * Updated `github.com/herdworks/hypertexting-go` to `v0.36.3`, pulling in `.csv` discovery for site and theme static data directories, content type overlay/preview APIs, page data MIME-type helpers, and current feed-reader integration updates.

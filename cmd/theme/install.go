@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	cli "github.com/herdworks/cli-go"
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	httheme "github.com/herdworks/hypertemplates-go/theme"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -44,7 +44,7 @@ func ThemeInstallCommand() *cli.Command {
 
 func ThemeInstallCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
-	var theme hypertemplates.Theme
+	var theme httheme.Theme
 	var reader *zip.ReadCloser
 
 	// Load the website configuration.
@@ -92,7 +92,7 @@ func ThemeInstallCommandHandler(cmd *cli.Command) (err error) {
 }
 
 // readThemeFromZip finds and unmarshals theme.json from the root of a zip archive.
-func readThemeFromZip(reader *zip.ReadCloser) (theme hypertemplates.Theme, err error) {
+func readThemeFromZip(reader *zip.ReadCloser) (theme httheme.Theme, err error) {
 	for _, f := range reader.File {
 		if f.Name != "theme.json" {
 			continue

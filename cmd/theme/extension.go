@@ -1,10 +1,10 @@
 package theme
 
 import (
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	httheme "github.com/herdworks/hypertemplates-go/theme"
 )
 
-type Themes []hypertemplates.Theme
+type Themes []httheme.Theme
 
 func (themes Themes) ColumnValues(field string) []string {
 	values := []string{}

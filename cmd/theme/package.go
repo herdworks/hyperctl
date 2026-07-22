@@ -7,7 +7,7 @@ import (
 	"os"
 
 	cli "github.com/herdworks/cli-go"
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	httheme "github.com/herdworks/hypertemplates-go/theme"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -49,7 +49,7 @@ func ThemePackageCommand() *cli.Command {
 
 func ThemePackageCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
-	var theme hypertemplates.Theme = hypertemplates.Theme{URI: &url.URL{Path: cmd.Options.Get("theme")}}
+	var theme httheme.Theme = httheme.Theme{URI: &url.URL{Path: cmd.Options.Get("theme")}}
 	var archive string = cmd.Options.Get("file")
 
 	// Load the website configuration

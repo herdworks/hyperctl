@@ -17,7 +17,7 @@ import (
 	"github.com/google/uuid"
 
 	cli "github.com/herdworks/cli-go"
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	htfiles "github.com/herdworks/hypertemplates-go/files"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -218,7 +218,7 @@ func ServerCommandWatcher(server *Server, website *hypertexting.Website) (change
 	now := time.Now()
 	dir := filepath.Dir(server.ConfigFile)
 	buildpath := filepath.ToSlash(website.BuildsDirName())
-	paths, err := hypertemplates.ListFiles(dir, true)
+	paths, err := htfiles.List(dir, true)
 	if err != nil {
 		return 0, err
 	}
@@ -227,7 +227,7 @@ func ServerCommandWatcher(server *Server, website *hypertexting.Website) (change
 		if strings.HasPrefix(relPath, ".") || relPath == buildpath || strings.HasPrefix(relPath, buildpath+"/") {
 			continue
 		}
-		p, err := hypertemplates.LocalFilePath(dir, relPath)
+		p, err := htfiles.LocalPath(dir, relPath)
 		if err != nil {
 			return 0, err
 		}
