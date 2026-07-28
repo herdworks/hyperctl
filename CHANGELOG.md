@@ -6,14 +6,17 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Added `hyperctl theme migrate` with explicit theme selection, optional complete-theme output directories, interactive review, `ht-param` migration, and optional `ht-debug` cleanup.
-* Updated command implementations for HyperTemplates' focused `theme` and `files` APIs while retaining the existing `hyperctl dev render` behavior.
+Updates `hyperctl` to use the next-generation templating directives from the `hypertemplates-go` v0.33.x and `hypertexting-go` v0.37.x releases, and adds a new `hyperctl theme migrate` command for migrating themes with legacy directives.
+
+* **BREAKING:** Theme rendering now uses HyperTemplates' typed `${ ... }` variable expressions and current directive model. Replace removed legacy directives with their migrated equivalents, and update CSS interpolation from `--ht-value(...)` to `--ht-var(...)`.
+* Added `hyperctl theme migrate` with idempotent migration of legacy `ht-not`, `ht-template`, `ht-attr`, `ht-param`, `ht-content`, `ht-query`, and `ht-pipe` declarations. It supports explicit theme selection, optional complete-theme output directories, and interactive review; unsupported constructs and optional `ht-debug` cleanup are reported with actionable locations.
+* Updated HyperTexting to v0.37.0 and HyperTemplates to v0.33.1 for the current theme, file, and directive APIs.
 
 ## 0.22.1 (2026-07-20)
 
-* Updated `github.com/herdworks/hypertexting-go` to `v0.36.3`, pulling in `.csv` discovery for site and theme static data directories, content type overlay/preview APIs, page data MIME-type helpers, and current feed-reader integration updates.
-* Updated `github.com/herdworks/hypertemplates-go` to `v0.32.0`, pulling in `TemplateData` mutation helpers and stricter mutation-path validation for add, replace, and append operations.
-* Updated `github.com/herdworks/hyperfeed-go` to `v0.26.5` and `github.com/herdworks/hypergraph-go` to `v0.22.3`, pulling in OPML/recommendations/following-link discovery improvements, following URL metadata persistence, and feed import/discovery fixes.
+* Updated `github.com/herdworks/hypertemplates-go` to `v0.32.0`, adding `TemplateData` mutation helpers and stricter mutation-path validation for add, replace, and append operations.
+* Updated `github.com/herdworks/hypertexting-go` to `v0.36.3`, adding `.csv` discovery for site and theme static data directories, content-type overlay and preview APIs, page-data MIME-type helpers, and feed-reader integration updates.
+* Updated `github.com/herdworks/hyperfeed-go` to `v0.26.5` and `github.com/herdworks/hypergraph-go` to `v0.22.3`, adding following/recommendation discovery improvements, following URL metadata persistence, and feed import/discovery fixes.
 
 ## 0.22.0 (2026-06-03)
 
