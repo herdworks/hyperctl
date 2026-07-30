@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+## v0.23.0 (2026-07-30)
+
 Updates `hyperctl` to use the next-generation templating directives from the `hypertemplates-go` v0.35.0 and `hypertexting-go` v0.38.0 releases, and adds `hyperctl theme migrate` for migrating themes with legacy directives.
 
 * **BREAKING:** Theme rendering now uses HyperTemplates' typed `${ ... }` variable expressions and current directive model. Replace removed legacy directives with their migrated equivalents, and update CSS interpolation from `--ht-value(...)` to `--ht-var(...)`.
