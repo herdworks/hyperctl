@@ -6,11 +6,11 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-Updates `hyperctl` to use the next-generation templating directives from the `hypertemplates-go` v0.33.x and `hypertexting-go` v0.37.x releases, and adds a new `hyperctl theme migrate` command for migrating themes with legacy directives.
+Updates `hyperctl` to use the next-generation templating directives from the `hypertemplates-go` v0.35.0 and `hypertexting-go` v0.38.0 releases, and adds `hyperctl theme migrate` for migrating themes with legacy directives.
 
 * **BREAKING:** Theme rendering now uses HyperTemplates' typed `${ ... }` variable expressions and current directive model. Replace removed legacy directives with their migrated equivalents, and update CSS interpolation from `--ht-value(...)` to `--ht-var(...)`.
-* Added `hyperctl theme migrate` with idempotent migration of legacy `ht-not`, `ht-template`, `ht-attr`, `ht-param`, `ht-content`, `ht-query`, and `ht-pipe` declarations. It supports explicit theme selection, optional complete-theme output directories, and interactive review; unsupported constructs and optional `ht-debug` cleanup are reported with actionable locations.
-* Updated HyperTexting to v0.37.0 and HyperTemplates to v0.33.1 for the current theme, file, and directive APIs.
+* Added `hyperctl theme migrate` with idempotent migration of legacy `ht-not`, `ht-template`, `ht-attr`, `ht-param`, `ht-content`, and `ht-query` declarations. Push-based `ht-pipe` declarations are reported for manual conversion to destination-side `ht-pipe='from "<selector>" as <type>'` directives. It supports explicit theme selection, optional complete-theme output directories, and interactive review; unsupported constructs and optional `ht-debug` cleanup are reported with actionable locations.
+* Updated HyperTexting to v0.38.0 and HyperTemplates to v0.35.0 for the current theme, file, and directive APIs.
 
 ## 0.22.1 (2026-07-20)
 
