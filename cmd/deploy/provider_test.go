@@ -8,12 +8,12 @@ import (
 )
 
 func TestDeploymentEnvironment(t *testing.T) {
-	production := hyperproviders.HostingEnvironment{"pages"}
+	production := hyperproviders.Environment{"pages"}
 	website := &hypertexting.Website{
 		Providers: hyperproviders.HostingProviders{
 			"pages": {Kind: "git", Endpoint: "https://example.com"},
 		},
-		Environments: map[string]*hyperproviders.HostingEnvironment{
+		Environments: map[string]*hyperproviders.Environment{
 			"production": &production,
 		},
 	}
@@ -55,12 +55,12 @@ func TestDeploymentEnvironmentProvidersList(t *testing.T) {
 }
 
 func TestDeploymentEnvironmentDefault(t *testing.T) {
-	defaultEnv := hyperproviders.HostingEnvironment{"default"}
+	defaultEnv := hyperproviders.Environment{"default"}
 	website := &hypertexting.Website{
 		Providers: hyperproviders.HostingProviders{
 			"default": {Kind: "git", Endpoint: "https://example.com"},
 		},
-		Environments: map[string]*hyperproviders.HostingEnvironment{
+		Environments: map[string]*hyperproviders.Environment{
 			"default": &defaultEnv,
 		},
 	}
@@ -91,27 +91,24 @@ func TestParseProviderNames(t *testing.T) {
 	}
 }
 
-func TestDeploymentMode(t *testing.T) {
-	if got := deploymentMode(false); got != hyperproviders.DeploymentModeReplacement {
-		t.Fatalf("deploymentMode(false) = %q, want replacement", got)
+func TestDeploymentKind(t *testing.T) {
+	if got := deploymentKind(false); got != hyperproviders.CompleteDeployment {
+		t.Fatalf("deploymentKind(false) = %q, want complete", got)
 	}
-	if got := deploymentMode(true); got != hyperproviders.DeploymentModeOverlay {
-		t.Fatalf("deploymentMode(true) = %q, want overlay", got)
+	if got := deploymentKind(true); got != hyperproviders.IncrementalDeployment {
+		t.Fatalf("deploymentKind(true) = %q, want incremental", got)
 	}
 }
 
-func TestDeploymentSessionUsesEnvThenFilesSecrets(t *testing.T) {
-	session := deploymentSession(nil)
-	if session == nil {
-		t.Fatal("deploymentSession returned nil")
+func TestDeploymentSecretsUsesEnvThenFilesSecrets(t *testing.T) {
+	secrets := DeploymentSecrets(nil)
+	if len(secrets) != 2 {
+		t.Fatalf("SecretProviders len = %d, want 2", len(secrets))
 	}
-	if len(session.SecretProviders) != 2 {
-		t.Fatalf("SecretProviders len = %d, want 2", len(session.SecretProviders))
-	}
-	if got := session.SecretProviders[0].Name(); got != "env" {
+	if got := secrets[0].Name(); got != "env" {
 		t.Fatalf("SecretProviders[0].Name() = %q, want env", got)
 	}
-	if got := session.SecretProviders[1].Name(); got != "files" {
+	if got := secrets[1].Name(); got != "files" {
 		t.Fatalf("SecretProviders[1].Name() = %q, want files", got)
 	}
 }

@@ -8,6 +8,7 @@ import (
 	cms "github.com/herdworks/hyperctl/cmd/cms"
 	deploy "github.com/herdworks/hyperctl/cmd/deploy"
 	dev "github.com/herdworks/hyperctl/cmd/dev"
+	sync "github.com/herdworks/hyperctl/cmd/sync"
 	theme "github.com/herdworks/hyperctl/cmd/theme"
 	version "github.com/herdworks/hyperctl/cmd/version"
 )
@@ -21,6 +22,7 @@ var HyperCTL = &cli.CLI{
 		theme.Command(),
 		build.Command(),
 		deploy.Command(),
+		sync.Command(),
 		dev.Command(),
 	},
 	Options: cli.CommandOptions{

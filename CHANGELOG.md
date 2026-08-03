@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* **Added:** `hyperctl sync` commands for hsync checkout workflows: `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
+* **Changed:** `hyperctl deploy` now uses the hsync-enabled deployment lifecycle. Sites with `site.sync` prepare synchronization artifacts before provider deployment and finalize their local synchronization state only after every provider succeeds.
+* **Changed:** Updated HyperSync to v0.2.0, HyperProviders to v0.25.1, HyperTexting to v0.39.0, and HyperGraph to v0.23.1.
+
 ## v0.23.0 (2026-07-30)
 
 Updates `hyperctl` to use the next-generation templating directives from the `hypertemplates-go` v0.35.0 and `hypertexting-go` v0.38.0 releases, and adds `hyperctl theme migrate` for migrating themes with legacy directives.

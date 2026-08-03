@@ -1,14 +1,11 @@
 package deploy
 
 import (
-	"context"
 	"fmt"
-	"io"
 	"path/filepath"
 	"strings"
 
 	hyperproviders "github.com/herdworks/hyperproviders-go"
-	"github.com/herdworks/hyperproviders-go/hosting"
 	envsecrets "github.com/herdworks/hyperproviders-go/providers/env"
 	filesecrets "github.com/herdworks/hyperproviders-go/providers/files"
 	_ "github.com/herdworks/hyperproviders-go/providers/git"
@@ -18,7 +15,7 @@ import (
 
 const defaultEnvironment = "default"
 
-func deploymentEnvironment(website *hypertexting.Website, environmentName, providerNames string) (*hyperproviders.HostingEnvironment, string, error) {
+func deploymentEnvironment(website *hypertexting.Website, environmentName, providerNames string) (*hyperproviders.Environment, string, error) {
 	if environmentName != "" && providerNames != "" {
 		return nil, "", fmt.Errorf("--providers and --environment are mutually exclusive")
 	}
@@ -41,22 +38,11 @@ func deploymentEnvironment(website *hypertexting.Website, environmentName, provi
 	return env, environmentName, nil
 }
 
-func deployEnvironment(ctx context.Context, website *hypertexting.Website, environment *hyperproviders.HostingEnvironment, environmentName, root string, mode hyperproviders.DeploymentMode) (err error) {
-	ctx = hosting.WithDeploymentRoot(ctx, root)
-	var w io.Writer
-	if environmentName != "" {
-		var finish func(error)
-		ctx, w, finish = hosting.BeginDeployment(ctx, environmentName, nil)
-		defer func() { finish(err) }()
-	}
-	return environment.Deploy(ctx, website.Providers, root, deploymentSession(website), mode, w)
-}
-
-func deploymentMode(incremental bool) hyperproviders.DeploymentMode {
+func deploymentKind(incremental bool) hyperproviders.DeploymentKind {
 	if incremental {
-		return hyperproviders.DeploymentModeOverlay
+		return hyperproviders.IncrementalDeployment
 	}
-	return hyperproviders.DeploymentModeReplacement
+	return hyperproviders.CompleteDeployment
 }
 
 func parseProviderNames(value string) []string {
@@ -72,13 +58,11 @@ func parseProviderNames(value string) []string {
 	return names
 }
 
-func deploymentSession(website *hypertexting.Website) *hyperproviders.Session {
+func DeploymentSecrets(website *hypertexting.Website) hyperproviders.SecretsProviders {
 	fileSecrets := filesecrets.New()
 	if website != nil && website.URI != nil && website.URI.Path != "" {
 		fileSecrets = filesecrets.NewWithBaseDirectory(filepath.Dir(website.URI.Path))
 	}
 
-	return &hyperproviders.Session{
-		SecretProviders: []hyperproviders.SecretProvider{envsecrets.New(), fileSecrets},
-	}
+	return hyperproviders.SecretsProviders{envsecrets.New(), fileSecrets}
 }

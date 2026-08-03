@@ -3,11 +3,14 @@ package deploy
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/url"
 	"path/filepath"
 
 	"github.com/google/uuid"
 	cli "github.com/herdworks/cli-go"
+	hsync "github.com/herdworks/hsync"
+	hyperproviders "github.com/herdworks/hyperproviders-go"
 	hypertexting "github.com/herdworks/hypertexting-go"
 	href "github.com/herdworks/hypertexting-go/href"
 )
@@ -141,11 +144,32 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err = build.Execute(context.TODO()); err != nil {
 		return err
 	}
-	environment, environmentName, err := deploymentEnvironment(website, cmd.Options.Get("environment"), cmd.Options.Get("providers"))
+	environment, environmentName, err := deploymentEnvironment(build.Website, cmd.Options.Get("environment"), cmd.Options.Get("providers"))
 	if err != nil {
 		return err
 	}
-	if err = deployEnvironment(context.TODO(), website, environment, environmentName, build.URI.Path, deploymentMode(incremental)); err != nil {
+	var providers hyperproviders.HostingProviders
+	if environmentName == "" {
+		providers, err = environment.Select(build.Website.Providers)
+		if err != nil {
+			return err
+		}
+	}
+	ctx := hyperproviders.WithDeploymentRoot(context.TODO(), build.URI.Path)
+	var writer io.Writer
+	var finish func(error)
+	if environmentName != "" {
+		ctx, writer, finish = hyperproviders.BeginDeployment(ctx, environmentName, nil)
+		defer func() { finish(err) }()
+	}
+	deployment := hsync.Deployment{
+		ConfigPath:  build.Website.URI.Path,
+		PayloadPath: build.URI.Path,
+		Providers:   providers,
+		Environment: environmentName,
+		Kind:        deploymentKind(incremental),
+	}
+	if err = deployment.Execute(ctx, DeploymentSecrets(build.Website), writer); err != nil {
 		return err
 	}
 	fmt.Printf("\nBuild \"%s\" deployed\n", buildID)
