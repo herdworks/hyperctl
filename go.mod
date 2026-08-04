@@ -3,17 +3,18 @@
 // reference: https://go.dev/doc/modules/gomod-ref#replace
 module github.com/herdworks/hyperctl
 
-go 1.26
+go 1.26.2
 
 // first-party dependencies
 require (
 	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hsync v0.2.0
+	github.com/herdworks/hsync v0.3.1
+	github.com/herdworks/htskills v0.2.0
 	github.com/herdworks/hyperfeed-go v0.26.5 // indirect
 	github.com/herdworks/hypergraph-go v0.23.1
-	github.com/herdworks/hyperproviders-go v0.25.1
-	github.com/herdworks/hypertemplates-go v0.35.0
-	github.com/herdworks/hypertexting-go v0.39.0
+	github.com/herdworks/hyperproviders-go v0.26.0
+	github.com/herdworks/hypertemplates-go v0.36.0
+	github.com/herdworks/hypertexting-go v0.40.0
 )
 
 // direct dependencies
@@ -84,5 +85,5 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.1
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

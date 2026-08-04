@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	cli "github.com/herdworks/cli-go"
+	agent "github.com/herdworks/hyperctl/cmd/agent"
 	build "github.com/herdworks/hyperctl/cmd/build"
 	cms "github.com/herdworks/hyperctl/cmd/cms"
 	deploy "github.com/herdworks/hyperctl/cmd/deploy"
@@ -16,8 +17,9 @@ import (
 var HyperCTL = &cli.CLI{
 	Name:        "hyperctl",
 	Version:     fmt.Sprintf("%s (%s)", version.CLIVersion, version.CLIReleaseDate),
-	Description: "hyperctl is a simple static site generator.",
+	Description: "The HyperTexting CLI.",
 	Commands: []*cli.Command{
+		agent.Command(),
 		cms.Command(),
 		theme.Command(),
 		build.Command(),
