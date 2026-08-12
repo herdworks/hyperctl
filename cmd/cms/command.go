@@ -1,17 +1,17 @@
 package cms
 
-import cli "github.com/herdworks/cli-go"
+import "github.com/herdworks/clif"
 
-func Command() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func Command() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "cms",
 			Description: "Content management tools",
 			Usage:       "hyperctl cms [command] [options]",
 			Handler:     NewCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			NewCommand(),
 			AssetCommand(),
 			ContentTypeCommand(),

@@ -24,17 +24,17 @@ function version() {
 function build_cli() {
     VERSION=${1:-"v0.0.0"}
     echo "\nBuilding hyperctl_${VERSION}_linux_arm64"
-    CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_linux_arm64" .
+    CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_linux_arm64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_linux_amd64"
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_linux_amd64" .
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_linux_amd64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_windows_arm64"
-    CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_windows_arm64" .
+    CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_windows_arm64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_windows_amd64"
-    CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_windows_amd64" .
+    CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_windows_amd64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_darwin_arm64"
-    CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_darwin_arm64" .
+    CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_darwin_arm64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_darwin_amd64"
-    CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_darwin_amd64" .
+    CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -o "builds/bin/hyperctl_${VERSION}_darwin_amd64" ./cmd/hyperctl
     echo "\nBuilding hyperctl_${VERSION}_darwin_universal"
     lipo -create builds/bin/hyperctl_${VERSION}_darwin_amd64 builds/bin/hyperctl_${VERSION}_darwin_arm64 -output builds/bin/hyperctl_${VERSION}_darwin_universal
     echo "\nCopying builds/bin/hyperctl_${VERSION}_darwin_universal to builds/bin/hyperctl"

@@ -1,17 +1,17 @@
 package theme
 
-import cli "github.com/herdworks/cli-go"
+import "github.com/herdworks/clif"
 
-func Command() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func Command() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "theme",
 			Description: "Theme management tools",
 			Usage:       "hyperctl theme [command] [options]",
 			Handler:     ThemeCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			ThemeListCommand(),
 			ThemeInstallCommand(),
 			ThemePackageCommand(),
@@ -20,7 +20,7 @@ func Command() *cli.Command {
 	}
 }
 
-func ThemeCommandHandler(cmd *cli.Command) (err error) {
+func ThemeCommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }

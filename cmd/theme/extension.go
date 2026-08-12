@@ -1,7 +1,7 @@
 package theme
 
 import (
-	httheme "github.com/herdworks/hypertemplates-go/theme"
+	httheme "github.com/herdworks/httt/theme"
 )
 
 type Themes []httheme.Theme

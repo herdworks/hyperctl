@@ -8,23 +8,23 @@ import (
 	"os"
 	"path/filepath"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 	hsync "github.com/herdworks/hsync"
 )
 
 // Command groups synchronization operations for a checked-out website.
-func Command() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func Command() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "sync",
 			Description: "Synchronize checked-out websites.",
 			Usage:       "hyperctl sync [command] [options]",
-			Handler: func(cmd *cli.Command) error {
+			Handler: func(cmd *clif.Command) error {
 				cmd.Help(nil)
 				return nil
 			},
 		},
-		SubCommands: cli.Commands{
+		SubCommands: clif.Commands{
 			downloadCommand(),
 			initCommand(),
 			pullCommand(),
@@ -35,18 +35,18 @@ func Command() *cli.Command {
 	}
 }
 
-func downloadCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func downloadCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "download",
 		Description: "Download a website.",
 		Usage:       "hyperctl sync download <url> <directory>",
-		Validator: func(cmd *cli.Command) error {
+		Validator: func(cmd *clif.Command) error {
 			if len(cmd.Args) != 2 {
 				return fmt.Errorf("download requires a URL and destination directory")
 			}
 			return nil
 		},
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			source, err := parseHTTPURL(cmd.Args[0])
 			if err != nil {
 				return fmt.Errorf("invalid URL %q", cmd.Args[0])
@@ -61,30 +61,30 @@ func downloadCommand() *cli.Command {
 	}}
 }
 
-func initCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func initCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "init",
 		Description: "Initialize a website for synchronization.",
 		Usage:       "hyperctl sync init <remote> [--config site.yaml]",
-		Validator: func(cmd *cli.Command) error {
+		Validator: func(cmd *clif.Command) error {
 			if len(cmd.Args) != 1 {
 				return fmt.Errorf("init requires one remote URL")
 			}
 			return nil
 		},
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			return hsync.InitializeConfig(cmd.Options.Get("config"), cmd.Args[0])
 		},
 	}, Options: configOption("Configuration file to create.")}
 }
 
-func pullCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func pullCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "pull",
 		Description: "Pull remote changes into the workspace.",
 		Usage:       "hyperctl sync pull [directory] [--config site.yaml]",
 		Validator:   atMostOneDirectory,
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			config, err := commandSyncConfig(commandDirectory(cmd), cmd.Options.Get("config"))
 			if err != nil {
 				return err
@@ -99,12 +99,12 @@ func pullCommand() *cli.Command {
 	}, Options: configOption("Website YAML or JSON configuration.")}
 }
 
-func pushCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func pushCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "push",
 		Description: "Push local changes to the remote.",
 		Usage:       "hyperctl sync push [directory] [--config site.yaml] [options]",
-		Validator: func(cmd *cli.Command) error {
+		Validator: func(cmd *clif.Command) error {
 			if err := atMostOneDirectory(cmd); err != nil {
 				return err
 			}
@@ -113,7 +113,7 @@ func pushCommand() *cli.Command {
 			}
 			return nil
 		},
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			config, err := commandSyncConfig(commandDirectory(cmd), cmd.Options.Get("config"))
 			if err != nil {
 				return err
@@ -125,18 +125,18 @@ func pushCommand() *cli.Command {
 			})
 		},
 	}, Options: append(configOption("Website YAML or JSON configuration."),
-		&cli.CommandOption{Name: "environment", ShortName: "e", Description: "Deployment environment from config.environments."},
-		&cli.CommandOption{Name: "providers", Description: "Comma-separated provider names from config.providers."},
+		&clif.CommandOption{Name: "environment", ShortName: "e", Description: "Deployment environment from config.environments."},
+		&clif.CommandOption{Name: "providers", Description: "Comma-separated provider names from config.providers."},
 	)}
 }
 
-func resetCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func resetCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "reset",
 		Description: "Reset modified files in the workspace.",
 		Usage:       "hyperctl sync reset [directory] [--config site.yaml] [--interactive]",
 		Validator:   atMostOneDirectory,
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			config, err := commandSyncConfig(commandDirectory(cmd), cmd.Options.Get("config"))
 			if err != nil {
 				return err
@@ -152,16 +152,16 @@ func resetCommand() *cli.Command {
 			fmt.Println(result.ManifestID)
 			return nil
 		},
-	}, Options: append(configOption("Website YAML or JSON configuration."), &cli.CommandOption{Name: "interactive", ShortName: "i", Description: "Choose each tracked file to restore.", Boolean: true})}
+	}, Options: append(configOption("Website YAML or JSON configuration."), &clif.CommandOption{Name: "interactive", ShortName: "i", Description: "Choose each tracked file to restore.", Boolean: true})}
 }
 
-func statusCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{
+func statusCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{
 		Name:        "status",
 		Description: "List modified files in the workspace.",
 		Usage:       "hyperctl sync status [directory] [--config site.yaml]",
 		Validator:   atMostOneDirectory,
-		Handler: func(cmd *cli.Command) error {
+		Handler: func(cmd *clif.Command) error {
 			config, err := commandSyncConfig(commandDirectory(cmd), cmd.Options.Get("config"))
 			if err != nil {
 				return err
@@ -183,8 +183,8 @@ func statusCommand() *cli.Command {
 	}, Options: configOption("Website YAML or JSON configuration.")}
 }
 
-func configOption(description string) cli.CommandOptions {
-	return cli.CommandOptions{{Name: "config", ShortName: "c", EnvName: "HYPER_CONFIG", Description: description, Default: "site.yaml"}}
+func configOption(description string) clif.CommandOptions {
+	return clif.CommandOptions{{Name: "config", ShortName: "c", EnvName: "HYPER_CONFIG", Description: description, Default: "site.yaml"}}
 }
 
 func commandSyncConfig(directory, configPath string) (hsync.RepositoryConfig, error) {
@@ -207,14 +207,14 @@ func commandSyncConfig(directory, configPath string) (hsync.RepositoryConfig, er
 	return config, nil
 }
 
-func atMostOneDirectory(cmd *cli.Command) error {
+func atMostOneDirectory(cmd *clif.Command) error {
 	if len(cmd.Args) > 1 {
 		return fmt.Errorf("%s accepts at most one directory", cmd.Config.Name)
 	}
 	return nil
 }
 
-func commandDirectory(cmd *cli.Command) string {
+func commandDirectory(cmd *clif.Command) string {
 	if len(cmd.Args) == 1 {
 		return cmd.Args[0]
 	}

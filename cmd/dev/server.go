@@ -16,23 +16,23 @@ import (
 
 	"github.com/google/uuid"
 
-	cli "github.com/herdworks/cli-go"
-	htfiles "github.com/herdworks/hypertemplates-go/files"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	htfiles "github.com/herdworks/httt/files"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func ServerCommand() *cli.Command {
+func ServerCommand() *clif.Command {
 	id := uuid.New()
-	return &cli.Command{
-		Config: cli.CommandConfig{
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "server",
 			Description: "Live-reloading development server.",
 			Usage:       "hyperctl dev server [options] [content]",
 			Validator:   ServerCommandValidator,
 			Handler:     ServerCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -110,12 +110,12 @@ func ServerCommand() *cli.Command {
 	}
 }
 
-func ServerCommandValidator(cmd *cli.Command) (err error) {
+func ServerCommandValidator(cmd *clif.Command) (err error) {
 	return nil
 }
 
 // TODO: this thing was only meant to be a temporary prototype; need refactoring
-func ServerCommandHandler(cmd *cli.Command) (err error) {
+func ServerCommandHandler(cmd *clif.Command) (err error) {
 	var server Server = Server{Hostname: cmd.Options.Get("host")}
 	if server.Port, err = strconv.Atoi(cmd.Options.Get("port")); err != nil {
 		return fmt.Errorf("invalid port: %s", cmd.Options.Get("port"))
@@ -129,13 +129,13 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	server.ConfigFile = cmd.Options.Get("config")
 	server.Duration = time.Duration(server.Interval) * time.Second
 	server.WatchedFiles = map[string]fs.FileInfo{}
-	server.WebsiteConfig = &hypertexting.WebsiteConfig{
+	server.WebsiteConfig = &htxt.WebsiteConfig{
 		ContentDirectory: cmd.Options.Get("content-dir"),
 		DataDirectory:    cmd.Options.Get("data-dir"),
 		StaticDirectory:  cmd.Options.Get("static-dir"),
 		ThemePath:        cmd.Options.Get("theme"),
 	}
-	buildConfig := hypertexting.BuildConfig{
+	buildConfig := htxt.BuildConfig{
 		WebsiteConfig: *server.WebsiteConfig,
 		BaseURL:       server.URL.String(),
 		DataFile:      cmd.Options.Get("data-file"),
@@ -146,11 +146,11 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	if err != nil {
 		return err
 	}
-	website := &hypertexting.Website{URI: websiteURI}
+	website := &htxt.Website{URI: websiteURI}
 	if err = website.Load(false, server.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	server.Build = &hypertexting.Build{
+	server.Build = &htxt.Build{
 		URI:     &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
 		ID:      cmd.Options.Get("id"),
 		Website: website,
@@ -212,7 +212,7 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ServerCommandWatcher(server *Server, website *hypertexting.Website) (changecount int, err error) {
+func ServerCommandWatcher(server *Server, website *htxt.Website) (changecount int, err error) {
 	changecount = 0
 	now := time.Now()
 	dir := filepath.Dir(server.ConfigFile)
@@ -259,8 +259,8 @@ func ServerCommandWatcher(server *Server, website *hypertexting.Website) (change
 
 type Server struct {
 	ConfigFile    string
-	WebsiteConfig *hypertexting.WebsiteConfig
-	Build         *hypertexting.Build
+	WebsiteConfig *htxt.WebsiteConfig
+	Build         *htxt.Build
 	Interval      int
 	Duration      time.Duration
 	WatchedFiles  map[string]fs.FileInfo

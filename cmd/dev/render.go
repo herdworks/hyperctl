@@ -3,20 +3,20 @@ package dev
 import (
 	"fmt"
 
-	cli "github.com/herdworks/cli-go"
-	hypertemplates "github.com/herdworks/hypertemplates-go"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/httt"
 )
 
-func RenderCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func RenderCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "render",
 			Description: "HyperTemplate rendering utilities.",
 			Usage:       "hyperctl dev render [options]",
 			Validator:   RenderCommandValidator,
 			Handler:     RenderCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "data",
 				ShortName:   "d",
@@ -49,17 +49,17 @@ func RenderCommand() *cli.Command {
 	}
 }
 
-func RenderCommandValidator(cmd *cli.Command) (err error) {
+func RenderCommandValidator(cmd *clif.Command) (err error) {
 	return nil
 }
 
-func RenderCommandHandler(cmd *cli.Command) (err error) {
-	html, err := hypertemplates.Render(
+func RenderCommandHandler(cmd *clif.Command) (err error) {
+	html, err := httt.Render(
 		cmd.Options.Get("data"),
 		cmd.Options.Get("layout"),
 		cmd.Options.Get("theme"),
 		cmd.Options.Get("untidy") == "true",
-		&hypertemplates.DefaultHyperMarkConfig,
+		&httt.DefaultHyperMarkConfig,
 		nil,
 	)
 	if err != nil {

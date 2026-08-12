@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	httheme "github.com/herdworks/hypertemplates-go/theme"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	httheme "github.com/herdworks/httt/theme"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
 func writeAssetListTestFile(t *testing.T, path string, body string) {
@@ -23,7 +23,7 @@ func writeAssetListTestFile(t *testing.T, path string, body string) {
 
 func TestAssetListRowsUseWinningAssetSource(t *testing.T) {
 	root := t.TempDir()
-	website := &hypertexting.Website{
+	website := &htxt.Website{
 		URI: &href.Href{URL: url.URL{Path: filepath.Join(root, "site.yaml")}},
 		Theme: httheme.Theme{
 			URI: &url.URL{Path: filepath.Join(root, "theme", "theme.json")},
@@ -34,9 +34,9 @@ func TestAssetListRowsUseWinningAssetSource(t *testing.T) {
 	writeAssetListTestFile(t, filepath.Join(website.ContentDirPath(), "shared.css"), "page")
 	website.Theme.Assets = []string{"shared.css"}
 	website.Assets = []string{"shared.css"}
-	page := &hypertexting.Page{Assets: []string{"shared.css"}}
+	page := &htxt.Page{Assets: []string{"shared.css"}}
 
-	entries, err := hypertexting.AssetEntries(&website.Theme, website, hypertexting.Pages{page})
+	entries, err := htxt.AssetEntries(&website.Theme, website, htxt.Pages{page})
 	if err != nil {
 		t.Fatalf("AssetEntries returned error: %v", err)
 	}
@@ -61,7 +61,7 @@ func TestAssetListRowsUseWinningAssetSource(t *testing.T) {
 
 func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
 	root := t.TempDir()
-	website := &hypertexting.Website{
+	website := &htxt.Website{
 		URI: &href.Href{URL: url.URL{Path: filepath.Join(root, "site.yaml")}},
 		Theme: httheme.Theme{
 			URI: &url.URL{Path: filepath.Join(root, "theme", "theme.json")},
@@ -69,9 +69,9 @@ func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
 	}
 	website.Theme.Assets = []string{"shared.css", "theme-only.css"}
 	website.Assets = []string{"shared.css"}
-	page := &hypertexting.Page{Assets: []string{"shared.css"}}
+	page := &htxt.Page{Assets: []string{"shared.css"}}
 
-	candidates, err := hypertexting.AssetCandidates(&website.Theme, website, hypertexting.Pages{page})
+	candidates, err := htxt.AssetCandidates(&website.Theme, website, htxt.Pages{page})
 	if err != nil {
 		t.Fatalf("AssetCandidates returned error: %v", err)
 	}
@@ -80,10 +80,10 @@ func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
 	if len(matches) != 3 {
 		t.Fatalf("matches len = %d, want 3", len(matches))
 	}
-	wantSources := []hypertexting.AssetSource{
-		hypertexting.AssetSourceTheme,
-		hypertexting.AssetSourceWebsite,
-		hypertexting.AssetSourcePage,
+	wantSources := []htxt.AssetSource{
+		htxt.AssetSourceTheme,
+		htxt.AssetSourceWebsite,
+		htxt.AssetSourcePage,
 	}
 	for i, want := range wantSources {
 		if matches[i].Source != want {
@@ -96,7 +96,7 @@ func TestAssetLookupMatchesOrdersThemeWebsitePageWinnerLast(t *testing.T) {
 	}
 
 	themeOnly := assetLookupMatches(candidates, "theme-only.css")
-	if len(themeOnly) != 1 || themeOnly[0].Source != hypertexting.AssetSourceTheme {
+	if len(themeOnly) != 1 || themeOnly[0].Source != htxt.AssetSourceTheme {
 		t.Fatalf("theme-only matches = %#v, want one theme entry", themeOnly)
 	}
 

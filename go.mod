@@ -7,14 +7,15 @@ go 1.26.2
 
 // first-party dependencies
 require (
-	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hsync v0.3.2
+	github.com/herdworks/clif v0.2.0
+	github.com/herdworks/hq v0.24.0
+	github.com/herdworks/hsync v0.4.0
 	github.com/herdworks/htskills v0.3.0
-	github.com/herdworks/hyperfeed-go v0.26.5 // indirect
-	github.com/herdworks/hypergraph-go v0.23.1
-	github.com/herdworks/hyperproviders-go v0.26.0
-	github.com/herdworks/hypertemplates-go v0.36.0
-	github.com/herdworks/hypertexting-go v0.41.0
+	github.com/herdworks/httt v0.37.0
+	github.com/herdworks/htup v0.27.1
+	github.com/herdworks/htxt v0.42.0
+	github.com/herdworks/hyperfeed v0.27.0 // indirect
+	github.com/herdworks/hypermedia v0.2.0 // indirect
 )
 
 // direct dependencies
@@ -26,10 +27,10 @@ require (
 // local development dependencies (replacements)
 //
 // uncomment to use local dependencies
-// replace github.com/herdworks/hypergraph-go => ../hypergraph-go
-// replace github.com/herdworks/hyperproviders-go => ../hyperproviders-go
-// replace github.com/herdworks/hypertemplates-go => ../hypertemplates-go
-// replace github.com/herdworks/hypertexting-go => ../hypertexting-go
+// replace github.com/herdworks/hq => ../hq
+// replace github.com/herdworks/htup => ../htup
+// replace github.com/herdworks/httt => ../httt
+// replace github.com/herdworks/htxt => ../htxt
 
 // transitive dependencies
 require (
@@ -68,7 +69,6 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
-	github.com/herdworks/hyperfiles-go v0.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/pjbgf/sha1cd v0.3.2 // indirect

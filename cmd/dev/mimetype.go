@@ -6,30 +6,30 @@ import (
 	"os"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 )
 
-func MimetypeCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func MimetypeCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "mimetype",
 			Description: "Mimetype utilities.",
 			Usage:       "hyperctl dev mimetype [options] <path>",
 			Validator:   MimetypeCommandValidator,
 			Handler:     MimetypeCommandHandler,
 		},
-		Options: cli.CommandOptions{},
+		Options: clif.CommandOptions{},
 	}
 }
 
-func MimetypeCommandValidator(cmd *cli.Command) (err error) {
+func MimetypeCommandValidator(cmd *clif.Command) (err error) {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("expected exactly 1 argument, got %v (%s)", len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
 
-func MimetypeCommandHandler(cmd *cli.Command) (err error) {
+func MimetypeCommandHandler(cmd *clif.Command) (err error) {
 	var uri string = cmd.Args[0]
 	var file *os.File
 	var buffer []byte = make([]byte, 512)

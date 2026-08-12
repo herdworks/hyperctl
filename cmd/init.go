@@ -6,21 +6,21 @@ import (
 	"os"
 	"path/filepath"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func InitCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func InitCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "init",
 			Description: "Init a HyperTemplates website project.",
 			Usage:       "hyperctl init [options] [content]",
 			Validator:   InitCommandValidator,
 			Handler:     InitCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "base_url",
 				ShortName:   "u",
@@ -49,7 +49,7 @@ func InitCommand() *cli.Command {
 	}
 }
 
-func InitCommandValidator(cmd *cli.Command) (err error) {
+func InitCommandValidator(cmd *clif.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	config := filepath.Join(project, "site.json")
 	if _, err := os.Stat(config); err == nil {
@@ -58,18 +58,18 @@ func InitCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func InitCommandHandler(cmd *cli.Command) (err error) {
+func InitCommandHandler(cmd *clif.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	config := filepath.Join(project, "site.json")
 	uri, _ := href.Parse(config)
-	website := hypertexting.Website{
+	website := htxt.Website{
 		URI:         uri,
 		BaseURL:     cmd.Options.Get("base_url"),
 		Title:       cmd.Options.Get("title"),
 		Description: cmd.Options.Get("description"),
-		Links:       []hypertexting.HTMLLink{},
-		Metadata:    []hypertexting.HTMLMeta{},
-		Config:      hypertexting.WebsiteConfig{},
+		Links:       []htxt.HTMLLink{},
+		Metadata:    []htxt.HTMLMeta{},
+		Config:      htxt.WebsiteConfig{},
 	}
 	jsonBytes, err := json.Marshal(website)
 	if err != nil {

@@ -4,44 +4,44 @@ import (
 	"fmt"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 	hsync "github.com/herdworks/hsync"
-	hyperproviders "github.com/herdworks/hyperproviders-go"
-	hypermark "github.com/herdworks/hypertemplates-go/hypermark"
-	markdown "github.com/herdworks/hypertemplates-go/markdown"
-	theme "github.com/herdworks/hypertemplates-go/theme"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	jsonschema "github.com/herdworks/hypertexting-go/jsonschema"
+	"github.com/herdworks/httt/hypermark"
+	"github.com/herdworks/httt/markdown"
+	"github.com/herdworks/httt/theme"
+	"github.com/herdworks/htup"
+	"github.com/herdworks/htxt"
+	"github.com/herdworks/htxt/jsonschema"
 )
 
 var schemas = jsonschema.Registry{
-	hypertexting.Attachment{},
-	hypertexting.Byline{},
-	hypertexting.FeedConfig{},
-	hypertexting.FeedData{},
-	hypertexting.FeedSelector{},
-	hypertexting.HTMLLink{},
-	hypertexting.HTMLMeta{},
+	htxt.Attachment{},
+	htxt.Byline{},
+	htxt.FeedConfig{},
+	htxt.FeedData{},
+	htxt.FeedSelector{},
+	htxt.HTMLLink{},
+	htxt.HTMLMeta{},
 	markdown.HyperMarkConfig{},
 	hypermark.MentionConfig{},
-	hypertexting.Page{},
-	hyperproviders.HostingProvider{},
-	hyperproviders.FilterRules{},
-	hyperproviders.Secret{},
+	htxt.Page{},
+	htup.HostingProvider{},
+	htup.FilterRules{},
+	htup.Secret{},
 	hsync.SyncConfig{},
 	hsync.Rules{},
 	theme.Theme{},
-	hypertexting.Website{},
-	hypertexting.WebsiteConfig{},
-	hypertexting.WebsiteFavicon{},
+	htxt.Website{},
+	htxt.WebsiteConfig{},
+	htxt.WebsiteFavicon{},
 }
 
-func schemaCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "schema", Description: "Describe Hyperctl data and CLI contracts as JSON.", Usage: "hyperctl agent schema [command]", Handler: help}, SubCommands: cli.Commands{schemaListCommand(), schemaDescribeCommand()}}
+func schemaCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "schema", Description: "Describe Hyperctl data and CLI contracts as JSON.", Usage: "hyperctl agent schema [command]", Handler: help}, SubCommands: clif.Commands{schemaListCommand(), schemaDescribeCommand()}}
 }
 
-func schemaListCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "ls", Description: "List stable schema kinds.", Usage: "hyperctl agent schema ls", Handler: func(*cli.Command) error {
+func schemaListCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "ls", Description: "List stable schema kinds.", Usage: "hyperctl agent schema ls", Handler: func(*clif.Command) error {
 		if err := schemas.Validate(); err != nil {
 			return fail(err)
 		}
@@ -65,7 +65,7 @@ func (entries schemaEntries) ColumnValues(field string) (values []string) {
 }
 
 func schemaListOutput(entries schemaEntries) string {
-	namecol := (&cli.Command{}).ColumnWidth(entries, "Name", 1)
+	namecol := (&clif.Command{}).ColumnWidth(entries, "Name", 1)
 	var output strings.Builder
 	fmt.Fprintf(&output, "%-*s %s\n", namecol, "Name", "Description")
 	fmt.Fprintf(&output, "%-*s %s\n", namecol, "----", "-----------")
@@ -75,8 +75,8 @@ func schemaListOutput(entries schemaEntries) string {
 	return output.String()
 }
 
-func schemaDescribeCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "describe", Description: "Write one raw JSON Schema document.", Usage: "hyperctl agent schema describe <kind>", Handler: func(command *cli.Command) error {
+func schemaDescribeCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "describe", Description: "Write one raw JSON Schema document.", Usage: "hyperctl agent schema describe <kind>", Handler: func(command *clif.Command) error {
 		if err := oneArgument(command); err != nil {
 			return fail(err)
 		}
@@ -89,14 +89,14 @@ func schemaDescribeCommand() *cli.Command {
 	}}}
 }
 
-func oneArgument(command *cli.Command) error {
+func oneArgument(command *clif.Command) error {
 	if len(command.Args) != 1 {
 		return fmt.Errorf("expected exactly 1 argument, got %d", len(command.Args))
 	}
 	return nil
 }
 
-func noArguments(command *cli.Command) error {
+func noArguments(command *clif.Command) error {
 	if len(command.Args) != 0 {
 		return fmt.Errorf("expected no arguments, got %d", len(command.Args))
 	}

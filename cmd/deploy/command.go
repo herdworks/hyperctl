@@ -8,23 +8,23 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 	hsync "github.com/herdworks/hsync"
-	hyperproviders "github.com/herdworks/hyperproviders-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/htup"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func Command() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func Command() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "deploy",
 			Description: "Deployment management tools",
 			Usage:       "hyperctl deploy [options]",
 			Validator:   DeployCommandValidator,
 			Handler:     DeployCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -89,7 +89,7 @@ func Command() *cli.Command {
 	}
 }
 
-func DeployCommandValidator(cmd *cli.Command) (err error) {
+func DeployCommandValidator(cmd *clif.Command) (err error) {
 	incremental := cmd.Options.Get("incremental") == "true"
 	page := cmd.Options.Get("page")
 	if incremental && page == "" {
@@ -101,13 +101,13 @@ func DeployCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func DeployCommandHandler(cmd *cli.Command) (err error) {
+func DeployCommandHandler(cmd *clif.Command) (err error) {
 	var websiteURI *href.Href
-	var website *hypertexting.Website
+	var website *htxt.Website
 	var buildID string = uuid.New().String()
 	incremental := cmd.Options.Get("incremental") == "true"
-	config := hypertexting.BuildConfig{
-		WebsiteConfig: hypertexting.WebsiteConfig{
+	config := htxt.BuildConfig{
+		WebsiteConfig: htxt.WebsiteConfig{
 			ContentDirectory: cmd.Options.Get("content-dir"),
 			DataDirectory:    cmd.Options.Get("data-dir"),
 			StaticDirectory:  cmd.Options.Get("static-dir"),
@@ -120,19 +120,19 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
-	website = &hypertexting.Website{URI: websiteURI}
+	website = &htxt.Website{URI: websiteURI}
 	if err = website.Load(false, &config.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	var page *hypertexting.Page
+	var page *htxt.Page
 	if incremental {
 		pageURI, err := href.Parse(cmd.Options.Get("page"))
 		if err != nil {
 			return err
 		}
-		page = &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
+		page = &htxt.Page{URI: &pageURI.URL, Path: htxt.PagePath(website, &pageURI.URL)}
 	}
-	build := &hypertexting.Build{
+	build := &htxt.Build{
 		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
 		ID:          buildID,
 		Website:     website,
@@ -147,18 +147,18 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err != nil {
 		return err
 	}
-	var providers hyperproviders.HostingProviders
+	var providers htup.HostingProviders
 	if environmentName == "" {
 		providers, err = environment.Select(build.Website.Providers)
 		if err != nil {
 			return err
 		}
 	}
-	ctx := hyperproviders.WithDeploymentRoot(context.TODO(), build.URI.Path)
+	ctx := htup.WithDeploymentRoot(context.TODO(), build.URI.Path)
 	var writer io.Writer
 	var finish func(error)
 	if environmentName != "" {
-		ctx, writer, finish = hyperproviders.BeginDeployment(ctx, environmentName, nil)
+		ctx, writer, finish = htup.BeginDeployment(ctx, environmentName, nil)
 		defer func() { finish(err) }()
 	}
 	deployment := hsync.Deployment{

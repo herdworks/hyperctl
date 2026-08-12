@@ -9,43 +9,43 @@ import (
 	"os"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
-	"github.com/herdworks/hypertemplates-go/scripting"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/httt/scripting"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
 // hyperctl data
-func DataCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func DataCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "data",
 			Description: "Manage global template data.",
 			Usage:       "hyperctl cms data [command] [options]",
 			Handler:     DataCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			DataListCommand(),
 			DataInspectCommand(),
 		},
 	}
 }
-func DataCommandHandler(cmd *cli.Command) (err error) {
+func DataCommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl data ls
-func DataListCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func DataListCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "ls",
 			Description: "List build context namespaces (ht, build, env, site, data, theme).",
 			Usage:       "hyperctl data ls [options]",
 			Handler:     DataListCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -65,7 +65,7 @@ func DataListCommand() *cli.Command {
 	}
 }
 
-func DataListCommandHandler(cmd *cli.Command) (err error) {
+func DataListCommandHandler(cmd *clif.Command) (err error) {
 	build, err := loadBuildContext(cmd)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func DataListCommandHandler(cmd *cli.Command) (err error) {
 		return nil
 	}
 	header := "Namespace"
-	colwidth := max(cmd.ColumnWidth(hypertexting.NamespacedData(ctx), header, 1), len(header)+1)
+	colwidth := max(cmd.ColumnWidth(htxt.NamespacedData(ctx), header, 1), len(header)+1)
 	fmt.Printf("%-*s %s\n", colwidth, header, "Size")
 	fmt.Printf("%-*s %s\n", colwidth, strings.Repeat("-", len(header)), "----")
 	for _, namespace := range ctx.Keys("") {
@@ -90,16 +90,16 @@ func DataListCommandHandler(cmd *cli.Command) (err error) {
 }
 
 // hyperctl data inspect
-func DataInspectCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func DataInspectCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect a value in the build context by keypath (e.g. site.pages, data.social.twitter).",
 			Usage:       "hyperctl data inspect <keypath> [options]",
 			Validator:   DataInspectValidator,
 			Handler:     DataInspectCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -119,14 +119,14 @@ func DataInspectCommand() *cli.Command {
 		},
 	}
 }
-func DataInspectValidator(cmd *cli.Command) (err error) {
+func DataInspectValidator(cmd *clif.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
-func DataInspectCommandHandler(cmd *cli.Command) (err error) {
+func DataInspectCommandHandler(cmd *clif.Command) (err error) {
 	build, err := loadBuildContext(cmd)
 	if err != nil {
 		return err
@@ -154,15 +154,15 @@ func DataInspectCommandHandler(cmd *cli.Command) (err error) {
 // output to tools like `jq` without noise on stdout. When the --verbose
 // flag is set the output is routed to stderr instead, keeping stdout
 // clean while still surfacing diagnostics.
-func loadBuildContext(cmd *cli.Command) (*hypertexting.Build, error) {
+func loadBuildContext(cmd *clif.Command) (*htxt.Build, error) {
 	websiteURI, err := href.Parse(cmd.Options.Get("config"))
 	if err != nil {
 		return nil, err
 	}
-	build := &hypertexting.Build{
+	build := &htxt.Build{
 		URI:     &url.URL{},
 		ID:      "inspect",
-		Website: &hypertexting.Website{URI: websiteURI},
+		Website: &htxt.Website{URI: websiteURI},
 	}
 	logWriter := io.Writer(io.Discard)
 	if cmd.Options.Get("verbose") == "true" {

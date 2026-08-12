@@ -6,42 +6,42 @@ import (
 	"net/url"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
 // hyperctl content-type
-func ContentTypeCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ContentTypeCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "content-type",
 			Description: "Manage content-types.",
 			Usage:       "hyperctl cms content-type [command] [options]",
 			Handler:     ContentTypeCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			ContentTypeListCommand(),
 			ContentTypeInspectCommand(),
 		},
 	}
 }
-func ContentTypeCommandHandler(cmd *cli.Command) (err error) {
+func ContentTypeCommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl content-type ls
-func ContentTypeListCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ContentTypeListCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "ls",
 			Description: "List content types.",
 			Usage:       "hyperctl content-type ls [options]",
 			Handler:     ContentTypeListCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -54,8 +54,8 @@ func ContentTypeListCommand() *cli.Command {
 	}
 }
 
-func ContentTypeListCommandHandler(cmd *cli.Command) (err error) {
-	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
+func ContentTypeListCommandHandler(cmd *clif.Command) (err error) {
+	website := htxt.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
@@ -78,16 +78,16 @@ func ContentTypeListCommandHandler(cmd *cli.Command) (err error) {
 }
 
 // hyperctl content-type inspect
-func ContentTypeInspectCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ContentTypeInspectCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect content types.",
 			Usage:       "hyperctl content-type inspect [options] <type>",
 			Validator:   ContentTypeInspectValidator,
 			Handler:     ContentTypeInspectCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -100,17 +100,17 @@ func ContentTypeInspectCommand() *cli.Command {
 		},
 	}
 }
-func ContentTypeInspectValidator(cmd *cli.Command) (err error) {
+func ContentTypeInspectValidator(cmd *clif.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
 	}
 	return nil
 }
-func ContentTypeInspectCommandHandler(cmd *cli.Command) (err error) {
+func ContentTypeInspectCommandHandler(cmd *clif.Command) (err error) {
 	var jsonBytes []byte
 	var typeRef string = cmd.Args[0]
-	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
+	website := htxt.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}

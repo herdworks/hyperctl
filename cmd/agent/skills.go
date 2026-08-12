@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 	htskills "github.com/herdworks/htskills"
 )
 
@@ -30,11 +30,11 @@ func (entries skillEntries) ColumnValues(field string) (values []string) {
 	return values
 }
 
-func skillCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "skill", Description: "Read, install, or update bundled portable Agent Skills.", Usage: "hyperctl agent skill [command]", Handler: help}, SubCommands: cli.Commands{skillListCommand(), skillDescribeCommand(), skillInstallCommand(), skillUpdateCommand()}}
+func skillCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "skill", Description: "Read, install, or update bundled portable Agent Skills.", Usage: "hyperctl agent skill [command]", Handler: help}, SubCommands: clif.Commands{skillListCommand(), skillDescribeCommand(), skillInstallCommand(), skillUpdateCommand()}}
 }
-func skillListCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "ls", Description: "List bundled offline skills.", Usage: "hyperctl agent skill ls", Handler: func(*cli.Command) error {
+func skillListCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "ls", Description: "List bundled offline skills.", Usage: "hyperctl agent skill ls", Handler: func(*clif.Command) error {
 		skills, err := bundledSkills()
 		if err != nil {
 			return fail(err)
@@ -50,7 +50,7 @@ func bundledSkills() (skillEntries, error) {
 }
 
 func skillListOutput(skills skillEntries) string {
-	namecol := (&cli.Command{}).ColumnWidth(skills, "Name", 1)
+	namecol := (&clif.Command{}).ColumnWidth(skills, "Name", 1)
 	var output strings.Builder
 	fmt.Fprintf(&output, "%-*s %s\n", namecol, "Name", "Description")
 	fmt.Fprintf(&output, "%-*s %s\n", namecol, "----", "-----------")
@@ -59,8 +59,8 @@ func skillListOutput(skills skillEntries) string {
 	}
 	return output.String()
 }
-func skillDescribeCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "describe", Description: "Write the raw embedded SKILL.md bytes.", Usage: "hyperctl agent skill describe <name>", Handler: func(command *cli.Command) error {
+func skillDescribeCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "describe", Description: "Write the raw embedded SKILL.md bytes.", Usage: "hyperctl agent skill describe <name>", Handler: func(command *clif.Command) error {
 		if err := oneArgument(command); err != nil {
 			return fail(err)
 		}
@@ -72,8 +72,8 @@ func skillDescribeCommand() *cli.Command {
 		return err
 	}}}
 }
-func skillInstallCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "install", Description: "Copy a complete skill directory to a new destination.", Usage: "hyperctl agent skill install <name> <path>", Handler: func(command *cli.Command) error {
+func skillInstallCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "install", Description: "Copy a complete skill directory to a new destination.", Usage: "hyperctl agent skill install <name> <path>", Handler: func(command *clif.Command) error {
 		if err := twoArguments(command); err != nil {
 			return fail(err)
 		}
@@ -88,8 +88,8 @@ func skillInstallCommand() *cli.Command {
 	}}}
 }
 
-func skillUpdateCommand() *cli.Command {
-	return &cli.Command{Config: cli.CommandConfig{Name: "update", Description: "Update an installed skill when the bundled version is newer.", Usage: "hyperctl agent skill update <name> <path>", Handler: func(command *cli.Command) error {
+func skillUpdateCommand() *clif.Command {
+	return &clif.Command{Config: clif.CommandConfig{Name: "update", Description: "Update an installed skill when the bundled version is newer.", Usage: "hyperctl agent skill update <name> <path>", Handler: func(command *clif.Command) error {
 		if err := twoArguments(command); err != nil {
 			return fail(err)
 		}
@@ -103,7 +103,7 @@ func skillUpdateCommand() *cli.Command {
 		return nil
 	}}}
 }
-func twoArguments(command *cli.Command) error {
+func twoArguments(command *clif.Command) error {
 	if len(command.Args) != 2 {
 		return fmt.Errorf("expected exactly 2 arguments, got %d", len(command.Args))
 	}

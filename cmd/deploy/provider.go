@@ -5,17 +5,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	hyperproviders "github.com/herdworks/hyperproviders-go"
-	envsecrets "github.com/herdworks/hyperproviders-go/providers/env"
-	filesecrets "github.com/herdworks/hyperproviders-go/providers/files"
-	_ "github.com/herdworks/hyperproviders-go/providers/git"
-	_ "github.com/herdworks/hyperproviders-go/providers/s3"
-	hypertexting "github.com/herdworks/hypertexting-go"
+	"github.com/herdworks/htup"
+	envsecrets "github.com/herdworks/htup/providers/env"
+	filesecrets "github.com/herdworks/htup/providers/files"
+	_ "github.com/herdworks/htup/providers/git"
+	_ "github.com/herdworks/htup/providers/s3"
+	"github.com/herdworks/htxt"
 )
 
 const defaultEnvironment = "default"
 
-func deploymentEnvironment(website *hypertexting.Website, environmentName, providerNames string) (*hyperproviders.Environment, string, error) {
+func deploymentEnvironment(website *htxt.Website, environmentName, providerNames string) (*htup.Environment, string, error) {
 	if environmentName != "" && providerNames != "" {
 		return nil, "", fmt.Errorf("--providers and --environment are mutually exclusive")
 	}
@@ -38,11 +38,11 @@ func deploymentEnvironment(website *hypertexting.Website, environmentName, provi
 	return env, environmentName, nil
 }
 
-func deploymentKind(incremental bool) hyperproviders.DeploymentKind {
+func deploymentKind(incremental bool) htup.DeploymentKind {
 	if incremental {
-		return hyperproviders.IncrementalDeployment
+		return htup.IncrementalDeployment
 	}
-	return hyperproviders.CompleteDeployment
+	return htup.CompleteDeployment
 }
 
 func parseProviderNames(value string) []string {
@@ -58,11 +58,11 @@ func parseProviderNames(value string) []string {
 	return names
 }
 
-func DeploymentSecrets(website *hypertexting.Website) hyperproviders.SecretsProviders {
+func DeploymentSecrets(website *htxt.Website) htup.SecretsProviders {
 	fileSecrets := filesecrets.New()
 	if website != nil && website.URI != nil && website.URI.Path != "" {
 		fileSecrets = filesecrets.NewWithBaseDirectory(filepath.Dir(website.URI.Path))
 	}
 
-	return hyperproviders.SecretsProviders{envsecrets.New(), fileSecrets}
+	return htup.SecretsProviders{envsecrets.New(), fileSecrets}
 }

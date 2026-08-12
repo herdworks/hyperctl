@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 	htskills "github.com/herdworks/htskills"
 )
 
@@ -53,7 +53,7 @@ func TestAgentReadmeIntroducesCompleteWorkflow(t *testing.T) {
 			t.Fatalf("agent readme context is missing %q", phrase)
 		}
 	}
-	if err := noArguments(&cli.Command{}); err != nil {
+	if err := noArguments(&clif.Command{}); err != nil {
 		t.Fatalf("start command rejects no arguments: %v", err)
 	}
 }
@@ -156,7 +156,7 @@ func TestProviderSchemaMatchesHostingProviderContract(t *testing.T) {
 	if err := json.Unmarshal(content, &document); err != nil {
 		t.Fatal(err)
 	}
-	provider := document["$defs"].(map[string]any)["github.com/herdworks/hyperproviders-go.HostingProvider"].(map[string]any)
+	provider := document["$defs"].(map[string]any)["github.com/herdworks/htup.HostingProvider"].(map[string]any)
 	if got := provider["required"]; !slices.Equal(got.([]any), []any{"kind", "endpoint"}) {
 		t.Fatalf("provider required = %#v", got)
 	}
@@ -167,7 +167,7 @@ func TestProviderSchemaMatchesHostingProviderContract(t *testing.T) {
 	if properties["secrets"].(map[string]any)["type"] != "array" {
 		t.Fatalf("provider secrets = %#v, want array", properties["secrets"])
 	}
-	filter := document["$defs"].(map[string]any)["github.com/herdworks/hyperproviders-go.FilterRules"].(map[string]any)
+	filter := document["$defs"].(map[string]any)["github.com/herdworks/htup.FilterRules"].(map[string]any)
 	for _, name := range []string{"include", "exclude"} {
 		property := properties[name].(map[string]any)
 		if property["$ref"] == nil {

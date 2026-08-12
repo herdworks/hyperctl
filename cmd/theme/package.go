@@ -6,21 +6,21 @@ import (
 	"net/url"
 	"os"
 
-	cli "github.com/herdworks/cli-go"
-	httheme "github.com/herdworks/hypertemplates-go/theme"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	httheme "github.com/herdworks/httt/theme"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func ThemePackageCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ThemePackageCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "package",
 			Description: "Package a theme into a zip archive.",
 			Usage:       "hyperctl theme package [options]",
 			Handler:     ThemePackageCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -47,14 +47,14 @@ func ThemePackageCommand() *cli.Command {
 	}
 }
 
-func ThemePackageCommandHandler(cmd *cli.Command) (err error) {
-	var website *hypertexting.Website
+func ThemePackageCommandHandler(cmd *clif.Command) (err error) {
+	var website *htxt.Website
 	var theme httheme.Theme = httheme.Theme{URI: &url.URL{Path: cmd.Options.Get("theme")}}
 	var archive string = cmd.Options.Get("file")
 
 	// Load the website configuration
 	if uri, err := href.Parse(cmd.Options.Get("config")); err == nil && uri != nil {
-		website = &hypertexting.Website{URI: uri}
+		website = &htxt.Website{URI: uri}
 	} else {
 		return fmt.Errorf("invalid website config URI: %s", cmd.Options.Get("config"))
 	}

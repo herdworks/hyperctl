@@ -6,19 +6,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* **Added:** `hyperctl agent` read-only onboarding and discovery commands:
-  `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`,
-  `install`, and `update` for bundled portable Agent Skills.
-* **Changed:** Updated dependencies to hsync v0.3.2, htskills v0.3.0,
-  HyperProviders v0.26.0, HyperTemplates v0.36.0, and HyperTexting v0.41.0.
+* **Added:** `hyperctl agent` read-only onboarding and discovery commands: `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl sync` commands for hsync checkout workflows: `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
+* **BREAKING:** Updated imports to `clif`, `hq`, `hyperfeed`, `htup`, `httt`, and `htxt`; the `hyperctl` executable now lives at `cmd/hyperctl`.
 * **Changed:** `hyperctl deploy` now uses the hsync-enabled deployment lifecycle. Sites with `site.sync` prepare synchronization artifacts before provider deployment and finalize their local synchronization state only after every provider succeeds.
-* **Changed:** Updated HyperSync to v0.2.0, HyperProviders to v0.25.1, HyperTexting to v0.39.0, and HyperGraph to v0.23.1.
-* **Changed:** Adapted build, deploy, development-server, and CMS inspection
-  paths to HyperTexting's private website page catalog and selected build
-  output sets.
-* **Changed:** Replaced the retired `feed` agent schema with Feed 2.0's
-  `feed-config`, `feed-data`, and `feed-selector` schemas.
+* **Changed:** Adapted build, deploy, development-server, and CMS inspection paths to HyperTexting's private website page catalog and selected build output sets.
+* **Changed:** Replaced the retired `feed` agent schema with Feed 2.0's `feed-config`, `feed-data`, and `feed-selector` schemas.
+* **Changed:** Updated dependencies to clif v0.2.0, hq v0.24.0, hsync v0.4.0, htskills v0.3.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.37.0, and htxt v0.42.0.
 
 ## v0.23.0 (2026-07-30)
 

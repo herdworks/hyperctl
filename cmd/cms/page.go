@@ -8,43 +8,43 @@ import (
 	"strings"
 	"time"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
 // hyperctl cms page
-func PageCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func PageCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "page",
 			Description: "Manage pages and drafts.",
 			Usage:       "hyperctl cms page [command] [options]",
 			Handler:     PageCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			PageListCommand(),
 			PageInspectCommand(),
 		},
 	}
 }
-func PageCommandHandler(cmd *cli.Command) (err error) {
+func PageCommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
 // hyperctl cms page ls
-func PageListCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func PageListCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "ls",
 			Description: "List website pages.",
 			Usage:       "hyperctl cms page ls [options] [<filter>]",
 			Validator:   PageListCommandValidator,
 			Handler:     PageListCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -57,7 +57,7 @@ func PageListCommand() *cli.Command {
 	}
 }
 
-func PageListCommandValidator(cmd *cli.Command) (err error) {
+func PageListCommandValidator(cmd *clif.Command) (err error) {
 	filter := "all"
 	filters := []string{"all", "pages", "drafts"}
 	if len(cmd.Args) > 1 {
@@ -72,15 +72,15 @@ func PageListCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func PageListCommandHandler(cmd *cli.Command) (err error) {
+func PageListCommandHandler(cmd *clif.Command) (err error) {
 	var filter string = "all"
-	var pages hypertexting.Pages
-	var website *hypertexting.Website
+	var pages htxt.Pages
+	var website *htxt.Website
 	var websiteURI *href.Href
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
-	website = &hypertexting.Website{URI: websiteURI}
+	website = &htxt.Website{URI: websiteURI}
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 	if pages, err = website.ListPages(); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false, nil); err != nil {
+	if err = htxt.LoadPages(context.TODO(), website, pages, nil, false, nil); err != nil {
 		return err
 	}
 	pages = FilterPages(pages, filter)
@@ -99,12 +99,12 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func FilterPages(pages hypertexting.Pages, filter string) hypertexting.Pages {
+func FilterPages(pages htxt.Pages, filter string) htxt.Pages {
 	if filter != "pages" && filter != "drafts" {
 		return pages
 	}
 
-	filtered := make(hypertexting.Pages, 0, len(pages))
+	filtered := make(htxt.Pages, 0, len(pages))
 	for _, page := range pages {
 		if page == nil || (filter == "pages" && page.Visibility.IsDraft()) || (filter == "drafts" && !page.Visibility.IsDraft()) {
 			continue
@@ -114,7 +114,7 @@ func FilterPages(pages hypertexting.Pages, filter string) hypertexting.Pages {
 	return filtered
 }
 
-func PageListCommandOutput(cmd *cli.Command, pages hypertexting.Pages) {
+func PageListCommandOutput(cmd *clif.Command, pages htxt.Pages) {
 	pathcol := cmd.ColumnWidth(pages, "Path", 1)
 	lastmodcol := cmd.ColumnWidth(pages, "LastModified", 1)
 	titlecol := cmd.ColumnWidth(pages, "Title", 1)
@@ -133,16 +133,16 @@ func PageListCommandOutput(cmd *cli.Command, pages hypertexting.Pages) {
 }
 
 // hyperctl cms page inspect
-func PageInspectCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func PageInspectCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "inspect",
 			Description: "Inspect website pages.",
 			Usage:       "hyperctl cms page inspect [options] <path>",
 			Validator:   PageInspectCommandValidator,
 			Handler:     PageInspectCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -155,7 +155,7 @@ func PageInspectCommand() *cli.Command {
 	}
 }
 
-func PageInspectCommandValidator(cmd *cli.Command) (err error) {
+func PageInspectCommandValidator(cmd *clif.Command) (err error) {
 	requiredArgs := 1
 	if len(cmd.Args) != requiredArgs {
 		return fmt.Errorf("expected %v argument(s), got %v (%s)", requiredArgs, len(cmd.Args), strings.Join(cmd.Args, ", "))
@@ -163,19 +163,19 @@ func PageInspectCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func PageInspectCommandHandler(cmd *cli.Command) (err error) {
-	var website *hypertexting.Website
-	var page *hypertexting.Page
+func PageInspectCommandHandler(cmd *clif.Command) (err error) {
+	var website *htxt.Website
+	var page *htxt.Page
 	var pageBytes []byte
 	var websiteURI *href.Href
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
-	website = &hypertexting.Website{URI: websiteURI}
+	website = &htxt.Website{URI: websiteURI}
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	build := &hypertexting.Build{Website: website}
+	build := &htxt.Build{Website: website}
 	if err = build.LoadContext(context.TODO(), nil); err != nil {
 		return err
 	}

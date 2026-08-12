@@ -3,22 +3,22 @@ package theme
 import (
 	"fmt"
 
-	cli "github.com/herdworks/cli-go"
-	httheme "github.com/herdworks/hypertemplates-go/theme"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	httheme "github.com/herdworks/httt/theme"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func ThemeListCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ThemeListCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "ls",
 			Description: "List installed themes.",
 			Usage:       "hyperctl theme ls [options]",
 			Validator:   nil,
 			Handler:     ThemeListCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -32,11 +32,11 @@ func ThemeListCommand() *cli.Command {
 	}
 }
 
-func ThemeListCommandHandler(cmd *cli.Command) (err error) {
+func ThemeListCommandHandler(cmd *clif.Command) (err error) {
 	var themes []httheme.Theme
-	var website *hypertexting.Website
+	var website *htxt.Website
 	if uri, err := href.Parse(cmd.Options.Get("config")); err == nil && uri != nil {
-		website = &hypertexting.Website{URI: uri}
+		website = &htxt.Website{URI: uri}
 	} else {
 		return fmt.Errorf("invalid website config URI: %s", cmd.Options.Get("config"))
 	}
@@ -50,7 +50,7 @@ func ThemeListCommandHandler(cmd *cli.Command) (err error) {
 	return
 }
 
-func ThemeListCommandOutput(cmd *cli.Command, website *hypertexting.Website, themes Themes) {
+func ThemeListCommandOutput(cmd *clif.Command, website *htxt.Website, themes Themes) {
 	pathcol := cmd.ColumnWidth(themes, "Path", 1)
 	namecol := cmd.ColumnWidth(themes, "Name", 1)
 	versioncol := cmd.ColumnWidth(themes, "Version", 1)

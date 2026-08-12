@@ -7,22 +7,22 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func Command() *cli.Command {
+func Command() *clif.Command {
 	id := uuid.New()
-	return &cli.Command{
-		Config: cli.CommandConfig{
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "build",
 			Description: "Build management tools",
 			Usage:       "hyperctl build [options]",
 			Validator:   BuildCommandValidator,
 			Handler:     BuildCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -82,7 +82,7 @@ func Command() *cli.Command {
 	}
 }
 
-func BuildCommandValidator(cmd *cli.Command) (err error) {
+func BuildCommandValidator(cmd *clif.Command) (err error) {
 	incremental := cmd.Options.Get("incremental") == "true"
 	page := cmd.Options.Get("page")
 	if incremental && page == "" {
@@ -94,12 +94,12 @@ func BuildCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func BuildCommandHandler(cmd *cli.Command) (err error) {
+func BuildCommandHandler(cmd *clif.Command) (err error) {
 	var websiteURI *href.Href
-	var website *hypertexting.Website
+	var website *htxt.Website
 	incremental := cmd.Options.Get("incremental") == "true"
-	config := hypertexting.BuildConfig{
-		WebsiteConfig: hypertexting.WebsiteConfig{
+	config := htxt.BuildConfig{
+		WebsiteConfig: htxt.WebsiteConfig{
 			ContentDirectory: cmd.Options.Get("content-dir"),
 			DataDirectory:    cmd.Options.Get("data-dir"),
 			StaticDirectory:  cmd.Options.Get("static-dir"),
@@ -112,19 +112,19 @@ func BuildCommandHandler(cmd *cli.Command) (err error) {
 	if websiteURI, err = href.Parse(cmd.Options.Get("config")); err != nil {
 		return err
 	}
-	website = &hypertexting.Website{URI: websiteURI}
+	website = &htxt.Website{URI: websiteURI}
 	if err = website.Load(false, &config.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	var page *hypertexting.Page
+	var page *htxt.Page
 	if incremental {
 		pageURI, err := href.Parse(cmd.Options.Get("page"))
 		if err != nil {
 			return err
 		}
-		page = &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
+		page = &htxt.Page{URI: &pageURI.URL, Path: htxt.PagePath(website, &pageURI.URL)}
 	}
-	build := &hypertexting.Build{
+	build := &htxt.Build{
 		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
 		ID:          cmd.Options.Get("id"),
 		Website:     website,

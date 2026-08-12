@@ -1,20 +1,20 @@
 package dev
 
 import (
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 )
 
-func Command() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func Command() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "dev",
 			Description: "Developer tools",
 			Usage:       "hyperctl dev [command] [options] <path>",
 			Validator:   nil,
 			Handler:     CommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			GraphCommand(),
 			MimetypeCommand(),
 			RenderCommand(),
@@ -23,7 +23,7 @@ func Command() *cli.Command {
 	}
 }
 
-func CommandHandler(cmd *cli.Command) (err error) {
+func CommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }

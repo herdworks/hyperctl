@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"net/url"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func ConfigCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ConfigCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "config",
 			Description: "View HyperTemplates configuration.",
 			Usage:       "hyperctl config [options]",
 			Validator:   ConfigCommandValidator,
 			Handler:     ConfigCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -39,12 +39,12 @@ func ConfigCommand() *cli.Command {
 	}
 }
 
-func ConfigCommandValidator(cmd *cli.Command) (err error) {
+func ConfigCommandValidator(cmd *clif.Command) (err error) {
 	return nil
 }
 
-func ConfigCommandHandler(cmd *cli.Command) (err error) {
-	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
+func ConfigCommandHandler(cmd *clif.Command) (err error) {
+	website := htxt.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(true, nil, nil); err != nil {
 		return err
 	}

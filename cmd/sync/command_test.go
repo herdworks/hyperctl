@@ -3,7 +3,7 @@ package sync
 import (
 	"testing"
 
-	cli "github.com/herdworks/cli-go"
+	"github.com/herdworks/clif"
 )
 
 func TestCommandRegistersCheckoutWorkflow(t *testing.T) {
@@ -20,7 +20,7 @@ func TestCommandRegistersCheckoutWorkflow(t *testing.T) {
 }
 
 func TestConfigurationCommandsDefaultToSiteYAML(t *testing.T) {
-	for _, command := range []*cli.Command{initCommand(), pullCommand(), pushCommand(), resetCommand(), statusCommand()} {
+	for _, command := range []*clif.Command{initCommand(), pullCommand(), pushCommand(), resetCommand(), statusCommand()} {
 		option := command.Options.Lookup("config")
 		if option == nil || option.Default != "site.yaml" || option.EnvName != "HYPER_CONFIG" {
 			t.Errorf("%s config default = %#v, want site.yaml", command.Config.Name, option)
@@ -30,7 +30,7 @@ func TestConfigurationCommandsDefaultToSiteYAML(t *testing.T) {
 
 func TestConfigurationCommandsHonorHyperConfig(t *testing.T) {
 	t.Setenv("HYPER_CONFIG", "alternate.yaml")
-	for _, command := range []*cli.Command{initCommand(), pullCommand(), pushCommand(), resetCommand(), statusCommand()} {
+	for _, command := range []*clif.Command{initCommand(), pullCommand(), pushCommand(), resetCommand(), statusCommand()} {
 		if got := command.Options.Get("config"); got != "alternate.yaml" {
 			t.Errorf("%s config = %q, want alternate.yaml", command.Config.Name, got)
 		}

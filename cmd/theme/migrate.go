@@ -4,20 +4,20 @@ import (
 	"errors"
 	"os"
 
-	cli "github.com/herdworks/cli-go"
-	"github.com/herdworks/hypertemplates-go/migrate"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/httt/migrate"
 )
 
 var errMigrationIncomplete = errors.New("migration incomplete")
 
-func ThemeMigrateCommand() *cli.Command {
-	command := &cli.Command{
-		Config: cli.CommandConfig{
+func ThemeMigrateCommand() *clif.Command {
+	command := &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "migrate",
 			Description: "Migrate a theme to current directive syntax.",
 			Usage:       "hyperctl theme migrate --theme theme.json [options]",
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "theme",
 				ShortName:   "t",
@@ -35,7 +35,7 @@ func ThemeMigrateCommand() *cli.Command {
 			},
 		},
 	}
-	command.Config.Handler = func(command *cli.Command) error {
+	command.Config.Handler = func(command *clif.Command) error {
 		status, err := (migrate.Migration{
 			ThemePath:   command.Options.Get("theme"),
 			OutputDir:   command.Options.Get("output"),

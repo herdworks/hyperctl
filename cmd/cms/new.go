@@ -7,42 +7,42 @@ import (
 	"slices"
 	"strings"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
-func NewCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func NewCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "new",
 			Description: "Create a new website or page.",
 			Usage:       "hyperctl cms new [command] [options]",
 			Handler:     NewCommandHandler,
 		},
-		Options: cli.CommandOptions{},
-		SubCommands: cli.Commands{
+		Options: clif.CommandOptions{},
+		SubCommands: clif.Commands{
 			NewWebsiteCommand(),
 			NewPageCommand(),
 		},
 	}
 }
 
-func NewCommandHandler(cmd *cli.Command) (err error) {
+func NewCommandHandler(cmd *clif.Command) (err error) {
 	cmd.Help(nil)
 	return nil
 }
 
-func NewWebsiteCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func NewWebsiteCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "website",
 			Description: "Create a new website.",
 			Usage:       "hyperctl new website [options] <path>",
 			Validator:   NewWebsiteCommandValidator,
 			Handler:     NewWebsiteCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "baseurl",
 				ShortName:   "b",
@@ -71,7 +71,7 @@ func NewWebsiteCommand() *cli.Command {
 	}
 }
 
-func NewWebsiteCommandValidator(cmd *cli.Command) (err error) {
+func NewWebsiteCommandValidator(cmd *clif.Command) (err error) {
 	var uri *url.URL
 	var baseurl *url.URL
 	var supportedSchemes = []string{"https", "http"}
@@ -92,20 +92,20 @@ func NewWebsiteCommandValidator(cmd *cli.Command) (err error) {
 	}
 	return nil
 }
-func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
+func NewWebsiteCommandHandler(cmd *clif.Command) (err error) {
 	websiteDirectory, _ := url.Parse(cmd.Args[0])
 	websiteConfigFileName := "site." + cmd.Options.Get("format")
 	websiteConfigURI := &href.Href{URL: url.URL{Scheme: websiteDirectory.Scheme, Path: filepath.Join(websiteDirectory.Path, websiteConfigFileName)}}
-	website := hypertexting.Website{
+	website := htxt.Website{
 		URI:         websiteConfigURI,
 		BaseURL:     cmd.Options.Get("baseurl"),
 		Title:       cmd.Options.Get("title"),
 		Description: cmd.Options.Get("description"),
-		Favicon: hypertexting.WebsiteFavicon{
+		Favicon: htxt.WebsiteFavicon{
 			Href: "/favicon.png",
 		},
 	}
-	website.Byline = hypertexting.Byline{
+	website.Byline = htxt.Byline{
 		Name:    cmd.Options.Get("title"),
 		Favicon: "/favicon.png",
 		Href:    "/",
@@ -117,15 +117,15 @@ func NewWebsiteCommandHandler(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func NewPageCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func NewPageCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "page",
 			Description: "Create a new page.",
 			Usage:       "hyperctl new page [options]",
 			Handler:     NewPageCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "config",
 				ShortName:   "c",
@@ -175,12 +175,12 @@ func NewPageCommand() *cli.Command {
 	}
 }
 
-func NewPageCommandHandler(cmd *cli.Command) (err error) {
-	website := hypertexting.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
+func NewPageCommandHandler(cmd *clif.Command) (err error) {
+	website := htxt.Website{URI: &href.Href{URL: url.URL{Path: cmd.Options.Get("config")}}}
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	page := hypertexting.Page{
+	page := htxt.Page{
 		LayoutRef:   cmd.Options.Get("layout"),
 		Slug:        cmd.Options.Get("slug"),
 		Title:       cmd.Options.Get("title"),
@@ -188,8 +188,8 @@ func NewPageCommandHandler(cmd *cli.Command) (err error) {
 		Content:     cmd.Options.Get("content"),
 	}
 	if cmd.Options.Get("draft") == "true" {
-		page.Visibility = hypertexting.DraftVisibility
+		page.Visibility = htxt.DraftVisibility
 	}
 	contenttype := website.GetContentTypeByName(cmd.Options.Get("content-type"), true, nil)
-	return hypertexting.CreatePage(&website, &page, contenttype, nil)
+	return htxt.CreatePage(&website, &page, contenttype, nil)
 }

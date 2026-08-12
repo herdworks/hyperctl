@@ -6,22 +6,22 @@ import (
 	"os"
 	"path/filepath"
 
-	cli "github.com/herdworks/cli-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
-	href "github.com/herdworks/hypertexting-go/href"
+	"github.com/herdworks/clif"
+	"github.com/herdworks/htxt"
+	href "github.com/herdworks/htxt/href"
 )
 
 // TODO: refactor to support reading/writing from/to yaml or json
-func ConfigureCommand() *cli.Command {
-	return &cli.Command{
-		Config: cli.CommandConfig{
+func ConfigureCommand() *clif.Command {
+	return &clif.Command{
+		Config: clif.CommandConfig{
 			Name:        "configure",
 			Description: "Manage HyperTemplates website configuration.",
 			Usage:       "hyperctl configure [options]",
 			Validator:   ConfigureCommandValidator,
 			Handler:     ConfigureCommandHandler,
 		},
-		Options: cli.CommandOptions{
+		Options: clif.CommandOptions{
 			{
 				Name:        "base_url",
 				ShortName:   "u",
@@ -57,7 +57,7 @@ func ConfigureCommand() *cli.Command {
 	}
 }
 
-func ConfigureCommandValidator(cmd *cli.Command) (err error) {
+func ConfigureCommandValidator(cmd *clif.Command) (err error) {
 	if len(os.Args[2:]) == 0 {
 		return fmt.Errorf("no configuration parameters provided, nothing to do")
 	}
@@ -69,11 +69,11 @@ func ConfigureCommandValidator(cmd *cli.Command) (err error) {
 	return nil
 }
 
-func ConfigureCommandHandler(cmd *cli.Command) (err error) {
+func ConfigureCommandHandler(cmd *clif.Command) (err error) {
 	project := cmd.Options.Get("project") // TODO: the --project flag has been removed
 	configfile := filepath.Join(project, "site.json")
 	uri, _ := href.Parse(configfile)
-	website := &hypertexting.Website{URI: uri}
+	website := &htxt.Website{URI: uri}
 	var jsonBytes []byte
 	if jsonBytes, err = os.ReadFile(configfile); err != nil {
 		return err

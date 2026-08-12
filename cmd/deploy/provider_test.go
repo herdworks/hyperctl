@@ -3,17 +3,17 @@ package deploy
 import (
 	"testing"
 
-	hyperproviders "github.com/herdworks/hyperproviders-go"
-	hypertexting "github.com/herdworks/hypertexting-go"
+	"github.com/herdworks/htup"
+	"github.com/herdworks/htxt"
 )
 
 func TestDeploymentEnvironment(t *testing.T) {
-	production := hyperproviders.Environment{"pages"}
-	website := &hypertexting.Website{
-		Providers: hyperproviders.HostingProviders{
+	production := htup.Environment{"pages"}
+	website := &htxt.Website{
+		Providers: htup.HostingProviders{
 			"pages": {Kind: "git", Endpoint: "https://example.com"},
 		},
-		Environments: map[string]*hyperproviders.Environment{
+		Environments: map[string]*htup.Environment{
 			"production": &production,
 		},
 	}
@@ -35,8 +35,8 @@ func TestDeploymentEnvironment(t *testing.T) {
 }
 
 func TestDeploymentEnvironmentProvidersList(t *testing.T) {
-	website := &hypertexting.Website{
-		Providers: hyperproviders.HostingProviders{
+	website := &htxt.Website{
+		Providers: htup.HostingProviders{
 			"pages":  {Kind: "git", Endpoint: "https://example.com"},
 			"assets": {Kind: "s3", Endpoint: "https://example.com"},
 		},
@@ -55,12 +55,12 @@ func TestDeploymentEnvironmentProvidersList(t *testing.T) {
 }
 
 func TestDeploymentEnvironmentDefault(t *testing.T) {
-	defaultEnv := hyperproviders.Environment{"default"}
-	website := &hypertexting.Website{
-		Providers: hyperproviders.HostingProviders{
+	defaultEnv := htup.Environment{"default"}
+	website := &htxt.Website{
+		Providers: htup.HostingProviders{
 			"default": {Kind: "git", Endpoint: "https://example.com"},
 		},
-		Environments: map[string]*hyperproviders.Environment{
+		Environments: map[string]*htup.Environment{
 			"default": &defaultEnv,
 		},
 	}
@@ -78,7 +78,7 @@ func TestDeploymentEnvironmentDefault(t *testing.T) {
 }
 
 func TestDeploymentEnvironmentRejectsEnvironmentAndProviders(t *testing.T) {
-	website := &hypertexting.Website{}
+	website := &htxt.Website{}
 	if _, _, err := deploymentEnvironment(website, "production", "pages"); err == nil {
 		t.Fatal("deploymentEnvironment both selectors error = nil, want error")
 	}
@@ -92,10 +92,10 @@ func TestParseProviderNames(t *testing.T) {
 }
 
 func TestDeploymentKind(t *testing.T) {
-	if got := deploymentKind(false); got != hyperproviders.CompleteDeployment {
+	if got := deploymentKind(false); got != htup.CompleteDeployment {
 		t.Fatalf("deploymentKind(false) = %q, want complete", got)
 	}
-	if got := deploymentKind(true); got != hyperproviders.IncrementalDeployment {
+	if got := deploymentKind(true); got != htup.IncrementalDeployment {
 		t.Fatalf("deploymentKind(true) = %q, want incremental", got)
 	}
 }
