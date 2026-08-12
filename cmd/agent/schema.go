@@ -17,7 +17,9 @@ import (
 var schemas = jsonschema.Registry{
 	hypertexting.Attachment{},
 	hypertexting.Byline{},
-	hypertexting.HyperFeed{},
+	hypertexting.FeedConfig{},
+	hypertexting.FeedData{},
+	hypertexting.FeedSelector{},
 	hypertexting.HTMLLink{},
 	hypertexting.HTMLMeta{},
 	markdown.HyperMarkConfig{},

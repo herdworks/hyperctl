@@ -106,13 +106,14 @@ func AssetListCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
+	pages, err := hypertexting.GetPages(&website, website.ContentDirPath())
+	if err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false, nil); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), &website, pages, nil, false, nil); err != nil {
 		return err
 	}
-	assetEntries, err := hypertexting.AssetEntries(&website.Theme, &website, website.Pages)
+	assetEntries, err := hypertexting.AssetEntries(&website.Theme, &website, pages)
 	if err != nil {
 		return err
 	}
@@ -217,13 +218,14 @@ func AssetLookupCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	if website.Pages, err = hypertexting.GetPages(&website, website.ContentDirPath()); err != nil {
+	pages, err := hypertexting.GetPages(&website, website.ContentDirPath())
+	if err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), &website, website.Pages, nil, false, nil); err != nil {
+	if err = hypertexting.LoadPages(context.TODO(), &website, pages, nil, false, nil); err != nil {
 		return err
 	}
-	candidates, err := hypertexting.AssetCandidates(&website.Theme, &website, website.Pages)
+	candidates, err := hypertexting.AssetCandidates(&website.Theme, &website, pages)
 	if err != nil {
 		return err
 	}

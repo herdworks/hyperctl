@@ -124,14 +124,13 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, &config.WebsiteConfig, nil); err != nil {
 		return err
 	}
-	var pages *hypertexting.Pages = &website.Pages
+	var page *hypertexting.Page
 	if incremental {
 		pageURI, err := href.Parse(cmd.Options.Get("page"))
 		if err != nil {
 			return err
 		}
-		page := &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
-		pages = &hypertexting.Pages{page}
+		page = &hypertexting.Page{URI: &pageURI.URL, Path: hypertexting.PagePath(website, &pageURI.URL)}
 	}
 	build := &hypertexting.Build{
 		URI:         &url.URL{Path: filepath.Join(website.BuildsDirPath(), buildID)},
@@ -139,7 +138,7 @@ func DeployCommandHandler(cmd *cli.Command) (err error) {
 		Website:     website,
 		Config:      config,
 		Incremental: incremental,
-		Pages:       pages,
+		Page:        page,
 	}
 	if err = build.Execute(context.TODO()); err != nil {
 		return err

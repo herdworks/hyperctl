@@ -186,7 +186,9 @@ func NewPageCommandHandler(cmd *cli.Command) (err error) {
 		Title:       cmd.Options.Get("title"),
 		Description: cmd.Options.Get("description"),
 		Content:     cmd.Options.Get("content"),
-		Draft:       cmd.Options.Get("draft") == "true",
+	}
+	if cmd.Options.Get("draft") == "true" {
+		page.Visibility = hypertexting.DraftVisibility
 	}
 	contenttype := website.GetContentTypeByName(cmd.Options.Get("content-type"), true, nil)
 	return hypertexting.CreatePage(&website, &page, contenttype, nil)

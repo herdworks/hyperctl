@@ -100,14 +100,18 @@ func PageListCommandHandler(cmd *cli.Command) (err error) {
 }
 
 func FilterPages(pages hypertexting.Pages, filter string) hypertexting.Pages {
-	switch filter {
-	case "pages":
-		return pages.FilterDraft(false)
-	case "drafts":
-		return pages.FilterDraft(true)
-	default:
+	if filter != "pages" && filter != "drafts" {
 		return pages
 	}
+
+	filtered := make(hypertexting.Pages, 0, len(pages))
+	for _, page := range pages {
+		if page == nil || (filter == "pages" && page.Visibility.IsDraft()) || (filter == "drafts" && !page.Visibility.IsDraft()) {
+			continue
+		}
+		filtered = append(filtered, page)
+	}
+	return filtered
 }
 
 func PageListCommandOutput(cmd *cli.Command, pages hypertexting.Pages) {
@@ -122,7 +126,7 @@ func PageListCommandOutput(cmd *cli.Command, pages hypertexting.Pages) {
 			"%-*s %-*v %-*v %-*s\n",
 			lastmodcol, pages[i].LastModified().Format(time.RFC3339),
 			titlecol, pages[i].Title,
-			draftcol, pages[i].Draft,
+			draftcol, pages[i].Visibility.IsDraft(),
 			pathcol, pages[i].Path,
 		)
 	}
@@ -161,7 +165,6 @@ func PageInspectCommandValidator(cmd *cli.Command) (err error) {
 
 func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 	var website *hypertexting.Website
-	var pages hypertexting.Pages
 	var page *hypertexting.Page
 	var pageBytes []byte
 	var websiteURI *href.Href
@@ -172,17 +175,11 @@ func PageInspectCommandHandler(cmd *cli.Command) (err error) {
 	if err = website.Load(false, nil, nil); err != nil {
 		return err
 	}
-	if pages, err = website.ListPages(); err != nil {
+	build := &hypertexting.Build{Website: website}
+	if err = build.LoadContext(context.TODO(), nil); err != nil {
 		return err
 	}
-	if err = hypertexting.LoadPages(context.TODO(), website, pages, nil, false, nil); err != nil {
-		return err
-	}
-	if err = hypertexting.LoadPageFeeds(context.TODO(), website, pages, nil); err != nil {
-		return err
-	} // populate page feeds
-	pages.ResolveTemplateData(website)
-	page = pages.PageByPath(cmd.Args[0])
+	page = build.Pages.PageByPath(cmd.Args[0])
 	if page == nil {
 		return fmt.Errorf("page \"%s\" not found", cmd.Args[0])
 	}

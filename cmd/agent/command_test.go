@@ -2,7 +2,6 @@ package agent
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -94,7 +93,7 @@ func TestSchemaListUsesAlignedColumns(t *testing.T) {
 }
 
 func TestSchemasAreJSONAndHaveStableNames(t *testing.T) {
-	want := []string{"attachment", "byline", "feed", "html-link", "html-meta", "markdown", "mention-config", "page", "provider", "provider-filter-rules", "provider-secret", "sync", "sync-rules", "theme", "website", "website-config", "website-favicon"}
+	want := []string{"attachment", "byline", "feed-config", "feed-data", "feed-selector", "html-link", "html-meta", "markdown", "mention-config", "page", "provider", "provider-filter-rules", "provider-secret", "sync", "sync-rules", "theme", "website", "website-config", "website-favicon"}
 	if got := schemaNames(); !slices.Equal(got, want) {
 		t.Fatalf("schema names = %v, want %v", got, want)
 	}
@@ -197,7 +196,7 @@ func TestEmbeddedSkillsAreCompleteAndExact(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s metadata: %v", skill.Name, err)
 		}
-		if metadata.Version == nil {
+		if metadata.Version == "" {
 			t.Fatalf("%s has no skill version", skill.Name)
 		}
 		for _, heading := range []string{"## Overview", "## Workflow", "## Instructions", "## Tools", "## References"} {
@@ -423,7 +422,7 @@ func TestInstallSkillCopiesCompleteDirectoryAndRejectsExistingDestination(t *tes
 	}
 }
 
-func TestUpdateSkillReplacesOlderAndUnversionedSkillsOnly(t *testing.T) {
+func TestUpdateSkillReplacesOlderSkillsOnly(t *testing.T) {
 	skill := testSkills(t)[0]
 	destination := filepath.Join(t.TempDir(), "installed-skill")
 	if _, err := installSkill(skill.Name, destination); err != nil {
@@ -438,16 +437,17 @@ func TestUpdateSkillReplacesOlderAndUnversionedSkillsOnly(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if metadata.Version == nil {
+	if metadata.Version == "" {
 		t.Fatal("embedded skill has no version")
 	}
-	versionLine := fmt.Sprintf("version: %d\n", *metadata.Version)
-	if err := os.WriteFile(installedPath, []byte(strings.Replace(string(embedded), versionLine, "", 1)), 0644); err != nil {
+	versionLine := "version: \"" + metadata.Version + "\"\n"
+	olderVersionLine := "version: \"2026-07\"\n"
+	if err := os.WriteFile(installedPath, []byte(strings.Replace(string(embedded), versionLine, olderVersionLine, 1)), 0644); err != nil {
 		t.Fatal(err)
 	}
 	written, err := updateSkill(skill.Name, destination)
 	if err != nil {
-		t.Fatalf("update unversioned skill: %v", err)
+		t.Fatalf("update older skill: %v", err)
 	}
 	if len(written) == 0 {
 		t.Fatal("update wrote no files")
@@ -462,7 +462,7 @@ func TestUpdateSkillReplacesOlderAndUnversionedSkillsOnly(t *testing.T) {
 	if _, err = updateSkill(skill.Name, destination); err == nil {
 		t.Fatal("update succeeded for an equal skill version")
 	}
-	newerVersionLine := fmt.Sprintf("version: %d\n", *metadata.Version+1)
+	newerVersionLine := "version: \"2026-09\"\n"
 	if err = os.WriteFile(installedPath, []byte(strings.Replace(string(embedded), versionLine, newerVersionLine, 1)), 0644); err != nil {
 		t.Fatal(err)
 	}

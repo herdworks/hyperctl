@@ -163,7 +163,6 @@ func loadBuildContext(cmd *cli.Command) (*hypertexting.Build, error) {
 		URI:     &url.URL{},
 		ID:      "inspect",
 		Website: &hypertexting.Website{URI: websiteURI},
-		Pages:   &hypertexting.Pages{},
 	}
 	logWriter := io.Writer(io.Discard)
 	if cmd.Options.Get("verbose") == "true" {

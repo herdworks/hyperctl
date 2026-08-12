@@ -168,16 +168,14 @@ func updateSkill(name, destination string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("bundled skill %q: %w", name, err)
 	}
-	if embeddedMetadata.Version == nil {
+	if embeddedMetadata.Version == "" {
 		return nil, fmt.Errorf("bundled skill %q is unversioned", name)
 	}
-	if installedMetadata.Version != nil {
-		if *installedMetadata.Version == *embeddedMetadata.Version {
-			return nil, fmt.Errorf("skill %q is already at version %d", name, *installedMetadata.Version)
-		}
-		if *installedMetadata.Version > *embeddedMetadata.Version {
-			return nil, fmt.Errorf("skill %q has newer installed version %d (bundled version %d)", name, *installedMetadata.Version, *embeddedMetadata.Version)
-		}
+	if installedMetadata.Version == embeddedMetadata.Version {
+		return nil, fmt.Errorf("skill %q is already at version %s", name, installedMetadata.Version)
+	}
+	if installedMetadata.Version > embeddedMetadata.Version {
+		return nil, fmt.Errorf("skill %q has newer installed version %s (bundled version %s)", name, installedMetadata.Version, embeddedMetadata.Version)
 	}
 	return copyEmbeddedSkill(name, destination)
 }

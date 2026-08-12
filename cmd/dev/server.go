@@ -151,12 +151,11 @@ func ServerCommandHandler(cmd *cli.Command) (err error) {
 		return err
 	}
 	server.Build = &hypertexting.Build{
-		URI:           &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
-		ID:            cmd.Options.Get("id"),
-		Website:       website,
-		Config:        buildConfig,
-		IncludeDrafts: true,
-		Pages:         &website.Pages,
+		URI:     &url.URL{Path: filepath.Join(website.BuildsDirPath(), cmd.Options.Get("id"))},
+		ID:      cmd.Options.Get("id"),
+		Website: website,
+		Config:  buildConfig,
+		Preview: true,
 	}
 
 	// start the server

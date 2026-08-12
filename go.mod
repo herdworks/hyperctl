@@ -8,13 +8,13 @@ go 1.26.2
 // first-party dependencies
 require (
 	github.com/herdworks/cli-go v0.1.0
-	github.com/herdworks/hsync v0.3.1
-	github.com/herdworks/htskills v0.2.0
+	github.com/herdworks/hsync v0.3.2
+	github.com/herdworks/htskills v0.3.0
 	github.com/herdworks/hyperfeed-go v0.26.5 // indirect
 	github.com/herdworks/hypergraph-go v0.23.1
 	github.com/herdworks/hyperproviders-go v0.26.0
 	github.com/herdworks/hypertemplates-go v0.36.0
-	github.com/herdworks/hypertexting-go v0.40.0
+	github.com/herdworks/hypertexting-go v0.41.0
 )
 
 // direct dependencies
