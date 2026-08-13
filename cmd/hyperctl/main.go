@@ -1,44 +1,25 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
 
-	"github.com/herdworks/clif"
-	"github.com/herdworks/hyperctl/cmd/agent"
-	"github.com/herdworks/hyperctl/cmd/build"
-	"github.com/herdworks/hyperctl/cmd/cms"
-	"github.com/herdworks/hyperctl/cmd/deploy"
-	"github.com/herdworks/hyperctl/cmd/dev"
-	"github.com/herdworks/hyperctl/cmd/sync"
-	"github.com/herdworks/hyperctl/cmd/theme"
-	"github.com/herdworks/hyperctl/cmd/version"
+	"github.com/herdworks/clic"
+	"github.com/herdworks/hyperctl/cli"
 )
 
-var HyperCTL = &clif.CLI{
-	Name:        "hyperctl",
-	Version:     fmt.Sprintf("%s (%s)", version.CLIVersion, version.CLIReleaseDate),
-	Description: "The HyperTexting CLI.",
-	Commands: []*clif.Command{
-		agent.Command(),
-		cms.Command(),
-		theme.Command(),
-		build.Command(),
-		deploy.Command(),
-		sync.Command(),
-		dev.Command(),
-	},
-	Options: clif.CommandOptions{
-		{
-			Name:        "help",
-			ShortName:   "h",
-			Description: "Display help information.",
-			Boolean:     true,
-			Secret:      true,
-			Global:      true,
-		},
-	},
-}
-
 func main() {
-	HyperCTL.Execute()
+	result := cli.CLI.Run(clic.Execution{
+		Context:          context.Background(),
+		Stdin:            os.Stdin,
+		Stdout:           os.Stdout,
+		Stderr:           os.Stderr,
+		LookupEnv:        os.LookupEnv,
+		WorkingDirectory: ".",
+	}, os.Args[1:])
+	if result.Error != nil {
+		fmt.Fprintln(os.Stderr, result.Error)
+	}
+	os.Exit(result.ExitCode)
 }
