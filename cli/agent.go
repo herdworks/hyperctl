@@ -10,7 +10,7 @@ func AgentCommand() clic.Command {
 	return clic.Command{
 		Meta: clic.CommandMeta{
 			Name:        "agent",
-			Description: "HyperTexting skills for coding agents.",
+			Description: "Coding agent tools",
 			Usage: []string{
 				"hyperctl agent [command]",
 			},

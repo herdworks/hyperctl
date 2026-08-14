@@ -17,7 +17,7 @@ func TestWebsiteCommandMountsHTXTWorkflow(t *testing.T) {
 	if command.Meta.EnvPrefix != "" {
 		t.Fatalf("website environment prefix = %q", command.Meta.EnvPrefix)
 	}
-	for _, key := range []string{"init", "build", "server", "data", "page", "asset", "content-type"} {
+	for _, key := range []string{"init", "build", "deploy", "server", "data", "page", "asset", "content-type"} {
 		if _, ok := command.SubCommand(key); !ok {
 			t.Errorf("website command %q is not registered", key)
 		}
@@ -46,7 +46,7 @@ func TestWebsiteCommandMountsHTXTWorkflow(t *testing.T) {
 	}
 }
 
-func TestHyperctlKeepsCMSAsAnAliasAndBuildAsALink(t *testing.T) {
+func TestHyperctlKeepsCMSAsAnAliasAndWebsiteShortcutsAsLinks(t *testing.T) {
 	command, ok := CLI.SubCommand("cms")
 	if !ok || command.Name() != "website" {
 		t.Fatalf("cms alias = %#v, %t", command, ok)
@@ -54,29 +54,39 @@ func TestHyperctlKeepsCMSAsAnAliasAndBuildAsALink(t *testing.T) {
 	if _, ok := CLI.SubCommand("build"); ok {
 		t.Error("top-level build command is mounted instead of linked")
 	}
-	link, ok := CLI.Link("build")
-	if !ok {
-		t.Fatal("top-level build link is not registered")
-	}
-	if got, want := link.To, []string{"website", "build"}; !sameStrings(got, want) {
-		t.Fatalf("build link destination = %q, want %q", got, want)
-	}
-	var output bytes.Buffer
-	result := CLI.Run(
-		clic.Execution{
-			Context: context.Background(),
-			Stdout:  &output,
-		},
-		clic.Arguments{
-			"build",
-			"--help",
-		},
-	)
-	if result.Error != nil {
-		t.Fatalf("CLI.Run(build --help) = %#v", result)
-	}
-	if !strings.Contains(output.String(), "hyperctl website build") {
-		t.Fatalf("build help = %q", output.String())
+	for _, shortcut := range []struct {
+		from string
+		to   []string
+	}{
+		{from: "build", to: []string{"website", "build"}},
+		{from: "deploy", to: []string{"website", "deploy"}},
+	} {
+		if _, ok := CLI.SubCommand(shortcut.from); ok {
+			t.Errorf("top-level %s command is mounted instead of linked", shortcut.from)
+		}
+		link, ok := CLI.Link(shortcut.from)
+		if !ok {
+			t.Errorf("top-level %s link is not registered", shortcut.from)
+			continue
+		}
+		if !sameStrings(link.To, shortcut.to) {
+			t.Errorf("%s link destination = %q, want %q", shortcut.from, link.To, shortcut.to)
+		}
+		var output bytes.Buffer
+		result := CLI.Run(
+			clic.Execution{
+				Context: context.Background(),
+				Stdout:  &output,
+			},
+			clic.Arguments{shortcut.from, "--help"},
+		)
+		if result.Error != nil {
+			t.Errorf("CLI.Run(%s --help) = %#v", shortcut.from, result)
+			continue
+		}
+		if !strings.Contains(output.String(), "hyperctl website "+shortcut.from) {
+			t.Errorf("%s help = %q", shortcut.from, output.String())
+		}
 	}
 }
 

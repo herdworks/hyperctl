@@ -7,22 +7,16 @@ go 1.26.2
 
 // first-party dependencies
 require (
-	github.com/herdworks/clic v0.4.1
+	github.com/herdworks/clic v0.4.2
 	github.com/herdworks/hq v0.24.0
 	github.com/herdworks/hsync v0.5.2
 	github.com/herdworks/htskills v0.5.0
 	github.com/herdworks/httt v0.38.0
 	github.com/herdworks/htup v0.27.1
-	github.com/herdworks/htxt v0.43.1
+	github.com/herdworks/htxt v0.44.1
 	github.com/herdworks/htxtd v0.1.0 // indirect
 	github.com/herdworks/hyperfeed v0.27.0
 	github.com/herdworks/hypermedia v0.2.0
-)
-
-// direct dependencies
-require (
-	github.com/google/uuid v1.6.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 // local development dependencies (replacements)
@@ -70,6 +64,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/pjbgf/sha1cd v0.3.2 // indirect
@@ -86,5 +81,6 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

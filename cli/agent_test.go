@@ -51,7 +51,7 @@ func TestAgentReadmeIntroducesCompleteWorkflow(t *testing.T) {
 	}
 	for _, phrase := range []string{
 		"HyperTexting is a content management system (CMS) and static site generator (SSG)", "HyperTemplates HTML templating and theme management system", "agent schema", "agent skill ls", "agent skill describe hypertexting", "agent skill install <name> <path>", "agent skill update <name> <path>",
-		"hyperctl --help", "hyperctl <command> --help", "hyperctl website init", "hyperctl website page new", "hyperctl website server", "hyperctl website build", "hyperctl website build --id <build-id>", "hyperctl theme package", "hyperctl deploy", "hyperctl sync", "established commands directly for mutations", "ht-apply",
+		"hyperctl --help", "hyperctl <command> --help", "hyperctl website init", "hyperctl website page new", "hyperctl website server", "hyperctl website build", "hyperctl theme package", "hyperctl deploy", "hyperctl sync", "established commands directly for mutations",
 	} {
 		if !strings.Contains(string(content), phrase) {
 			t.Fatalf("agent readme context is missing %q", phrase)

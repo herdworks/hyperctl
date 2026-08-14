@@ -30,7 +30,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   lifecycle. Sites with `site.sync` prepare synchronization artifacts before
   provider deployment and finalize their local synchronization state only after
   every provider succeeds.
-* **Changed:** `htxt server` uses HyperTexting's private website page catalog
+* **Changed:** `hyperctl website deploy` now delegates its build and hsync
+  deployment lifecycle to `htxt.Deployment`; `hyperctl deploy` remains a
+  hidden compatibility link to that command.
+* **Changed:** `hyperctl website server` uses HyperTexting's private website page catalog
   and selected build output sets.
 * **Changed:** `hyperctl website` inspection commands use HyperTexting's
   private website page catalog and selected build output sets.
@@ -39,9 +42,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Changed:** `hyperctl theme ls` supports `--format columns|json` output.
 * **Changed:** `hyperctl website page ls` replaces positional filters with
   `--visibility`.
-* **Changed:** Updated dependencies to clic v0.3.4, hq v0.24.0, hsync v0.5.1,
-  htskills v0.4.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.37.0, and htxt
-  v0.42.2.
+* **Changed:** Updated dependencies to clic v0.4.2, hq v0.24.0, hsync v0.5.2,
+  htskills v0.5.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.38.0, htxt
+  v0.44.1, and hypermedia v0.2.0.
 * **Replaced:** the `clif` cli framework is now `clic`;
   moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
 

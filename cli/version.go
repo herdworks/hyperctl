@@ -23,7 +23,7 @@ func VersionCommand() clic.Command {
 	return clic.Command{
 		Meta: clic.CommandMeta{
 			Name:        "version",
-			Description: "Print version information.",
+			Description: "Print version information",
 			Usage:       []string{"hyperctl version"},
 			Order:       1000,
 		},

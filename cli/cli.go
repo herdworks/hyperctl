@@ -17,7 +17,6 @@ var CLI = clic.CLI{
 		Commands: clic.MustCommandsFrom(
 			AgentCommand,
 			WebsiteCommand,
-			DeployCommand,
 			SyncCommand,
 			ThemeCommand,
 			VersionCommand,
@@ -30,6 +29,10 @@ var CLI = clic.CLI{
 			{
 				From: "server",
 				To:   []string{"website", "server"},
+			},
+			{
+				From: "deploy",
+				To:   []string{"website", "deploy"},
 			},
 		},
 	},
