@@ -25,14 +25,27 @@ func DeployCommand() clic.Command {
 			Usage: []string{
 				"hyperctl deploy [options]",
 			},
+			Order: 4,
 		},
 		Spec: clic.CommandSpec{
 			Key: "deploy", Help: clic.DefaultHelp,
 			Options:   deployOptions(),
-			Validator: buildValidator,
+			Validator: deployBuildValidator,
 			Handler:   deployHandler,
 		},
 	}
+}
+
+func deployBuildValidator(execution *clic.Execution) error {
+	incremental := execution.Options["incremental"].BoolValue()
+	page := execution.Options["page"].StringValue()
+	if incremental && page == "" {
+		return fmt.Errorf("--page is required when --incremental is set")
+	}
+	if !incremental && page != "" {
+		return fmt.Errorf("--page can only be used when --incremental is set")
+	}
+	return nil
 }
 func deployOptions() clic.Options {
 	return clic.Options{

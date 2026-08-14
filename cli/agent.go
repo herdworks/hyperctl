@@ -14,6 +14,7 @@ func AgentCommand() clic.Command {
 			Usage: []string{
 				"hyperctl agent [command]",
 			},
+			Order: 1,
 		},
 		Spec: clic.CommandSpec{
 			Key:  "agent",

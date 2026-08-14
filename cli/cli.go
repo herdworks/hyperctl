@@ -1,15 +1,13 @@
 // Package cli composes Hyperctl's importable command-line interface.
 package cli
 
-import (
-	"github.com/herdworks/clic"
-)
+import "github.com/herdworks/clic"
 
 var CLI = clic.CLI{
 	Command: clic.Command{
 		Meta: clic.CommandMeta{
-			Name:        "hyperctl",
 			Description: "The HyperTexting CLI.",
+			EnvPrefix:   "HYPER_",
 		},
 		Spec: clic.CommandSpec{
 			Key:     "hyperctl",
@@ -18,68 +16,30 @@ var CLI = clic.CLI{
 		},
 		Commands: clic.MustCommandsFrom(
 			AgentCommand,
-			BuildCommand,
-			CMSCommand,
+			WebsiteCommand,
 			DeployCommand,
-			DevCommand,
 			SyncCommand,
 			ThemeCommand,
 			VersionCommand,
 		),
+		Links: clic.Links{
+			{
+				From: "build",
+				To:   []string{"website", "build"},
+			},
+			{
+				From: "server",
+				To:   []string{"website", "server"},
+			},
+		},
 	},
 }
 
 // global options
-func GlobalVersionOption() clic.Option {
-	return clic.Option{
-		Meta: clic.OptionMeta{
-			Name:        "version",
-			Description: "Print version information and exit.",
-		},
-		Spec: clic.OptionSpec{
-			Key:  "version",
-			Kind: clic.BoolOption,
-		},
-	}
-}
-func GlobalWebsiteConfigOption() clic.Option {
-	return clic.Option{
-		Meta: clic.OptionMeta{
-			Name:        "config",
-			ShortName:   "c",
-			EnvName:     "HYPER_CONFIG",
-			Description: "Path to the website configuration file.",
-			Default:     "site.yaml",
-		},
-		Spec: clic.OptionSpec{
-			Key:      "config",
-			Kind:     clic.StringOption,
-			Required: true,
-		},
-	}
-}
-
-func GlobalThemeConfigOption() clic.Option {
-	return clic.Option{
-		Meta: clic.OptionMeta{
-			Name:        "theme",
-			ShortName:   "t",
-			EnvName:     "HYPER_THEME",
-			Description: "Path to the theme configuration file.",
-			Default:     "theme/theme.json",
-		},
-		Spec: clic.OptionSpec{
-			Key:      "theme",
-			Kind:     clic.StringOption,
-			Required: true,
-		},
-	}
-}
 
 func GlobalVerboseOption() clic.Option {
 	return clic.Option{
 		Meta: clic.OptionMeta{
-			Name:        "verbose",
 			ShortName:   "v",
 			Description: "Enable verbose mode",
 		},

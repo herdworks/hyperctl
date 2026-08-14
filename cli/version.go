@@ -16,13 +16,6 @@ import (
 	"github.com/herdworks/hypermedia"
 )
 
-// PackageVersion identifies one bundled Herdworks module release.
-type PackageVersion struct {
-	Package     string
-	Version     string
-	ReleaseDate time.Time
-}
-
 // VersionCommand prints Hyperctl version information.
 func VersionCommand() clic.Command {
 	verbose := GlobalVerboseOption()
@@ -58,8 +51,30 @@ func versionHandler(execution *clic.Execution) error {
 	return err
 }
 
+// PackageVersion identifies one bundled Herdworks module release.
+type PackageVersion struct {
+	Package     string
+	Version     string
+	ReleaseDate time.Time
+}
+
 // PackageVersions is a collection of package version metadata.
 type PackageVersions []PackageVersion
+
+// ColumnValues returns the package version table columns.
+func (versions PackageVersions) ColumnValues(field string) (values []string) {
+	for _, version := range versions {
+		switch field {
+		case "package":
+			values = append(values, version.Package)
+		case "version":
+			values = append(values, version.Version)
+		case "release_date":
+			values = append(values, version.ReleaseDate.Format(time.RFC3339))
+		}
+	}
+	return values
+}
 
 // packageVersions returns the Herdworks modules linked into Hyperctl.
 func packageVersions() PackageVersions {
@@ -75,19 +90,4 @@ func packageVersions() PackageVersions {
 		{Package: "hypermedia", Version: hypermedia.LibVersion, ReleaseDate: hypermedia.LibReleaseDate},
 		{Package: "hyperctl", Version: hyperctl.CLIVersion, ReleaseDate: hyperctl.CLIReleaseDate},
 	}
-}
-
-// ColumnValues returns the package version table columns.
-func (versions PackageVersions) ColumnValues(field string) (values []string) {
-	for _, version := range versions {
-		switch field {
-		case "package":
-			values = append(values, version.Package)
-		case "version":
-			values = append(values, version.Version)
-		case "release_date":
-			values = append(values, version.ReleaseDate.Format(time.RFC3339))
-		}
-	}
-	return values
 }

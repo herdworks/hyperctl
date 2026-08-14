@@ -6,22 +6,44 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* **Added:** `hyperctl agent` read-only onboarding and discovery commands: `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
-* **Added:** `hyperctl sync` commands for hsync checkout workflows: `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
-* **Added:** `hyperctl version` prints the CLI version; `--verbose` lists the
-  HyperTexting package versions and release dates.
-* **BREAKING:** Replaced the `clif` command implementation with `clic` and
-  moved the importable command tree to `hyperctl/cli`; the executable remains
-  at `cmd/hyperctl`.
-* **Changed:** `hyperctl deploy` now uses the hsync-enabled deployment lifecycle. Sites with `site.sync` prepare synchronization artifacts before provider deployment and finalize their local synchronization state only after every provider succeeds.
-* **Changed:** Adapted build, deploy, development-server, and CMS inspection paths to HyperTexting's private website page catalog and selected build output sets.
-* **Changed:** Replaced the retired `feed` agent schema with Feed 2.0's `feed-config`, `feed-data`, and `feed-selector` schemas.
-* **Changed:** Standardized `ls` output through `clic.WriteList`; `theme ls`
-  supports `--format columns|json`, and `cms page ls` replaces positional
-  filters with `--visibility`.
+* **Added:** `hyperctl agent` onboarding and discovery commands:
+  `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
+* **Added:** `hyperctl sync` commands for hsync checkout workflows:
+  `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
+* **Added:** `hyperctl version` prints the CLI version;
+  use `hyperctl version --verbose` to list the individual HyperTexting package versions.
+* **Added:** `hyperctl server` is a shortcut for `hyperctl website server`.
+* **Added:** `hyperctl htxt` is an alias for `hyperctl website`.
+* **Added:** `hyperctl httt` is an alias for `hyperctl theme`.
+* **Added:** `hyperctl tmpl` is an alias for `hyperctl theme`.
+* **Changed:** `hyperctl cms` is now `hyperctl website`.
+* **Changed:** `hyperctl dev server` is now `hyperctl website server`.
+* **Changed:** `hyperctl dev render` is now `hyperctl theme render`.
+* **Changed:** `hyperctl theme` now remixes the standalone `httt` theme workflow.
+* **Changed:** `hyperctl build` is a shortcut for `hyperctl website build`.
+* **Changed:** `hyperctl cms` is now an alias for `hyperctl website`.
+* **Changed:** `hyperctl dev` is now an alias for `hyperctl website`.
+* **Changed:** `hyperctl website build` uses HyperTexting's private website
+  page catalog and selected build output sets.
+* **Changed:** `hyperctl deploy` now uses HyperTexting's private website page
+  catalog and selected build output sets, and its hsync-enabled deployment
+  lifecycle. Sites with `site.sync` prepare synchronization artifacts before
+  provider deployment and finalize their local synchronization state only after
+  every provider succeeds.
+* **Changed:** `htxt server` uses HyperTexting's private website page catalog
+  and selected build output sets.
+* **Changed:** `hyperctl website` inspection commands use HyperTexting's
+  private website page catalog and selected build output sets.
+* **Changed:** `hyperctl agent schema` replaces the retired `feed` schema with
+  Feed 2.0's `feed-config`, `feed-data`, and `feed-selector` schemas.
+* **Changed:** `hyperctl theme ls` supports `--format columns|json` output.
+* **Changed:** `hyperctl website page ls` replaces positional filters with
+  `--visibility`.
 * **Changed:** Updated dependencies to clic v0.3.4, hq v0.24.0, hsync v0.5.1,
   htskills v0.4.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.37.0, and htxt
   v0.42.2.
+* **Replaced:** the `clif` cli framework is now `clic`;
+  moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
 
 ## v0.23.0 (2026-07-30)
 

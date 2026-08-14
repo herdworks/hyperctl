@@ -45,11 +45,15 @@ func TestAgentReadmeIntroducesCompleteWorkflow(t *testing.T) {
 	if readme.Meta.Description != "Show onboarding context for a new agent." {
 		t.Fatalf("readme description = %q", readme.Meta.Description)
 	}
+	content, err := htskills.Readme()
+	if err != nil {
+		t.Fatal(err)
+	}
 	for _, phrase := range []string{
-		"HyperTemplates", "HyperTexting CMS", "agent schema", "agent skill ls", "agent skill describe",
-		"hyperctl cms new website", "hyperctl cms new page", "hyperctl dev server", "hyperctl build", "hyperctl build --id <build-id>", "hyperctl deploy", "established commands directly for mutations", "ht-apply",
+		"HyperTexting is a content management system (CMS) and static site generator (SSG)", "HyperTemplates HTML templating and theme management system", "agent schema", "agent skill ls", "agent skill describe hypertexting", "agent skill install <name> <path>", "agent skill update <name> <path>",
+		"hyperctl --help", "hyperctl <command> --help", "hyperctl website init", "hyperctl website page new", "hyperctl website server", "hyperctl website build", "hyperctl website build --id <build-id>", "hyperctl theme package", "hyperctl deploy", "hyperctl sync", "established commands directly for mutations", "ht-apply",
 	} {
-		if !strings.Contains(readmeContent(), phrase) {
+		if !strings.Contains(string(content), phrase) {
 			t.Fatalf("agent readme context is missing %q", phrase)
 		}
 	}
@@ -58,6 +62,21 @@ func TestAgentReadmeIntroducesCompleteWorkflow(t *testing.T) {
 	}
 	if err := readme.Spec.Validator(&clic.Execution{Command: &readme}); err != nil {
 		t.Fatalf("readme command rejects no arguments: %v", err)
+	}
+}
+
+func TestAgentReadmeWritesBundledContent(t *testing.T) {
+	command := ReadmeCommand()
+	var output strings.Builder
+	if err := command.Spec.Handler(&clic.Execution{Stdout: &output}); err != nil {
+		t.Fatal(err)
+	}
+	want, err := htskills.Readme()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if output.String() != string(want) {
+		t.Fatalf("readme output = %q, want %q", output.String(), want)
 	}
 }
 
@@ -349,7 +368,7 @@ func TestHypertextingSkillRoutesAndManagesFocusedSkills(t *testing.T) {
 			}
 		}
 	}
-	for _, phrase := range []string{"hypertexting-html` to author semantic elements", "hypertexting-layouts` to compose HTML", "hypertexting-themes` to organize reusable layouts", "hyperctl build --id <build-id>", "Do not wrap `hyperctl build`"} {
+	for _, phrase := range []string{"hypertexting-html` to author semantic elements", "hypertexting-layouts` to compose HTML", "hypertexting-themes` to organize reusable layouts", "hyperctl website build --id <build-id>", "Do not wrap `hyperctl website build`"} {
 		if !strings.Contains(string(content), phrase) {
 			t.Fatalf("orchestration skill is missing %q", phrase)
 		}
