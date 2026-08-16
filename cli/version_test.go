@@ -28,7 +28,7 @@ func TestVersionCommandVerbose(t *testing.T) {
 	if result != (clic.Result{}) {
 		t.Fatalf("CLI.Run(version --verbose) = %#v", result)
 	}
-	want := "Package     Version  Release Date\n-------     -------  ------------\n"
+	want := "Package     Version        Release Date\n-------     -------        ------------\n"
 	if got := output.String(); len(got) < len(want) || got[:len(want)] != want {
 		t.Fatalf("verbose version output = %q, want prefix %q", got, want)
 	}

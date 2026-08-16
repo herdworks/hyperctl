@@ -10,10 +10,10 @@ require (
 	github.com/herdworks/clic v0.4.2
 	github.com/herdworks/hq v0.24.0
 	github.com/herdworks/hsync v0.5.2
-	github.com/herdworks/htskills v0.5.0
-	github.com/herdworks/httt v0.38.0
+	github.com/herdworks/htskills v0.6.0
+	github.com/herdworks/httt v0.39.0
 	github.com/herdworks/htup v0.27.1
-	github.com/herdworks/htxt v0.44.1
+	github.com/herdworks/htxt v0.44.2
 	github.com/herdworks/htxtd v0.1.0 // indirect
 	github.com/herdworks/hyperfeed v0.27.0
 	github.com/herdworks/hypermedia v0.2.0

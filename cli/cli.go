@@ -22,18 +22,12 @@ var CLI = clic.CLI{
 			VersionCommand,
 		),
 		Links: clic.Links{
-			{
-				From: "build",
-				To:   []string{"website", "build"},
-			},
-			{
-				From: "server",
-				To:   []string{"website", "server"},
-			},
-			{
-				From: "deploy",
-				To:   []string{"website", "deploy"},
-			},
+			{From: "build", To: []string{"website", "build"}},
+			{From: "deploy", To: []string{"website", "deploy"}},
+			{From: "download", To: []string{"sync", "download"}},
+			{From: "pull", To: []string{"sync", "pull"}},
+			{From: "push", To: []string{"sync", "push"}},
+			{From: "server", To: []string{"website", "server"}},
 		},
 	},
 }

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl sync` commands for hsync checkout workflows:
   `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
+* **Added:** `hyperctl download`, `pull`, and `push` shortcuts for their
+  corresponding `hyperctl sync` commands.
 * **Added:** `hyperctl version` prints the CLI version;
   use `hyperctl version --verbose` to list the individual HyperTexting package versions.
 * **Added:** `hyperctl server` is a shortcut for `hyperctl website server`.
@@ -43,8 +45,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Changed:** `hyperctl website page ls` replaces positional filters with
   `--visibility`.
 * **Changed:** Updated dependencies to clic v0.4.2, hq v0.24.0, hsync v0.5.2,
-  htskills v0.5.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.38.0, htxt
-  v0.44.1, and hypermedia v0.2.0.
+  htskills v0.6.0, hyperfeed v0.27.0, htup v0.27.1, httt v0.39.0, htxt
+  v0.44.2, and hypermedia v0.2.0.
 * **Replaced:** the `clif` cli framework is now `clic`;
   moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
 
