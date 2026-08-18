@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* **Added:** `hyperctl agent skill up [skills-directory]` synchronizes bundled
+  HyperTexting skills into every discovered project-local skill root and
+  rejects global Claude and Codex skill directories.
+* **Changed:** `hyperctl agent skill` now remounts the reusable `htskills/cli`
+  command tree, including `readme`, `ls`, `describe`, `install`, `update`, and
+  `up`; `hyperctl agent readme` remains a compatibility link to `skill readme`.
+* **Changed:** Narrowed `hyperctl agent` skill tests to command mounting and
+  Hyperctl namespace integration; `htskills` owns bundled-skill content and
+  command-behavior tests.
+* **Removed:** The unregistered `hyperctl dev mimetype` helper.
 * **Added:** `hyperctl agent` onboarding and discovery commands:
   `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl sync` commands for hsync checkout workflows:
@@ -45,7 +55,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Changed:** `hyperctl website page ls` replaces positional filters with
   `--visibility`.
 * **Changed:** Updated dependencies to clic v0.4.2, hq v0.24.0, hsync v0.5.3,
-  htskills v0.6.0, hyperfeed v0.27.0, htup v0.27.2, httt v0.39.0, htxt
+  htskills v0.8.0, hyperfeed v0.27.0, htup v0.27.2, httt v0.39.0, htxt
   v0.44.3, and hypermedia v0.2.0.
 * **Replaced:** the `clif` cli framework is now `clic`;
   moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.

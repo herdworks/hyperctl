@@ -1,104 +1,64 @@
 package cli
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
-	"os"
-	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
 
 	"github.com/herdworks/clic"
-	htskills "github.com/herdworks/htskills"
 )
 
-func testSkills(t *testing.T) htskills.Skills {
-	t.Helper()
-	skills, err := htskills.Catalog()
-	if err != nil {
-		t.Fatal(err)
-	}
-	return skills
-}
-
-func TestAgentCommandRegistersRequiredCommands(t *testing.T) {
+func TestAgentCommandMountsSkillTreeAndLegacyReadmeLink(t *testing.T) {
 	command := AgentCommand()
-	for _, name := range []string{"readme", "schema", "skill"} {
+	for _, name := range []string{"schema", "skill"} {
 		if _, ok := command.SubCommand(name); !ok {
 			t.Fatalf("agent command does not register %q", name)
 		}
+	}
+	if _, ok := command.Link("readme"); !ok {
+		t.Fatal("agent command does not link the legacy readme command")
 	}
 	for _, name := range []string{"ls", "describe"} {
 		if _, ok := SchemaCommand().SubCommand(name); !ok {
 			t.Fatalf("schema command does not register %q", name)
 		}
 	}
-	for _, name := range []string{"ls", "describe", "install", "update"} {
-		if _, ok := SkillCommand().SubCommand(name); !ok {
-			t.Fatalf("skill command does not register %q", name)
-		}
+	skill, ok := command.SubCommand("skill")
+	if !ok {
+		t.Fatal("agent command does not register skill")
+	}
+	if got, want := skill.Meta.Usage, []string{"hyperctl agent skill [command]"}; !slices.Equal(got, want) {
+		t.Fatalf("skill usage = %v, want %v", got, want)
 	}
 }
 
-func TestAgentReadmeIntroducesCompleteWorkflow(t *testing.T) {
-	readme := ReadmeCommand()
-	if readme.Meta.Description != "Show onboarding context for a new agent." {
-		t.Fatalf("readme description = %q", readme.Meta.Description)
+func TestAgentReadmeUsesHyperctlSkillNamespace(t *testing.T) {
+	var output bytes.Buffer
+	result := CLI.Run(clic.Execution{
+		Context: context.Background(),
+		Stdout:  &output,
+	}, clic.Arguments{"agent", "readme"})
+	if result.Error != nil {
+		t.Fatalf("hyperctl agent readme = %#v", result)
 	}
-	content, err := htskills.Readme()
-	if err != nil {
-		t.Fatal(err)
+	if !strings.Contains(output.String(), `"hyperctl agent skill up"`) {
+		t.Fatalf("agent readme does not use the Hyperctl namespace: %q", output.String())
 	}
-	for _, phrase := range []string{
-		"HyperTexting is a content management system (CMS) and static site generator (SSG)", "HyperTemplates HTML templating and theme management system", "agent schema", "agent skill ls", "agent skill describe hypertexting", "agent skill install <name> <path>", "agent skill update <name> <path>",
-		"hyperctl --help", "hyperctl <command> --help", "hyperctl website init", "hyperctl website page new", "hyperctl website server", "hyperctl website build", "hyperctl theme package", "hyperctl deploy", "hyperctl sync", "established commands directly for mutations",
-	} {
-		if !strings.Contains(string(content), phrase) {
-			t.Fatalf("agent readme context is missing %q", phrase)
-		}
-	}
-	if readme.Spec.Validator == nil {
-		t.Fatal("readme command has no validator")
-	}
-	if err := readme.Spec.Validator(&clic.Execution{Command: &readme}); err != nil {
-		t.Fatalf("readme command rejects no arguments: %v", err)
+	if strings.Contains(output.String(), "htskills") {
+		t.Fatalf("agent readme leaks the imported command name: %q", output.String())
 	}
 }
 
-func TestAgentReadmeWritesBundledContent(t *testing.T) {
-	command := ReadmeCommand()
-	var output strings.Builder
-	if err := command.Spec.Handler(&clic.Execution{Stdout: &output}); err != nil {
-		t.Fatal(err)
+func TestAgentSkillUpUsesHyperctlNamespace(t *testing.T) {
+	result := CLI.Run(clic.Execution{Context: context.Background(), WorkingDirectory: t.TempDir(), LookupEnv: func(string) (string, bool) { return t.TempDir(), true }}, clic.Arguments{"agent", "skill", "up"})
+	if result.ExitCode != 1 || result.Error == nil {
+		t.Fatalf("hyperctl agent skill up = %#v, want validation error", result)
 	}
-	want, err := htskills.Readme()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if output.String() != string(want) {
-		t.Fatalf("readme output = %q, want %q", output.String(), want)
-	}
-}
-
-func TestSkillListUsesAlignedColumns(t *testing.T) {
-	skills := testSkills(t)
-	command := SkillListCommand()
-	var output strings.Builder
-	if err := command.Spec.Handler(&clic.Execution{Stdout: &output}); err != nil {
-		t.Fatal(err)
-	}
-	lines := strings.Split(strings.TrimSuffix(output.String(), "\n"), "\n")
-	if len(lines) != len(skills)+2 {
-		t.Fatalf("skill list has %d lines, want %d", len(lines), len(skills)+2)
-	}
-	descriptionColumn := strings.Index(lines[0], "Description")
-	if descriptionColumn <= len("Name") || !strings.HasPrefix(lines[1], "----") {
-		t.Fatalf("skill list header is not tabular: %q / %q", lines[0], lines[1])
-	}
-	for i, skill := range skills {
-		if got := strings.Index(lines[i+2], skill.Description); got != descriptionColumn {
-			t.Fatalf("%s description starts in column %d, want %d", skill.Name, got, descriptionColumn)
-		}
+	if !strings.Contains(result.Error.Error(), "hyperctl agent skill up") || strings.Contains(result.Error.Error(), "htskills up") {
+		t.Fatalf("hyperctl agent skill up error does not use the Hyperctl namespace: %q", result.Error)
 	}
 }
 
@@ -214,303 +174,8 @@ func TestProviderSchemaMatchesHostingProviderContract(t *testing.T) {
 	}
 }
 
-func TestEmbeddedSkillsAreCompleteAndExact(t *testing.T) {
-	skills := testSkills(t)
-	for _, skill := range skills {
-		content, err := skillContent(skill.Name)
-		if err != nil {
-			t.Fatalf("%s: %v", skill.Name, err)
-		}
-		if !strings.HasPrefix(string(content), "---\nname: "+skill.Name+"\n") {
-			t.Fatalf("%s has invalid skill frontmatter", skill.Name)
-		}
-		metadata, err := htskills.Parse(content)
-		if err != nil {
-			t.Fatalf("%s metadata: %v", skill.Name, err)
-		}
-		if metadata.Version == "" {
-			t.Fatalf("%s has no skill version", skill.Name)
-		}
-		for _, heading := range []string{"## Overview", "## Workflow", "## Instructions", "## Tools", "## References"} {
-			if !strings.Contains(string(content), heading) {
-				t.Fatalf("%s is missing %q", skill.Name, heading)
-			}
-		}
-	}
-}
-
-func TestDataAndLayoutSkillsCoverCoreAuthoringRules(t *testing.T) {
-	data, err := skillContent("hypertexting-data")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"custom properties", "content/index.yaml", "data/homepage.yaml"} {
-		if !strings.Contains(string(data), phrase) {
-			t.Fatalf("data skill is missing %q", phrase)
-		}
-	}
-	layout, err := skillContent("hypertexting-layouts")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"ht-with", "ht-debug", "source design dictate the authoring workflow", "full-page mockups", "component-level designs", "both paths must converge", "required outcome: reusable fragments", "Do not split a layout merely to anticipate reuse", "clear data contract or reuse opportunity", "rootless component", "fixture data", "top-level section", "component a fragment", "Compare extracted section fragments", "smaller shared fragments", "Use `hypertexting-html` to choose semantic elements", "Colocate a fragment’s component styles"} {
-		if !strings.Contains(string(layout), phrase) {
-			t.Fatalf("layout skill is missing %q", phrase)
-		}
-	}
-	templateData, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting-layouts/references/template-data.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"direct text-node children", "implicit `ht-apply`", "root-shallow", "do not reach descendant elements", "plain object renders one fragment", "each.index", "site", "page", "theme"} {
-		if !strings.Contains(string(templateData), phrase) {
-			t.Fatalf("layout template-data reference is missing %q", phrase)
-		}
-	}
-	css, err := skillContent("hypertexting-css")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"Colocate component-specific CSS", "Include these two style elements", "style#components` before `style#layout", "source order precedence", "fixture JSON", "Style custom elements and their custom attributes directly", "few CSS classes", "fragment-owned component styles", "generic static `style.css`", "Do not create a fragment variant solely for layout-specific styling", "markup, data contract, or reusable behavior differs"} {
-		if !strings.Contains(string(css), phrase) {
-			t.Fatalf("CSS skill is missing %q", phrase)
-		}
-	}
-}
-
-func TestDataHtmlPluginsAndThemeSkillsDeclareOwnershipAndThemePatterns(t *testing.T) {
-	data, err := skillContent("hypertexting-data")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(string(data), "Use `hypertexting-plugins` to implement the computed-data plugin") {
-		t.Fatal("data skill does not hand computed-data implementation to the plugins skill")
-	}
-	namespaces, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting-data/references/namespaces.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"social/twitter.yaml", "social.twitter", "archive.js", "static file and one computed `.js` file"} {
-		if !strings.Contains(string(namespaces), phrase) {
-			t.Fatalf("data namespaces reference is missing %q", phrase)
-		}
-	}
-	html, err := skillContent("hypertexting-html")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"Author the HTML first", "semantic HTML", "Avoid div soup", "hyphenated custom element", "few or none"} {
-		if !strings.Contains(string(html), phrase) {
-			t.Fatalf("HTML skill is missing %q", phrase)
-		}
-	}
-	plugins, err := skillContent("hypertexting-plugins")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"`hypertexting-data` has defined a reusable derived namespace", "social/twitter.js` becomes `social.twitter`", "template-value plugin", "text-transform: uppercase", "alternate HTML authoring system"} {
-		if !strings.Contains(string(plugins), phrase) {
-			t.Fatalf("plugins skill is missing %q", phrase)
-		}
-	}
-	pluginReference, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting-plugins/references/choosing-plugins.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"duration_iso", "export default function durationISO", "export default function durationLabel", "Computed-data plugin", "Web Component"} {
-		if !strings.Contains(string(pluginReference), phrase) {
-			t.Fatalf("plugin reference is missing %q", phrase)
-		}
-	}
-	themes, err := skillContent("hypertexting-themes")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"`theme.json`", "themes/<theme>/theme.json", "themes/<theme>/<version>/theme.json", "site.config.theme", "embedded builtins only as a fallback"} {
-		if !strings.Contains(string(themes), phrase) {
-			t.Fatalf("themes skill is missing %q", phrase)
-		}
-	}
-	config, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting-themes/references/config.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"JSON", "layouts_dir", "fragments_dir", "static_dir", "data"} {
-		if !strings.Contains(string(config), phrase) {
-			t.Fatalf("theme config reference is missing %q", phrase)
-		}
-	}
-}
-
-func TestHypertextingSkillRoutesAndManagesFocusedSkills(t *testing.T) {
-	content, err := skillContent("hypertexting")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, name := range []string{
-		"hypertexting-data",
-		"hypertexting-themes",
-		"hypertexting-layouts",
-		"hypertexting-debugging",
-		"hypertexting-assets",
-		"hypertexting-html",
-		"hypertexting-plugins",
-		"hypertexting-css",
-		"hypertexting-javascript",
-	} {
-		for _, command := range []string{
-			"hyperctl agent skill install " + name + " <path>",
-			"hyperctl agent skill update " + name + " <path>",
-			"hyperctl agent skill describe " + name,
-		} {
-			if !strings.Contains(string(content), command) {
-				t.Fatalf("orchestration skill is missing %q", command)
-			}
-		}
-	}
-	for _, phrase := range []string{"hypertexting-html` to author semantic elements", "hypertexting-layouts` to compose HTML", "hypertexting-themes` to organize reusable layouts", "hyperctl website build --id <build-id>", "Do not wrap `hyperctl website build`"} {
-		if !strings.Contains(string(content), phrase) {
-			t.Fatalf("orchestration skill is missing %q", phrase)
-		}
-	}
-	architecture, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting/references/architecture.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"pre-renders HTML and assets at build time", "islands-style enhancement", "serverless functions"} {
-		if !strings.Contains(string(architecture), phrase) {
-			t.Fatalf("architecture reference is missing %q", phrase)
-		}
-	}
-}
-
-func TestDebuggingSkillUsesDeclarativeDebuggingAndKnownIssues(t *testing.T) {
-	debugging, err := skillContent("hypertexting-debugging")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"`ht-debug`", "Do not write a custom script", "known issues"} {
-		if !strings.Contains(string(debugging), phrase) {
-			t.Fatalf("debugging skill is missing %q", phrase)
-		}
-	}
-	debugReference, err := htskills.FS.ReadFile(htskills.Root + "/hypertexting-debugging/references/ht-debug.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"ht-debug=\"element\"", "${ page.hero }", "exactly one", "Repeated `ht-debug` attributes"} {
-		if !strings.Contains(string(debugReference), phrase) {
-			t.Fatalf("ht-debug reference is missing %q", phrase)
-		}
-	}
-}
-
-func TestJavaScriptSkillSeparatesBrowserEnhancementsFromBuildPlugins(t *testing.T) {
-	javascript, err := skillContent("hypertexting-javascript")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, phrase := range []string{"pre-rendered HTML component", "build-time JavaScript plugins", "hypertexting-plugins", "document.addEventListener(\"<event>\", this)", "destination-side `ht-pipe='from \"script.component\" as js'`"} {
-		if !strings.Contains(string(javascript), phrase) {
-			t.Fatalf("JavaScript skill is missing %q", phrase)
-		}
-	}
-	for _, path := range []string{
-		htskills.Root + "/hypertexting-javascript/references/runtime-boundaries.md",
-		htskills.Root + "/hypertexting-javascript/references/web-components.md",
-	} {
-		if _, err = htskills.FS.ReadFile(path); err != nil {
-			t.Fatalf("JavaScript skill reference %q: %v", path, err)
-		}
-	}
-}
-
-func TestInstallSkillCopiesCompleteDirectoryAndRejectsExistingDestination(t *testing.T) {
-	skill := testSkills(t)[0]
-	destination := filepath.Join(t.TempDir(), "installed-skill")
-	written, err := installSkill(skill.Name, destination)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(written) == 0 {
-		t.Fatal("install wrote no files")
-	}
-	installed, err := os.ReadFile(filepath.Join(destination, "SKILL.md"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	embedded, err := skillContent(skill.Name)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if string(installed) != string(embedded) {
-		t.Fatal("installed SKILL.md differs from embedded bytes")
-	}
-	if info, err := os.Stat(filepath.Join(destination, "references")); err != nil || !info.IsDir() {
-		t.Fatalf("installed skill does not contain references directory: %v", err)
-	}
-	if _, err := installSkill(skill.Name, destination); err == nil {
-		t.Fatal("install succeeded for an existing destination")
-	}
-}
-
-func TestUpdateSkillReplacesOlderSkillsOnly(t *testing.T) {
-	skill := testSkills(t)[0]
-	destination := filepath.Join(t.TempDir(), "installed-skill")
-	if _, err := installSkill(skill.Name, destination); err != nil {
-		t.Fatal(err)
-	}
-	installedPath := filepath.Join(destination, "SKILL.md")
-	embedded, err := skillContent(skill.Name)
-	if err != nil {
-		t.Fatal(err)
-	}
-	metadata, err := htskills.Parse(embedded)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if metadata.Version == "" {
-		t.Fatal("embedded skill has no version")
-	}
-	versionLine := "version: \"" + metadata.Version + "\"\n"
-	olderVersionLine := "version: \"2026-07\"\n"
-	if err := os.WriteFile(installedPath, []byte(strings.Replace(string(embedded), versionLine, olderVersionLine, 1)), 0644); err != nil {
-		t.Fatal(err)
-	}
-	written, err := updateSkill(skill.Name, destination)
-	if err != nil {
-		t.Fatalf("update older skill: %v", err)
-	}
-	if len(written) == 0 {
-		t.Fatal("update wrote no files")
-	}
-	updated, err := os.ReadFile(installedPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if string(updated) != string(embedded) {
-		t.Fatal("updated SKILL.md differs from embedded bytes")
-	}
-	if _, err = updateSkill(skill.Name, destination); err == nil {
-		t.Fatal("update succeeded for an equal skill version")
-	}
-	newerVersionLine := "version: \"2026-09\"\n"
-	if err = os.WriteFile(installedPath, []byte(strings.Replace(string(embedded), versionLine, newerVersionLine, 1)), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = updateSkill(skill.Name, destination); err == nil {
-		t.Fatal("update succeeded for a newer installed skill")
-	}
-	if _, err = updateSkill(skill.Name, filepath.Join(t.TempDir(), "missing-skill")); err == nil {
-		t.Fatal("update succeeded for a missing installation")
-	}
-}
-
-func TestUnknownNamesFail(t *testing.T) {
+func TestUnknownSchemaFails(t *testing.T) {
 	if _, ok := schemas.Lookup("unknown"); ok {
 		t.Fatal("unknown schema found")
-	}
-	if _, err := skillContent("unknown"); err == nil {
-		t.Fatal("unknown skill did not fail")
 	}
 }

@@ -3,6 +3,7 @@ package cli
 
 import (
 	"github.com/herdworks/clic"
+	htskillscli "github.com/herdworks/htskills/cli"
 )
 
 // AgentCommand exposes coding-agent guidance and contracts.
@@ -21,9 +22,17 @@ func AgentCommand() clic.Command {
 			Help: clic.DefaultHelp,
 		},
 		Commands: clic.MustCommandsFrom(
-			ReadmeCommand,
 			SchemaCommand,
-			SkillCommand,
+			func() clic.Command {
+				command := htskillscli.SkillCommand()
+				command.Meta.Name = "skill"
+				command.Meta.Usage = []string{"hyperctl agent skill [command]"}
+				command.Spec.Key = "skill"
+				return command
+			},
 		),
+		Links: clic.Links{
+			{From: "readme", To: []string{"skill", "readme"}},
+		},
 	}
 }
