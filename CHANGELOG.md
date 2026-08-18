@@ -46,7 +46,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   `--visibility`.
 * **Changed:** Updated dependencies to clic v0.4.2, hq v0.24.0, hsync v0.5.3,
   htskills v0.6.0, hyperfeed v0.27.0, htup v0.27.2, httt v0.39.0, htxt
-  v0.44.2, and hypermedia v0.2.0.
+  v0.44.3, and hypermedia v0.2.0.
 * **Replaced:** the `clif` cli framework is now `clic`;
   moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
 
