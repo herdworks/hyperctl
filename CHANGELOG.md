@@ -6,9 +6,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* Updated `github.com/herdworks/hsync` to v0.6.3,
-  `github.com/herdworks/htup` to v0.27.3, and
-  `github.com/herdworks/htxt` to v0.45.0.
 * **Added:** `hyperctl agent skill up [skills-directory]` synchronizes bundled
   HyperTexting skills into every discovered project-local skill root and
   rejects global Claude and Codex skill directories.
@@ -57,11 +54,16 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Changed:** `hyperctl theme ls` supports `--format columns|json` output.
 * **Changed:** `hyperctl website page ls` replaces positional filters with
   `--visibility`.
-* **Changed:** Updated dependencies to clic v0.4.2, hq v0.24.0, hsync v0.5.3,
-  htskills v0.8.0, hyperfeed v0.27.0, htup v0.27.2, httt v0.39.0, htxt
-  v0.44.3, and hypermedia v0.2.0.
-* **Replaced:** the `clif` cli framework is now `clic`;
-  moved the command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
+* **Changed:** moved the CLI command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
+* **Changed:** package dependencies, including:
+  `cli-go` v0.1.0 to `clic` v0.4.2
+  `hyperfeed-go` v0.26.5 to `hyperfeed` v0.27.0
+  `hyperproviders-go` v0.23.0 to `htup` v0.27.3
+  `hypertemplates-go` v0.35.0 to `httt` v0.39.0
+  `hypertexting-go` v0.38.0 to `htxt` v0.45.1
+  `hypergraph-go` v0.22.3 to `hq` v0.24.0
+* **Updated:** `hsync` to v0.6.4, `htskills` to v0.8.0; 
+  and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.1.0 (indirectly).
 
 ## v0.23.0 (2026-07-30)
 
