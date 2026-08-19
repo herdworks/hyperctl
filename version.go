@@ -6,6 +6,6 @@ import (
 
 // ============================ Package Variables ============================
 var (
-	CLIVersion        = "v0.24.0-rc.08"
+	CLIVersion        = "v0.24.0-rc.09"
 	CLIReleaseDate, _ = time.Parse(time.RFC3339, "2026-08-19T13:00:00-07:00") // Usage: CLIReleaseDate.Format(time.RFC3339)
 )
