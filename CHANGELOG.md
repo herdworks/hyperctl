@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+* Updated `github.com/herdworks/hsync` to v0.6.3,
+  `github.com/herdworks/htup` to v0.27.3, and
+  `github.com/herdworks/htxt` to v0.45.0.
 * **Added:** `hyperctl agent skill up [skills-directory]` synchronizes bundled
   HyperTexting skills into every discovered project-local skill root and
   rejects global Claude and Codex skill directories.
