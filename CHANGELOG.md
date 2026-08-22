@@ -19,7 +19,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Added:** `hyperctl agent` onboarding and discovery commands:
   `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl sync` commands for hsync checkout workflows:
-  `download`, `init`, `pull`, `push`, `reset`, and `status`. Configuration-consuming commands default to `site.yaml` and honor `HYPER_CONFIG`.
+  `download`, `init`, `pull`, `push`, `remote`, `reset`, and `status`.
+  Configuration-consuming commands resolve `site.yaml` through HyperTexting's
+  website-aware sync manager, defaulting omitted include, ignore, and maximum
+  file-size policy while honoring `HYPER_CONFIG`.
 * **Added:** `hyperctl download`, `pull`, and `push` shortcuts for their
   corresponding `hyperctl sync` commands.
 * **Added:** `hyperctl version` prints the CLI version;
@@ -56,14 +59,15 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   `--visibility`.
 * **Changed:** moved the CLI command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
 * **Updated:** package dependencies, including:
-  `cli-go` v0.1.0 to `clic` v0.4.2
+  `cli-go` v0.1.0 to `clic` v0.4.3
   `hyperfeed-go` v0.26.5 to `hyperfeed` v0.28.0
   `hyperproviders-go` v0.23.0 to `htup` v0.27.3
   `hypertemplates-go` v0.35.0 to `httt` v0.39.1
-  `hypertexting-go` v0.38.0 to `htxt` v0.45.2
+  `hypertexting-go` v0.38.0 to `htxt` v0.45.4
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
-  `hsync` to v0.6.4 and `htskills` to v0.8.0;
+  `hsync` to v0.7.0 and `htskills` to v0.8.0;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).
+
 
 ## v0.23.0 (2026-07-30)
 
