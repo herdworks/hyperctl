@@ -63,7 +63,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   `hyperfeed-go` v0.26.5 to `hyperfeed` v0.28.0
   `hyperproviders-go` v0.23.0 to `htup` v0.27.3
   `hypertemplates-go` v0.35.0 to `httt` v0.39.1
-  `hypertexting-go` v0.38.0 to `htxt` v0.45.4
+  `hypertexting-go` v0.38.0 to `htxt` v0.45.5
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
   `hsync` to v0.7.1 and `htskills` to v0.8.0;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).
