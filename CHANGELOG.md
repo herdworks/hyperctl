@@ -58,14 +58,18 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Changed:** `hyperctl website page ls` replaces positional filters with
   `--visibility`.
 * **Changed:** moved the CLI command tree to `hyperctl/cli`; the executable remains at `cmd/hyperctl`.
+* **Changed:** The `markdown(...)` template-variable function now unwraps a
+  sole rendered paragraph by default, making short Markdown values suitable
+  inside elements that already provide block structure. Pass a final
+  `{ "display": "block" }` options map to preserve the paragraph wrapper.
 * **Updated:** package dependencies, including:
   `cli-go` v0.1.0 to `clic` v0.4.3
   `hyperfeed-go` v0.26.5 to `hyperfeed` v0.28.0
   `hyperproviders-go` v0.23.0 to `htup` v0.27.3
-  `hypertemplates-go` v0.35.0 to `httt` v0.40.1
-  `hypertexting-go` v0.38.0 to `htxt` v0.46.0
+  `hypertemplates-go` v0.35.0 to `httt` v0.41.0
+  `hypertexting-go` v0.38.0 to `htxt` v0.47.0
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
-  `hsync` to v0.7.2 and `htskills` to v0.9.0;
+  `hsync` to v0.7.2 and `htskills` to v0.9.1;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).
 
 
