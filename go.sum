@@ -100,12 +100,12 @@ github.com/herdworks/hsync v0.7.2 h1:fYcT+VaEBYY8mjMgBAvao7dDT0hmr+cWaSF6TtwZ10g
 github.com/herdworks/hsync v0.7.2/go.mod h1:kMKsvGBRac2tBsm/zWYK78IvAfown1CKux2rJkYCwbk=
 github.com/herdworks/htskills v0.9.1 h1:LTjyK7YD7ouDrZfVJ5ZOW6Ei1HBq06Usk/ePFwId9vM=
 github.com/herdworks/htskills v0.9.1/go.mod h1:fu4nmfWv8EqnRzCEZb3uvxzLWTzOtbL8HB/+6yiJRZc=
-github.com/herdworks/httt v0.41.0 h1:+W7YAASCeAsi1Sfut47ug6t5Qo1Uaubgp3kv2LiUkrE=
-github.com/herdworks/httt v0.41.0/go.mod h1:qL2vKpnWKz5ORn6ZCQ0hngLgGLqAIIVdMegvmMnQgNk=
+github.com/herdworks/httt v0.41.1 h1:DACjZR/9DselJVufW7uitTiv0Ylh1afAHltDzpc1TYI=
+github.com/herdworks/httt v0.41.1/go.mod h1:qL2vKpnWKz5ORn6ZCQ0hngLgGLqAIIVdMegvmMnQgNk=
 github.com/herdworks/htup v0.27.3 h1:QYpah96PRNSARJoCBmNJ7MluHJTJSqFRkq4C/1VDgn8=
 github.com/herdworks/htup v0.27.3/go.mod h1:4df8kivNR3cGrUXYru40LLJyQwztjiejBUBCGQCOnj8=
-github.com/herdworks/htxt v0.47.0 h1:3T7eAyFJk9JR76YZ75B4eRTANqhNSbx15ZlQGFBS3vM=
-github.com/herdworks/htxt v0.47.0/go.mod h1:VJboihlzw11g3/QMpTALCxNp6NLwvDL6M335s4bcSro=
+github.com/herdworks/htxt v0.48.0 h1:3El3Ba1TDe6y+PAv4ae/P0Jq1Adj02hlfEXTMq87OeA=
+github.com/herdworks/htxt v0.48.0/go.mod h1:qJ1Pydu7131L568BoWIiJka9Wte244tVBSe1WX1kJO4=
 github.com/herdworks/htxtd v0.2.0 h1:7FJYIwEAC4RyPr7dGnaN40rkh3917hYxIKCGZa8NBLs=
 github.com/herdworks/htxtd v0.2.0/go.mod h1:uCvRbvWZH/rl9M2a5IlILpfhkbRH0DItgzcCdw/72G4=
 github.com/herdworks/hyperfeed v0.28.0 h1:1NoZJkD9H1ssTelzx7KrAaK5VjpIfB4vULo1hYqAdVI=

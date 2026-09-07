@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   corresponding `hyperctl sync` commands.
 * **Added:** `hyperctl version` prints the CLI version;
   use `hyperctl version --verbose` to list the individual HyperTexting package versions.
+* **Added:** `hyperctl build --drafts-dir` for layering draft content into a build.
+* **Added:** `hyperctl server --drafts-dir` for layering draft content into a preview server.
 * **Added:** `hyperctl server` is a shortcut for `hyperctl website server`.
 * **Added:** `hyperctl htxt` is an alias for `hyperctl website`.
 * **Added:** `hyperctl httt` is an alias for `hyperctl theme`.
@@ -62,12 +64,14 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   sole rendered paragraph by default, making short Markdown values suitable
   inside elements that already provide block structure. Pass a final
   `{ "display": "block" }` options map to preserve the paragraph wrapper.
+* **Changed:** content types `spec.uri_resolver` was renamed to `spec.path_resolver`
+* **Removed** `hyperctl website page new`
 * **Updated:** package dependencies, including:
   `cli-go` v0.1.0 to `clic` v0.4.3
   `hyperfeed-go` v0.26.5 to `hyperfeed` v0.28.0
   `hyperproviders-go` v0.23.0 to `htup` v0.27.3
-  `hypertemplates-go` v0.35.0 to `httt` v0.41.0
-  `hypertexting-go` v0.38.0 to `htxt` v0.47.0
+  `hypertemplates-go` v0.35.0 to `httt` v0.41.1
+  `hypertexting-go` v0.38.0 to `htxt` v0.48.0
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
   `hsync` to v0.7.2 and `htskills` to v0.9.1;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).
