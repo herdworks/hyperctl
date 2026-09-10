@@ -15,10 +15,10 @@ var CLI = clic.CLI{
 			Options: clic.Options{},
 		},
 		Commands: clic.MustCommandsFrom(
-			AgentCommand,
 			WebsiteCommand,
-			SyncCommand,
 			ThemeCommand,
+			SyncCommand,
+			SkillCommand,
 			VersionCommand,
 		),
 		Links: clic.Links{
@@ -28,6 +28,7 @@ var CLI = clic.CLI{
 			{From: "pull", To: []string{"sync", "pull"}},
 			{From: "push", To: []string{"sync", "push"}},
 			{From: "server", To: []string{"website", "server"}},
+			{From: "readme", To: []string{"skill", "readme"}},
 		},
 	},
 }

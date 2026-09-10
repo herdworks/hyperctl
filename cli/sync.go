@@ -12,6 +12,6 @@ func SyncCommand() clic.Command {
 	command.Spec.Key = "sync"
 	command.Meta.Description = "Website synchronization tools"
 	command.Meta.EnvPrefix = ""
-	command.Meta.Order = 5
+	command.Meta.Order = 3
 	return command
 }

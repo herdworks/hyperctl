@@ -6,18 +6,18 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
-* **Added:** `hyperctl agent skill up [skills-directory]` synchronizes bundled
+* **Added:** `hyperctl skill up [skills-directory]` synchronizes bundled
   HyperTexting skills into every discovered project-local skill root and
   rejects global Claude and Codex skill directories.
-* **Changed:** `hyperctl agent skill` now remounts the reusable `htskills/cli`
+* **Changed:** `hyperctl skill` now remounts the reusable `htskills/cli`
   command tree, including `readme`, `ls`, `describe`, `install`, `update`, and
-  `up`; `hyperctl agent readme` remains a compatibility link to `skill readme`.
-* **Changed:** Narrowed `hyperctl agent` skill tests to command mounting and
+  `up`; `hyperctl readme` remains a compatibility link to `skill readme`.
+* **Changed:** Narrowed `hyperctl skill` tests to command mounting and
   Hyperctl namespace integration; `htskills` owns bundled-skill content and
   command-behavior tests.
 * **Removed:** The unregistered `hyperctl dev mimetype` helper.
-* **Added:** `hyperctl agent` onboarding and discovery commands:
-  `readme`; `schema ls` and `schema describe`; and `skill ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
+* **Added:** `hyperctl skill` onboarding and discovery commands:
+  `readme`, `ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl sync` commands for hsync checkout workflows:
   `download`, `init`, `pull`, `push`, `remote`, `reset`, and `status`.
   Configuration-consuming commands resolve `site.yaml` through HyperTexting's
@@ -54,7 +54,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   and selected build output sets.
 * **Changed:** `hyperctl website` inspection commands use HyperTexting's
   private website page catalog and selected build output sets.
-* **Changed:** `hyperctl agent schema` replaces the retired `feed` schema with
+* **Changed:** `hyperctl website schema` replaces the retired `feed` schema with
   Feed 2.0's `feed-config`, `feed-data`, and `feed-selector` schemas.
 * **Changed:** `hyperctl theme ls` supports `--format columns|json` output.
 * **Changed:** `hyperctl website page ls` replaces positional filters with
@@ -70,8 +70,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   `cli-go` v0.1.0 to `clic` v0.4.3
   `hyperfeed-go` v0.26.5 to `hyperfeed` v0.28.0
   `hyperproviders-go` v0.23.0 to `htup` v0.27.3
-  `hypertemplates-go` v0.35.0 to `httt` v0.41.1
-  `hypertexting-go` v0.38.0 to `htxt` v0.48.0
+  `hypertemplates-go` v0.35.0 to `httt` v0.41.2
+  `hypertexting-go` v0.38.0 to `htxt` v0.48.6
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
   `hsync` to v0.7.2 and `htskills` to v0.9.1;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).

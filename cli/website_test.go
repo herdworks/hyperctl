@@ -17,7 +17,7 @@ func TestWebsiteCommandMountsHTXTWorkflow(t *testing.T) {
 	if command.Meta.EnvPrefix != "" {
 		t.Fatalf("website environment prefix = %q", command.Meta.EnvPrefix)
 	}
-	for _, key := range []string{"init", "build", "deploy", "server", "data", "page", "asset", "content-type"} {
+	for _, key := range []string{"init", "build", "deploy", "server", "data", "page", "asset", "content-type", "schema"} {
 		if _, ok := command.SubCommand(key); !ok {
 			t.Errorf("website command %q is not registered", key)
 		}
@@ -43,6 +43,23 @@ func TestWebsiteCommandMountsHTXTWorkflow(t *testing.T) {
 	}
 	if !strings.Contains(output.String(), "HYPER_CONFIG") {
 		t.Errorf("mounted page-new environment = %q", output.String())
+	}
+}
+
+func TestWebsiteSchemaCommandMountsHTXTWorkflow(t *testing.T) {
+	var output bytes.Buffer
+	result := CLI.Run(
+		clic.Execution{
+			Context: context.Background(),
+			Stdout:  &output,
+		},
+		clic.Arguments{"website", "schema", "describe", "website"},
+	)
+	if result.Error != nil {
+		t.Fatalf("CLI.Run(website schema describe website) = %#v", result)
+	}
+	if !strings.Contains(output.String(), `"$schema": "https://json-schema.org/draft/2020-12/schema"`) {
+		t.Errorf("mounted schema output = %q", output.String())
 	}
 }
 
