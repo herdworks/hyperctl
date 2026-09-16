@@ -100,8 +100,8 @@ github.com/herdworks/hsync v0.7.2 h1:fYcT+VaEBYY8mjMgBAvao7dDT0hmr+cWaSF6TtwZ10g
 github.com/herdworks/hsync v0.7.2/go.mod h1:kMKsvGBRac2tBsm/zWYK78IvAfown1CKux2rJkYCwbk=
 github.com/herdworks/htskills v0.9.1 h1:LTjyK7YD7ouDrZfVJ5ZOW6Ei1HBq06Usk/ePFwId9vM=
 github.com/herdworks/htskills v0.9.1/go.mod h1:fu4nmfWv8EqnRzCEZb3uvxzLWTzOtbL8HB/+6yiJRZc=
-github.com/herdworks/httt v0.41.2 h1:pFi30kBFjW+H6CrAW6SU82WgAEm/l4qjQn/XYXdLpko=
-github.com/herdworks/httt v0.41.2/go.mod h1:qL2vKpnWKz5ORn6ZCQ0hngLgGLqAIIVdMegvmMnQgNk=
+github.com/herdworks/httt v0.41.3 h1:/Y8R6KPl0sFIx6MRxzyrHKA2N94aVpTH2Q9FK+JHG7Y=
+github.com/herdworks/httt v0.41.3/go.mod h1:qL2vKpnWKz5ORn6ZCQ0hngLgGLqAIIVdMegvmMnQgNk=
 github.com/herdworks/htup v0.27.3 h1:QYpah96PRNSARJoCBmNJ7MluHJTJSqFRkq4C/1VDgn8=
 github.com/herdworks/htup v0.27.3/go.mod h1:4df8kivNR3cGrUXYru40LLJyQwztjiejBUBCGQCOnj8=
 github.com/herdworks/htxt v0.49.0 h1:lQ+eTH3OeE3nRSHYJAglGrb/2CSRqH97VcZ3jHd9O8k=
