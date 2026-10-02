@@ -13,9 +13,9 @@ require (
 	github.com/herdworks/htskills v0.10.0
 	github.com/herdworks/httt v0.41.3
 	github.com/herdworks/htup v0.28.0
-	github.com/herdworks/htxt v0.50.5
+	github.com/herdworks/htxt v0.50.7
 	github.com/herdworks/htxtd v0.2.0 // indirect
-	github.com/herdworks/hyperfeed v0.29.1
+	github.com/herdworks/hyperfeed v0.29.2
 	github.com/herdworks/hypermedia v0.2.0
 )
 

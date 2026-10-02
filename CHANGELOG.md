@@ -64,10 +64,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 * **Removed:** The unregistered `hyperctl dev mimetype` helper.
 * **Updated:** package dependencies, including:
   `cli-go` v0.1.0 to `clic` v0.4.3
-  `hyperfeed-go` v0.26.5 to `hyperfeed` v0.29.1
+  `hyperfeed-go` v0.26.5 to `hyperfeed` v0.29.2
   `hyperproviders-go` v0.23.0 to `htup` v0.28.0
   `hypertemplates-go` v0.35.0 to `httt` v0.41.3
-  `hypertexting-go` v0.38.0 to `htxt` v0.50.5
+  `hypertexting-go` v0.38.0 to `htxt` v0.50.7
   `hypergraph-go` v0.22.3 to `hq` v0.24.0
   `hsync` to v0.7.2 and `htskills` to v0.10.0;
   and added _new_ `hypermedia` v0.2.0 and `htxtd` v0.2.0 (indirectly).
