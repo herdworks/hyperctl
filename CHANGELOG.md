@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## Unreleased
 
+## v0.24.0 (2026-10-10)
+
 * **Added:** `hyperctl skill` onboarding and discovery commands:
   `readme`, `ls`, `describe`, `install`, and `update` for bundled portable Agent Skills.
 * **Added:** `hyperctl skill up [skills-directory]` synchronizes bundled
