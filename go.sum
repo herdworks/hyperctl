@@ -104,8 +104,8 @@ github.com/herdworks/httt v0.41.3 h1:/Y8R6KPl0sFIx6MRxzyrHKA2N94aVpTH2Q9FK+JHG7Y
 github.com/herdworks/httt v0.41.3/go.mod h1:qL2vKpnWKz5ORn6ZCQ0hngLgGLqAIIVdMegvmMnQgNk=
 github.com/herdworks/htup v0.28.0 h1:x06TvBD8ajq34cycT3cVTF8ivImDzdLbK3ZH29BHBEQ=
 github.com/herdworks/htup v0.28.0/go.mod h1:4df8kivNR3cGrUXYru40LLJyQwztjiejBUBCGQCOnj8=
-github.com/herdworks/htxt v0.50.9 h1:8zE5gynrIf4cPomML52GQ5zSln90FP7whzEqgGbVnRI=
-github.com/herdworks/htxt v0.50.9/go.mod h1:XS92ylTqq++NFSgOguHAx9HSaN8oRsSqy5tmJVAOMns=
+github.com/herdworks/htxt v0.51.0 h1:UzSjTiXXo/fk0yEV4as9fz65xsFIkmfQmXi2eP3FjW4=
+github.com/herdworks/htxt v0.51.0/go.mod h1:XS92ylTqq++NFSgOguHAx9HSaN8oRsSqy5tmJVAOMns=
 github.com/herdworks/htxtd v0.2.0 h1:7FJYIwEAC4RyPr7dGnaN40rkh3917hYxIKCGZa8NBLs=
 github.com/herdworks/htxtd v0.2.0/go.mod h1:uCvRbvWZH/rl9M2a5IlILpfhkbRH0DItgzcCdw/72G4=
 github.com/herdworks/hyperfeed v0.29.2 h1:+zYWkdIG4dHqq4mi6WpqSUpWVKmkL/05SMi4vdUDeLY=
